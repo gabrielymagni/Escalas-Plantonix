@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import BaseAdmin from "../pages/private/base/BaseAdmin";
-import Teste from "../pages/private/Services/Cadastros/Teste";
+import Bloco from "../pages/private/Services/Cadastros/Bloco.jsx";
+import Funcionario from "../pages/private/Services/Cadastros/Funcionario.jsx";
+import Regras from "../pages/private/Services/Cadastros/Regras.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -15,10 +17,18 @@ export const router = createBrowserRouter([
         path: '/private',
         element: <BaseAdmin />,
         children: [
-            // {
-            //     path: 'cadastros',
-            //     element: <Teste />,
-            // }
+            {
+                path: 'cadastroBloco',
+                element: <Bloco />,
+            }, 
+            {
+                path: 'cadastroFuncionario',
+                element: <Funcionario />,
+            }, 
+            {
+                path: 'cadastroRegras',
+                element: <Regras />,
+            }, 
         ]
     }
 ])

@@ -9,15 +9,15 @@ export function Header({ open, handleDrawer }) {
 
     return (
         < AppBar position="fixed" open={open} sx={{ bgcolor: '#fff' }} >
-            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'start' }}>
                 <IconButton edge="start" aria-label="menu" color="#1b1464"
-                    sx={{ marginRight: 2 }}
+                    sx={[{ marginRight: 5 },
+                        open && { display: 'none' },
+                        ]}
                     title='Menu'
                     onClick={handleDrawer}
                 >
-                    {!open &&
                         <MenuIcon sx={{ color: '#0452A2' }} />
-                    }
                 </IconButton>
 
                 <Box align="center" sx={{

@@ -11,8 +11,6 @@ const useAdminBase = () => {
         setOpenSideBar((prev) => !prev)
     }
 
-    console.log("open", openSideBar)
-
     return {
         openSideBar, isMobile, handleDrawer
     }

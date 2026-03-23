@@ -30,6 +30,11 @@ export function SideBar({ openSideBar, handleDrawer }) {
             <List >
                 {RoutesSidebar.map(item => (
                     <ListItem key={item.path} disablePadding sx={{ display: "block" }} title={item.name}>
+                        {item.divider &&
+                            <Divider sx={{ fontSize: 12, color: '#4F4F4F' }}>
+                                {open ? item.text_divider : null}
+                            </Divider>
+                        }
                         <ListItemButton
                             sx={{
                                 ...sxItenButton(open, pathMatch?.path === item.path),
@@ -50,9 +55,9 @@ export function SideBar({ openSideBar, handleDrawer }) {
                             />
                         </ListItemButton>
 
-                        {item.divider &&
+                        {/* {item.divider &&
                             <Divider sx={{ fontSize: 12, color: "#787878" }} />
-                        }
+                        } */}
                     </ListItem>
                 ))}
 
