@@ -1,26 +1,27 @@
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AddHomeIcon from '@mui/icons-material/AddHome';
+import FeedIcon from '@mui/icons-material/Feed';
 
 export const RoutesSidebar = [
     {
-        name: "Bloco",
+        name: "Blocos",
         path: "/private/cadastroBloco",
         divider: true,
-        icon: <AppRegistrationIcon />,
+        icon: <AddHomeIcon />,
         text_divider: "Cadastros"
     },
     {
-        name: "Funcionário",
+        name: "Funcionários",
         path: "/private/cadastroFuncionario",
         divider: false,
-        icon: <AppRegistrationIcon />,
+        icon: <PersonAddIcon />,
         text_divider: " "
     },
     {
         name: "Regras",
         path: "/private/cadastroRegras",
         divider: false,
-        icon: <AppRegistrationIcon />,
+        icon: <FeedIcon />,
         text_divider: " "
     },
 ];

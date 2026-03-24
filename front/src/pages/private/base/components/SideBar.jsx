@@ -31,16 +31,12 @@ export function SideBar({ openSideBar, handleDrawer }) {
                 {RoutesSidebar.map(item => (
                     <ListItem key={item.path} disablePadding sx={{ display: "block" }} title={item.name}>
                         {item.divider &&
-                            <Divider sx={{ fontSize: 12, color: '#4F4F4F' }}>
+                            <Divider sx={{ fontSize: 14, color: '#000000' }}>
                                 {open ? item.text_divider : null}
                             </Divider>
                         }
                         <ListItemButton
-                            sx={{
-                                ...sxItenButton(open, pathMatch?.path === item.path),
-                                borderRadius: "10px",
-                                m: 1,
-                            }}
+                            sx={sxItenButton(open, pathMatch?.path === item.path)}
                             // component={Link}
                             to={item.path}
                         >
@@ -55,20 +51,8 @@ export function SideBar({ openSideBar, handleDrawer }) {
                             />
                         </ListItemButton>
 
-                        {/* {item.divider &&
-                            <Divider sx={{ fontSize: 12, color: "#787878" }} />
-                        } */}
                     </ListItem>
                 ))}
-
-                {/* <ListItem disablePadding sx={{ display: 'block', }}>
-                    <ListItemButton sx={sxItenButton} onClick={() => handleDeslogar()}>
-                        <ListItemIcon sx={sxItemIcon}>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Sair'} sx={sxItemText} />
-                    </ListItemButton>
-                </ListItem> */}
             </List>
 
 
@@ -77,12 +61,14 @@ export function SideBar({ openSideBar, handleDrawer }) {
 }
 
 export const sxItenButton = (open, isSelected) => ({
-    minHeight: 48,
+    minHeight: 40,
     justifyContent: open ? 'initial' : 'center',
     bgcolor: isSelected ? "#e3eefa" : "transparent", //cor teste
     "&:hover": {
         bgcolor: isSelected ? "#e3eefa" : "rgba(0, 0, 0, 0.08)"
     },
+    borderRadius: "10px",
+    m: 1,
 })
 
 export const sxItemIcon = (open, isSelected) => ({

@@ -1,13 +1,16 @@
 import { Typography } from '@mui/material'
+import TableBlocos from './components/TableBlocos'
 
-const Funcionario = () => {
+const Bloco = () => {
     return (
         <>
             <Typography height={'33px'} sx={{ fontSize: '22px', color: '#222059', fontWeight: 'bold', textAlign: 'center', mb: 2 }}>
-                Funcionário
+                Blocos
             </Typography>
+
+            <TableBlocos />
         </>
     )
 }
 
-export default Funcionario
+export default Bloco

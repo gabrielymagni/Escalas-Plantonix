@@ -1,8 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import BaseAdmin from "../pages/private/base/BaseAdmin";
-import Bloco from "../pages/private/Services/Cadastros/Bloco.jsx";
-import Funcionario from "../pages/private/Services/Cadastros/Funcionario.jsx";
-import Regras from "../pages/private/Services/Cadastros/Regras.jsx";
+import Bloco from "../pages/private/Services/Cadastros/Blocos/Bloco";
+import Funcionario from "../pages/private/Services/Cadastros/Funcionarios/Funcionario";
 
 export const router = createBrowserRouter([
     {
@@ -25,10 +24,10 @@ export const router = createBrowserRouter([
                 path: 'cadastroFuncionario',
                 element: <Funcionario />,
             }, 
-            {
-                path: 'cadastroRegras',
-                element: <Regras />,
-            }, 
+            // {
+            //     path: 'cadastroRegras',
+            //     element: <Regras />,
+            // }, 
         ]
     }
 ])
