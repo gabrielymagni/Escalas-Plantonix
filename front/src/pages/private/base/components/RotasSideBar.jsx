@@ -17,11 +17,11 @@ export const RoutesSidebar = [
         icon: <PersonAddIcon />,
         text_divider: " "
     },
-    {
-        name: "Regras",
-        path: "/private/cadastroRegras",
-        divider: false,
-        icon: <FeedIcon />,
-        text_divider: " "
-    },
+    // {
+    //     name: "Regras",
+    //     path: "/private/cadastroRegras",
+    //     divider: false,
+    //     icon: <FeedIcon />,
+    //     text_divider: " "
+    // },
 ];

@@ -16,7 +16,7 @@ const Funcionario = () => {
                 Funcionários
             </Typography>
 
-            <Grid container sx={{
+            <Grid container spacing={2} sx={{
                 display: 'flex', justifyContent: 'space-around', alignItems: 'center',
                 mt: 3, mb: 5
             }} >
@@ -27,9 +27,9 @@ const Funcionario = () => {
                     />
                 </Grid>
 
-                <Grid size={{ xs: 12, md: 2 }}>
+                <Grid size={{ xs: 12, md: 3 }}>
                     <Button variant="outlined" startIcon={<AddIcon />} fullWidth onClick={handleModalCadastro}
-                        sx={{ bgcolor: '#62acb5', color: '#fff', fontWeight: 'bold', border: '1px solid #62acb5' }}>
+                        sx={{ bgcolor: '#141259', color: '#fff', fontWeight: 'bold' }}>
                         Adicionar
                     </Button>
                 </Grid>

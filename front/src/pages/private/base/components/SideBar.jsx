@@ -63,7 +63,7 @@ export function SideBar({ openSideBar, handleDrawer }) {
 export const sxItenButton = (open, isSelected) => ({
     minHeight: 40,
     justifyContent: open ? 'initial' : 'center',
-    bgcolor: isSelected ? "#e3eefa" : "transparent", //cor teste
+    bgcolor: isSelected ? "#141259" : "transparent", //cor teste
     "&:hover": {
         bgcolor: isSelected ? "#e3eefa" : "rgba(0, 0, 0, 0.08)"
     },
@@ -74,12 +74,12 @@ export const sxItenButton = (open, isSelected) => ({
 export const sxItemIcon = (open, isSelected) => ({
     minWidth: 0,
     justifyContent: "center",
-    color: isSelected ? "#1565c0" : "#707070",
+    color: isSelected ? "#fff" : "#707070",
     mr: open ? 3 : 'auto',
 })
 
 export const sxItemText = (open, isSelected) => ({
     fontWeight: isSelected ? "bold" : "normal",
-    color: isSelected ? "#1565c0" : "#000",
+    color: isSelected ? "#fff" : "#000",
     opacity: open ? 1 : 0
 })

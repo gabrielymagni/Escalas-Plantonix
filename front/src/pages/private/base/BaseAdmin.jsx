@@ -18,7 +18,7 @@ function BaseAdmin() {
 
             <SideBar openSideBar={openSideBar} handleDrawer={handleDrawer} />
 
-            <Box sx={{width: '100%', overflowX: 'hidden', minHeight: '100vh', p: { md: 10, xs: 1 }, bgcolor: '#f8f7fa'}}>
+            <Box sx={{width: '100%', overflowX: 'hidden', minHeight: '100vh', p: { md: 10, xs: 1 }, pt: { md: 10, xs: 10 }, bgcolor: '#f8f7fa'}}>
                 <Outlet />
             </Box>
 

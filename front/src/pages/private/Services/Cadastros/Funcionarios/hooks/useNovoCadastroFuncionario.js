@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { simulaDadosBloco } from "../../Blocos/components/ColunasBlocos";
+import { simulaDadosBloco } from "../../Blocos/components/CardsBlocos";
 
 const useNovoCadastroFuncionario = () => {
 

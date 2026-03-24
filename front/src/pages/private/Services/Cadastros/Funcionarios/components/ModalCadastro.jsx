@@ -1,9 +1,8 @@
 import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
-import { simulaDadosBloco } from "../../Blocos/components/ColunasBlocos";
-import { useState } from "react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import useNovoCadastroFuncionario from "../hooks/useNovoCadastroFuncionario";
+import { simulaDadosBloco } from "../../Blocos/components/CardsBlocos";
 
 const ModalCadastro = ({ open, handleCloseModal }) => {
 
@@ -15,9 +14,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
 
                 <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: "#141259", position: "relative" }}>
                     Novo funcionário
-                    <IconButton aria-label="close"
-                        onClick={handleCloseModal}
-                        sx={{ position: "absolute", right: 8, top: 8 }} >
+                    <IconButton aria-label="close" onClick={handleCloseModal} sx={{ position: "absolute", right: 8, top: 8 }} >
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
@@ -27,31 +24,30 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                         <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField id="filled-basic" label="Nome Completo" variant="filled" name="nome" fullWidth />
+                                <TextField label="Nome Completo" variant="filled" name="nome" fullWidth />
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField id="filled-basic" label="Email" variant="filled" name="email" fullWidth />
+                                <TextField label="Email" variant="filled" name="email" fullWidth />
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField id="filled-basic" label="Coren" variant="filled" name="coren" fullWidth />
+                                <TextField label="Coren" variant="filled" name="coren" fullWidth />
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField id="filled-basic" label="Plantão" variant="filled" fullWidth />
+                                <TextField label="Plantão" variant="filled" fullWidth />
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField id="filled-basic" label="Permissão" variant="filled" fullWidth />
+                                <TextField label="Permissão" variant="filled" fullWidth />
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField id="filled-basic" label="Folgas" variant="filled" fullWidth />
+                                <TextField label="Folgas" variant="filled" fullWidth />
                             </Grid>
                             <Grid size={{ md: 12, xs: 12 }}>
-                                <TextField id="filled-basic" label="Cargo" variant="filled" name="cargo" fullWidth />
+                                <TextField label="Cargo" variant="filled" name="cargo" fullWidth />
                             </Grid>
 
 
                             <Grid size={{ md: 6, xs: 12 }}>
                                 <Autocomplete multiple
-                                    id="tags-outlined"
                                     options={turnosDisponiveis}
                                     getOptionLabel={(option) => option.turno}
                                     renderInput={(params) => (
@@ -113,7 +109,7 @@ export const turnosDisponiveis = [
 
 
 export const sxButton = () => ({
-    bgcolor: '#62acb5', 
+    bgcolor: '#141259', 
     color: '#fff',
     fontWeight: 'bold'
 })

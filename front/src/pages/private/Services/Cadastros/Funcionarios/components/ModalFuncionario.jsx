@@ -8,6 +8,8 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
 
         const dados = new FormData(evento.target);
         const nome = dados.get("nome");
+        const email = dados.get("email");
+        const coren = dados.get("coren");
         console.log("NOME", nome)
 
         if (info.nome === nome){
