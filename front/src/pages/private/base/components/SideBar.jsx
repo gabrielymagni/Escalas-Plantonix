@@ -32,30 +32,27 @@ export function SideBar({ openSideBar, handleDrawer }) {
                     <ListItem key={item.path} disablePadding sx={{ display: "block" }} title={item.name}>
                         {item.divider &&
                             <Divider sx={{ fontSize: 14, color: '#000000' }}>
-                                {open ? item.text_divider : null}
+                                {openSideBar ? item.text_divider : null}
                             </Divider>
                         }
                         <ListItemButton
-                            sx={sxItenButton(open, pathMatch?.path === item.path)}
-                            // component={Link}
+                            sx={sxItenButton(openSideBar, pathMatch?.path === item.path)}
                             to={item.path}
                         >
                             <ListItemIcon
-                                sx={sxItemIcon(open, pathMatch?.path === item.path)}
+                                sx={sxItemIcon(openSideBar, pathMatch?.path === item.path)}
                             >
                                 {item.icon}
                             </ListItemIcon>
                             <ListItemText
                                 primary={item.name}
-                                sx={sxItemText(open, pathMatch?.path === item.path)}
+                                sx={sxItemText(openSideBar, pathMatch?.path === item.path)}
                             />
                         </ListItemButton>
 
                     </ListItem>
                 ))}
             </List>
-
-
         </Drawer>
     )
 }
@@ -65,7 +62,7 @@ export const sxItenButton = (open, isSelected) => ({
     justifyContent: open ? 'initial' : 'center',
     bgcolor: isSelected ? "#141259" : "transparent", //cor teste
     "&:hover": {
-        bgcolor: isSelected ? "#e3eefa" : "rgba(0, 0, 0, 0.08)"
+        bgcolor: isSelected ? "#141259" : "rgba(0, 0, 0, 0.08)"
     },
     borderRadius: "10px",
     m: 1,

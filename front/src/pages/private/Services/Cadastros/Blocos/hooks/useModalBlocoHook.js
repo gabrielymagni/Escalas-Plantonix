@@ -13,8 +13,13 @@ const useModalBlocoHook = () => {
 
         const dados = new FormData(evento.target);
         const bloco = dados.get("bloco");
-        const quant_pessoa = dados.get("quant_pessoa");
-        console.log("bloco", bloco)
+        const quant_pessoas = dados.get("quant_pessoas");
+
+        const payload = {
+            bloco: bloco,
+            quant_pessoas: quant_pessoas
+        }
+        console.log("payload", payload)
     }
 
     return {

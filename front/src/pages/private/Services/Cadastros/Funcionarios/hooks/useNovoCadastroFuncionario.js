@@ -5,7 +5,7 @@ const useNovoCadastroFuncionario = () => {
 
     const [openModalCadastro, setOpenModalCdastro] = useState(false);
     const [rankingBlocos, setRankingBlocos] = useState([]);
-
+    console.log("rankingBlocos", rankingBlocos)
     const handleModalCadastro = () => {
         setOpenModalCdastro(prev => !prev);
     }
@@ -19,12 +19,21 @@ const useNovoCadastroFuncionario = () => {
         const nome = dados.get('nome')
         const email = dados.get('email')
         const coren = dados.get('coren')
-        console.log("nome", nome)
+        const ordem = dados.get('ordem')
+        console.log("ordem", ordem)
 
         const payload = {
             nome: nome,
             email: email,
-            coren: coren
+            coren: coren, 
+            blocos: [
+                rankingBlocos.map((item, index) => {
+                    return {
+                        id_bloco: item.id,
+                        ordem: index + 1
+                    }
+                })
+            ]
         }
 
         console.log("payload", payload)

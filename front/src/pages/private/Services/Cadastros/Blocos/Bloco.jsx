@@ -1,12 +1,8 @@
-import { Button, Grid, Typography } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add';
+import { Typography } from '@mui/material'
 import CardsBlocos from './components/CardsBlocos';
-import ModalCadastro from './components/ModalCadastro';
-import useModalBlocoHook from './hooks/useModalBlocoHook';
+import AdicionarCadastro from './components/AdicionarCadastro';
 
 const Bloco = () => {
-
-    const { openCadastro, handleOpenCadastro } = useModalBlocoHook();
 
     return (
         <>
@@ -14,23 +10,9 @@ const Bloco = () => {
                 Blocos
             </Typography>
 
-
-            <Grid container sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', mt: 3, mb: 5 }} >
-
-                <Grid size={{ xs: 12, md: 3 }}>
-                    <Button variant="outlined" startIcon={<AddIcon />} fullWidth
-                        onClick={handleOpenCadastro}
-                        sx={{ bgcolor: '#141259', color: '#fff', fontWeight: 'bold' }}>
-                        Adicionar
-                    </Button>
-                </Grid>
-            </Grid>
+            <AdicionarCadastro />
 
             <CardsBlocos />
-
-            {openCadastro &&
-                <ModalCadastro open={openCadastro} handleOpen={handleOpenCadastro} />
-            }
         </>
     )
 }

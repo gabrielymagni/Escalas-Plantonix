@@ -1,14 +1,11 @@
-import { Button, Grid, TextField, Typography } from '@mui/material'
+import { Grid, TextField, Typography } from '@mui/material'
 import TableFuncionarios from './components/TableFuncionarios'
-import AddIcon from '@mui/icons-material/Add';
 import useFuncionarioHook from './hooks/useFuncionarioHook';
 import ModalFuncionario from './components/ModalFuncionario';
-import useNovoCadastroFuncionario from './hooks/useNovoCadastroFuncionario';
-import ModalCadastro from './components/ModalCadastro';
+import AdicionarCadastro from './components/AdicionarCadastro';
 
 const Funcionario = () => {
     const { rows, columns, infoLinha, openModal, handleCloseModal } = useFuncionarioHook();
-    const { openModalCadastro, handleModalCadastro } = useNovoCadastroFuncionario(); 
 
     return (
         <>
@@ -27,12 +24,7 @@ const Funcionario = () => {
                     />
                 </Grid>
 
-                <Grid size={{ xs: 12, md: 3 }}>
-                    <Button variant="outlined" startIcon={<AddIcon />} fullWidth onClick={handleModalCadastro}
-                        sx={{ bgcolor: '#141259', color: '#fff', fontWeight: 'bold' }}>
-                        Adicionar
-                    </Button>
-                </Grid>
+                <AdicionarCadastro />
             </Grid>
 
             <TableFuncionarios rows={rows} columns={columns} />
@@ -40,9 +32,6 @@ const Funcionario = () => {
             {openModal &&
                 <ModalFuncionario open={openModal} info={infoLinha} handleCloseModal={handleCloseModal} />
             }
-
-            {openModalCadastro && 
-            <ModalCadastro open={openModalCadastro} handleCloseModal={handleModalCadastro} />}
         </>
     )
 }
