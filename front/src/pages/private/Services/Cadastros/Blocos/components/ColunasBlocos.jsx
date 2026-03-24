@@ -5,27 +5,27 @@ export const getColumnsBloco = () => [
 
 
 export const getRowsBloco = () =>
-    simulaDados.map((item) => ({
+    simulaDadosBloco.map((item) => ({
         id: item.id,
         bloco: item.bloco
     }))
 
 
-export const simulaDados = [
+export const simulaDadosBloco = [
     {
         id: 1,
         bloco: 'Cirúrgico'
     },
     {
-        id: 1,
+        id: 2,
         bloco: 'Maternidade'
     },
     {
-        id: 1,
+        id: 3,
         bloco: 'Clínica'
     },
     {
-        id: 1,
+        id: 4,
         bloco: 'Ambulatório'
     },
 ]

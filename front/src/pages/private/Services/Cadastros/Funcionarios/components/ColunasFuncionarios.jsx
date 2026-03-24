@@ -1,5 +1,6 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const getColumnsFuncionario = (handleModal) => [
     { id: "id", label: "ID", minWidth: 100 },
@@ -14,10 +15,16 @@ export const getColumnsFuncionario = (handleModal) => [
         id: "detalhes", label: "", minWidth: 50,
         render: (row) => (
             <Box sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', height: '100%' }}>
-                <IconButton sx={{ color: '#1b1464' }} 
-                onClick={() => handleModal(row)} 
-                title="Detalhes" >
+                <IconButton sx={{ color: '#1b1464' }}
+                    onClick={() => handleModal(row)}
+                    title="Detalhes" >
                     <VisibilityIcon />
+                </IconButton>
+
+                <IconButton sx={{ color: '#b8492d' }}
+                    onClick={() => console.log("remove da lista")}
+                    title="Remover" >
+                    <DeleteIcon />
                 </IconButton>
             </Box >
         ),
