@@ -9,7 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import useAdminBase from "../hooks/useAdminBase.js";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export function SideBar({ openSideBar, handleDrawer }) {
 
@@ -36,7 +36,7 @@ export function SideBar({ openSideBar, handleDrawer }) {
                             </Divider>
                         }
                         <ListItemButton
-                            sx={sxItenButton(openSideBar, pathMatch?.path === item.path)}
+                            sx={sxItenButton(openSideBar, pathMatch?.path === item.path)} component={Link}
                             to={item.path}
                         >
                             <ListItemIcon
