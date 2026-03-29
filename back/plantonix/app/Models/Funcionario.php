@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Funcionario extends Model
 {
     use SoftDeletes;
-    protected $fillable = ['nome', 'email', 'coren'];
+    protected $fillable = ['nome', 'email', 'coren', 'turno', 'tipo_escala', 'data_contratacao'];
 
     public static function getFuncionarios()
     {
@@ -28,7 +28,10 @@ class Funcionario extends Model
             $funcionario = self::create([
                 "nome" => $dados->nome,
                 "email" => $dados->email,
-                "coren" => $dados->coren
+                "coren" => $dados->coren,
+                "turno" => $dados->turno,
+                "tipo_escala" => $dados->tipo_escala,
+                "data_contratacao" => $dados->data_contratacao,
             ]);
 
             foreach ($dados->blocos as $bloco) {
