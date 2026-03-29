@@ -23,11 +23,8 @@ const ModalCadastro = ({ open, handleOpen }) => {
                 <DialogContent>
                     <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-                        <Grid size={{ md: 6, xs: 12 }}>
+                        <Grid size={{ md: 12, xs: 12 }}>
                             <TextField label="Bloco" variant="filled" name="nome" fullWidth />
-                        </Grid>
-                        <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField label="Quantidade de pessoas" variant="filled" name="quant_pessoas" fullWidth />
                         </Grid>
                     </Grid>
 

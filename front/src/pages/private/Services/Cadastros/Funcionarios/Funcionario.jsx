@@ -3,9 +3,14 @@ import TableFuncionarios from './components/TableFuncionarios'
 import useFuncionarioHook from './hooks/useFuncionarioHook';
 import ModalFuncionario from './components/ModalFuncionario';
 import AdicionarCadastro from './components/AdicionarCadastro';
+import { useEffect } from 'react';
 
 const Funcionario = () => {
-    const { rows, columns, infoLinha, openModal, handleCloseModal } = useFuncionarioHook();
+    const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios } = useFuncionarioHook();
+
+    useEffect(() => {
+        getAllFuncionarios()
+    }, [])
 
     return (
         <>

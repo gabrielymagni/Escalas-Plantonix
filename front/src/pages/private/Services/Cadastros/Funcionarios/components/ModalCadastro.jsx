@@ -2,11 +2,18 @@ import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import useNovoCadastroFuncionario from "../hooks/useNovoCadastroFuncionario";
-import { simulaDadosBloco } from "../../Blocos/components/CardsBlocos";
+import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
+import { useEffect } from "react";
 
 const ModalCadastro = ({ open, handleCloseModal }) => {
 
-    const { handleSubmit, handleBlocosRanking, getOptionsFiltradas, rankingBlocos } = useNovoCadastroFuncionario();
+    const { handleSubmit, handleBlocosRanking, getOptionsFiltradas, rankingBlocos, handleTurnos, handleEscala, escalaSelecionada } = useNovoCadastroFuncionario();
+    const { allBlocos, getAllBlocos, } = useModalBlocoHook();
+
+    useEffect(() => {
+        getAllBlocos()
+    }, [])
+
 
     return (
         <>
@@ -32,29 +39,37 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                             <Grid size={{ md: 6, xs: 12 }}>
                                 <TextField label="Coren" variant="filled" name="coren" fullWidth />
                             </Grid>
+
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Plantão" variant="filled" fullWidth />
-                            </Grid>
-                            <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Permissão" variant="filled" fullWidth />
-                            </Grid>
-                            <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Folgas" variant="filled" fullWidth />
-                            </Grid>
-                            <Grid size={{ md: 12, xs: 12 }}>
                                 <TextField label="Cargo" variant="filled" name="cargo" fullWidth />
                             </Grid>
 
+                            <Grid size={{ md: 6, xs: 12 }}>
+                                <TextField label="Data contratação" variant="filled" name="data_contratacao" fullWidth type="date" />
+                            </Grid>
 
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <Autocomplete multiple
-                                    options={turnosDisponiveis}
+                                <Autocomplete
+                                    options={tipoEscala}
+                                    getOptionLabel={(option) => option.tipo}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Tipos de escala" />
+                                    )}
+                                    onChange={(event, newValue) => handleEscala(event, newValue)}
+                                />
+                            </Grid>
+
+                            <Grid size={{ md: 6, xs: 12 }}>
+                                <Autocomplete disabled={escalaSelecionada.length === 0}
+                                    options={turnosDisponiveis(escalaSelecionada.tipo)}
                                     getOptionLabel={(option) => option.turno}
                                     renderInput={(params) => (
                                         <TextField {...params} label="Disponibilidade de turnos" />
                                     )}
+                                    onChange={(event, newValue) => handleTurnos(event, newValue)}
                                 />
                             </Grid>
+
 
                             <Grid size={{ md: 6, xs: 12 }} >
 
@@ -63,19 +78,19 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
 
                                     <Typography sx={{ textAlign: 'center' }}>Ordem de preferência de blocos</Typography>
 
-                                    {simulaDadosBloco.map((item, index) => (
-                                            <Autocomplete key={index} size="small" fullWidth
-                                                options={getOptionsFiltradas(index)}
-                                                getOptionLabel={(option) => option.bloco}
-                                                value={rankingBlocos[index] || null}
-                                                onChange={(event, newValue) =>
-                                                    handleBlocosRanking(index, newValue)
-                                                }
-                                                renderInput={(params) => (
-                                                    <TextField {...params} label={`${index + 1}° opção`} />
-                                                )}
-                                            />
-                                        ))
+                                    {allBlocos.map((item, index) => (
+                                        <Autocomplete key={index} size="small" fullWidth
+                                            options={getOptionsFiltradas(index, allBlocos)}
+                                            getOptionLabel={(option) => option.nome}
+                                            value={rankingBlocos[index] || null}
+                                            onChange={(event, newValue) =>
+                                                handleBlocosRanking(index, newValue)
+                                            }
+                                            renderInput={(params) => (
+                                                <TextField {...params} label={`${index + 1}° opção`} />
+                                            )}
+                                        />
+                                    ))
                                     }
                                 </Grid>
 
@@ -87,7 +102,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                     </DialogContent>
                     <DialogActions>
                         <Button type="submit" endIcon={<CheckCircleIcon />} sx={sxButton} >
-                            Cadastrar 
+                            Cadastrar
                         </Button>
                     </DialogActions>
                 </form>
@@ -100,16 +115,28 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
 export default ModalCadastro
 
 
-export const turnosDisponiveis = [
-    { id: 1, turno: 'Manhã' },
-    { id: 2, turno: 'Tarde' },
-    { id: 3, turno: 'Noite' },
-    { id: 4, turno: 'Manha e Tarde' }
+export const turnosDisponiveis = (escala) => {
+    if (escala === '6x1') return [
+        { id: 'M', turno: 'Manhã' },
+        { id: 'T', turno: 'Tarde' },
+    ];
+    if (escala === '5x2') return [
+        { id: 'MT', turno: 'Manhã e Tarde' },
+    ];
+    if (escala === '12x36') return [
+        { id: 'N', turno: 'Noite' },
+    ];
+}
+
+export const tipoEscala = [
+    { tipo: '6x1' },
+    { tipo: '12x36' },
+    { tipo: '5x2' },
 ]
 
 
 export const sxButton = () => ({
-    bgcolor: '#141259', 
+    bgcolor: '#141259',
     color: '#fff',
     fontWeight: 'bold'
 })
