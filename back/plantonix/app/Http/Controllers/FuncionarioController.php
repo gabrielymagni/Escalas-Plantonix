@@ -34,6 +34,7 @@ class FuncionarioController extends Controller
                 "turno" => 'required|string|max:2',
                 "tipo_escala" => 'required|string|max:6',
                 "data_contratacao" => 'required|date',
+                "cargo" => "required|string|255",
                 "blocos" => 'required|array'
             ]);
 
@@ -55,9 +56,10 @@ class FuncionarioController extends Controller
                 "nome" => 'required|string|max:255',
                 "email" => 'required|string|max:255',
                 "coren" => 'required|string|max:20',
-                "turno" => 'required|string|max:1',
+                "turno" => 'required|string|max:2',
                 "tipo_escala" => 'required|string|max:6',
                 "data_contratacao" => 'required|date',
+                "cargo" => "required|string|255",
                 "blocos" => 'required|array'
             ]);
 
