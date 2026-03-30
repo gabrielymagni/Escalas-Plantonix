@@ -39,21 +39,22 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                         <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Nome Completo" variant="filled" name="nome" fullWidth />
+                                <TextField label="Nome Completo" variant="filled" name="nome" fullWidth required/>
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Email" variant="filled" name="email" fullWidth />
+                                <TextField label="Email" variant="filled" name="email" fullWidth required type="email"/>
                             </Grid>
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Coren" variant="filled" name="coren" fullWidth />
-                            </Grid>
-
-                            <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Cargo" variant="filled" name="cargo" fullWidth />
+                                <TextField label="Coren" variant="filled" name="coren" fullWidth required/>
                             </Grid>
 
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Data contratação" variant="filled" name="data_contratacao" fullWidth type="date" />
+                                <TextField label="Cargo" variant="filled" name="cargo" fullWidth required/>
+                            </Grid>
+
+                            <Grid size={{ md: 6, xs: 12 }}>
+                                <TextField label="Data contratação" variant="filled" name="data_contratacao" 
+                                fullWidth type="date" required/>
                             </Grid>
 
                             <Grid size={{ md: 6, xs: 12 }}>
@@ -61,7 +62,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                                     options={tipoEscala}
                                     getOptionLabel={(option) => option.tipo}
                                     renderInput={(params) => (
-                                        <TextField {...params} label="Tipos de escala" />
+                                        <TextField {...params} label="Tipos de escala" required/>
                                     )}
                                     onChange={(event, newValue) => handleEscala(event, newValue)}
                                 />
@@ -72,7 +73,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                                     options={turnosDisponiveis(escalaSelecionada.tipo)}
                                     getOptionLabel={(option) => option.turno}
                                     renderInput={(params) => (
-                                        <TextField {...params} label="Disponibilidade de turnos" />
+                                        <TextField {...params} label="Disponibilidade de turnos" required/>
                                     )}
                                     onChange={(event, newValue) => handleTurnos(event, newValue)}
                                 />
@@ -95,7 +96,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                                                 handleBlocosRanking(index, newValue)
                                             }
                                             renderInput={(params) => (
-                                                <TextField {...params} label={`${index + 1}° opção`} />
+                                                <TextField {...params} label={`${index + 1}° opção`} required/>
                                             )}
                                         />
                                     ))

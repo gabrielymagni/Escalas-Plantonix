@@ -10,11 +10,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
 
     const { editarFuncionario, rankingBlocos, handleBlocosRanking } = useFuncionarioHook();
 
-    const {
-        getOptionsFiltradas,
-        handleTurnos,
-        handleEscala
-    } = useNovoCadastroFuncionario();
+    const { getOptionsFiltradas, handleTurnos, handleEscala } = useNovoCadastroFuncionario();
 
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
 
@@ -64,20 +60,10 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
     return (
         <Dialog fullWidth maxWidth="md" open={open} onClose={handleCloseModal}>
 
-            <DialogTitle
-                sx={{
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    color: "#141259",
-                    position: "relative"
-                }}
-            >
+            <DialogTitle sx={{textAlign: "center", fontWeight: "bold", color: "#141259", position: "relative"}}>
                 Detalhes
 
-                <IconButton
-                    onClick={handleCloseModal}
-                    sx={{ position: "absolute", right: 8, top: 8 }}
-                >
+                <IconButton onClick={handleCloseModal} sx={{ position: "absolute", right: 8, top: 8 }} >
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
@@ -89,54 +75,23 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                     <Grid container spacing={2}>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField
-                                label="Nome Completo"
-                                name="nome"
-                                fullWidth
-                                variant="filled"
-                                defaultValue={info?.nome}
-                            />
+                            <TextField label="Nome Completo" name="nome" fullWidth variant="filled" required defaultValue={info?.nome} />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField
-                                label="Email"
-                                name="email"
-                                fullWidth
-                                variant="filled"
-                                defaultValue={info?.email}
-                            />
+                            <TextField label="Email" name="email" fullWidth variant="filled" required type="email" defaultValue={info?.email} />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField
-                                label="Coren"
-                                name="coren"
-                                fullWidth
-                                variant="filled"
-                                defaultValue={info?.coren}
-                            />
+                            <TextField label="Coren" name="coren" fullWidth variant="filled" required defaultValue={info?.coren} />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField
-                                label="Cargo"
-                                name="cargo"
-                                fullWidth
-                                variant="filled"
-                                defaultValue={info?.cargo}
-                            />
+                            <TextField label="Cargo" name="cargo" fullWidth variant="filled" required defaultValue={info?.cargo} />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField
-                                label="Data contratação"
-                                name="data_contratacao"
-                                type="date"
-                                fullWidth
-                                variant="filled"
-                                defaultValue={info?.data_contratacao}
-                            />
+                            <TextField label="Data contratação" name="data_contratacao" type="date" fullWidth required variant="filled" defaultValue={info?.data_contratacao} />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
@@ -153,7 +108,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                                     handleEscala(event, newValue);
                                 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Tipos de escala" name="tipo_escala"/>
+                                    <TextField {...params} label="Tipos de escala" name="tipo_escala" required />
                                 )}
                             />
                         </Grid>
@@ -175,29 +130,20 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                                     handleTurnos(event, newValue);
                                 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Disponibilidade de turnos" name="turno" />
+                                    <TextField {...params} label="Disponibilidade de turnos" name="turno" required />
                                 )}
                             />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
 
-                            <Grid
-                                container
-                                spacing={2}
-                                sx={{
-                                    border: '2px solid #141259',
-                                    p: 2,
-                                    borderRadius: 5
-                                }}
-                            >
+                            <Grid container spacing={2} sx={{border: '2px solid #141259', p: 2, borderRadius: 5 }} >
 
                                 <Typography sx={{ textAlign: 'center', width: '100%' }}>
                                     Ordem de preferência de blocos
                                 </Typography>
 
                                 {allBlocos.map((item, index) => (
-
                                     <Autocomplete
                                         key={index}
                                         size="small"
@@ -209,10 +155,9 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                                             handleBlocosRanking(index, newValue)
                                         }
                                         renderInput={(params) => (
-                                            <TextField {...params} label={`${index + 1}° opção`} name="blocos" />
+                                            <TextField {...params} label={`${index + 1}° opção`} name="blocos" required />
                                         )}
                                     />
-
                                 ))}
 
                             </Grid>

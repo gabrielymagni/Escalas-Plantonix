@@ -5,12 +5,10 @@ import { turnosDisponiveis } from '../components/ModalCadastro';
 
 const useFuncionarioHook = () => {
 
-    const [infoLinha, setInfoLinha] = useState();
+    const [infoLinha, setInfoLinha] = useState(); //pega dados da linha selecioanda pra passar pro modal 
     const [openModal, setOpenModal] = useState(false);
     const [rankingBlocos, setRankingBlocos] = useState([]);
     const [loading, setLoading] = useState(false);
-
-
     const [allFuncionarios, setAllFuncionarios] = useState([]);
 
     const getAllFuncionarios = async () => {
@@ -22,14 +20,12 @@ const useFuncionarioHook = () => {
                 console.log("response", response)
                 setAllFuncionarios(response.data);
                 setLoading(false)
-
             } else {
                 console.log("erro ao chamar api ")
             }
         } catch (error) {
             console.error('resposta indisponível', error)
         }
-
     }
 
     const handleModal = (row) => {
@@ -61,7 +57,8 @@ const useFuncionarioHook = () => {
             const response = await axios.delete(`${import.meta.env.VITE_API_URL}/funcionario/${id}`);
             if (response.status === 204) {
                 console.log("response", response)
-                window.location.reload()
+                alert("Bloco removido com sucesso.")
+                // window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -70,7 +67,6 @@ const useFuncionarioHook = () => {
         }
 
     }
-
 
     const rows = getRowsFuncionario(allFuncionarios);
     const columns = getColumnsFuncionario(handleModal, deleteFuncionario);
@@ -119,7 +115,8 @@ const useFuncionarioHook = () => {
             const response = await axios.put(`${import.meta.env.VITE_API_URL}/funcionario/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
-                window.location.reload()
+                alert("Bloco editado com sucesso.")
+                // window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
