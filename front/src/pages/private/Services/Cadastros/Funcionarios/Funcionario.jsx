@@ -1,17 +1,29 @@
-import { Grid, TextField, Typography } from '@mui/material'
+import { Backdrop, CircularProgress, Grid, TextField, Typography } from '@mui/material'
 import TableFuncionarios from './components/TableFuncionarios'
 import useFuncionarioHook from './hooks/useFuncionarioHook';
 import ModalFuncionario from './components/ModalFuncionario';
 import AdicionarCadastro from './components/AdicionarCadastro';
+import { useEffect } from 'react';
 
 const Funcionario = () => {
-    const { rows, columns, infoLinha, openModal, handleCloseModal } = useFuncionarioHook();
+    const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading } = useFuncionarioHook();
+
+    useEffect(() => {
+        getAllFuncionarios()
+    }, [])
 
     return (
         <>
             <Typography height={'33px'} sx={{ fontSize: '22px', color: '#222059', fontWeight: 'bold', textAlign: 'center', mb: 2 }}>
                 Funcionários
             </Typography>
+
+            <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
 
             <Grid container spacing={2} sx={{
                 display: 'flex', justifyContent: 'space-around', alignItems: 'center',
