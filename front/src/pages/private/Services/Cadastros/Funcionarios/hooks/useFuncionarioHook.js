@@ -7,9 +7,12 @@ const useFuncionarioHook = () => {
 
     const [infoLinha, setInfoLinha] = useState(); //pega dados da linha selecioanda pra passar pro modal 
     const [openModal, setOpenModal] = useState(false);
+    const [openRemove, setOpenRemove] = useState(false);
     const [rankingBlocos, setRankingBlocos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [allFuncionarios, setAllFuncionarios] = useState([]);
+    const [turnoSelecionado, setTurnoSelecionado] = useState(null);
+    const [escalaSelecionada, setEscalaSelecionada] = useState(null);
 
     const getAllFuncionarios = async () => {
         setLoading(true)
@@ -34,6 +37,15 @@ const useFuncionarioHook = () => {
         console.log("item", row)
     }
 
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    }
+
+    const handleModalRemover = (row) => {
+        setOpenRemove((prev) => !prev);
+        setInfoLinha(row)
+    }
+
     const handleBlocosRanking = (indexOrArray, value) => {
 
         // quando vier array inteiro (edição)
@@ -50,6 +62,15 @@ const useFuncionarioHook = () => {
         });
     };
 
+    const handleTurnos = (event, newValue) => {
+        setTurnoSelecionado(newValue)
+    }
+
+    const handleEscala = (event, newValue) => {
+        setEscalaSelecionada(newValue)
+        setTurnoSelecionado(null)
+    }
+
     const deleteFuncionario = async (id) => {
         setLoading(true)
 
@@ -57,8 +78,8 @@ const useFuncionarioHook = () => {
             const response = await axios.delete(`${import.meta.env.VITE_API_URL}/funcionario/${id}`);
             if (response.status === 204) {
                 console.log("response", response)
-                alert("Bloco removido com sucesso.")
-                // window.location.reload()
+                alert("Funcionário removido com sucesso! ✅")
+                window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -69,16 +90,11 @@ const useFuncionarioHook = () => {
     }
 
     const rows = getRowsFuncionario(allFuncionarios);
-    const columns = getColumnsFuncionario(handleModal, deleteFuncionario);
-
-    const handleCloseModal = () => {
-        setOpenModal(false);
-    }
+    const columns = getColumnsFuncionario(handleModal, handleModalRemover);
 
     const editarFuncionario = async (evento, id) => {
         evento.preventDefault();
         setLoading(true)
-
 
         const dados = new FormData(evento.target);
         const nome = dados.get('nome')
@@ -89,10 +105,6 @@ const useFuncionarioHook = () => {
         const tipo_escala = dados.get('tipo_escala')
         const turno = dados.get('turno')
         const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno)
-        console.log("turnoAjusta", turnoAjustado)
-        const blocos = dados.get('blocos')
-        console.log("blocos", blocos)
-
 
         const payload = {
             nome: nome,
@@ -115,21 +127,21 @@ const useFuncionarioHook = () => {
             const response = await axios.put(`${import.meta.env.VITE_API_URL}/funcionario/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
-                alert("Bloco editado com sucesso.")
-                // window.location.reload()
+                alert("Funcionário editado com sucesso! ✅")
+                window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
         } catch (error) {
             console.error('resposta indisponível', error)
         }
-
     }
 
 
     return {
-        rows, columns, infoLinha, openModal, handleCloseModal, allFuncionarios,
-        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading
+        rows, columns, infoLinha, openModal, handleCloseModal, allFuncionarios, deleteFuncionario,
+        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading, openRemove, handleModalRemover, 
+        handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado
     }
 }
 

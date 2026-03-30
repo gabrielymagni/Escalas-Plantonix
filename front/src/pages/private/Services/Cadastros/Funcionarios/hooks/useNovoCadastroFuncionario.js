@@ -1,27 +1,17 @@
 import { useState } from "react"
-import { simulaDadosBloco } from "../../Blocos/components/CardsBlocos";
 import axios from "axios";
+import { turnosDisponiveis } from "../components/ModalCadastro";
 
 const useNovoCadastroFuncionario = () => {
-    const [loading, setLoading] = useState(false);
-
     const [openModalCadastro, setOpenModalCdastro] = useState(false);
-    const [rankingBlocos, setRankingBlocos] = useState([]);
-    const [turnoSelecionado, setTurnoSelecionado] = useState([]);
-    const [escalaSelecionada, setEscalaSelecionada] = useState([]);
-    console.log("rankingBlocos", rankingBlocos)
-    console.log("turnoSelecionado", turnoSelecionado)
-    console.log("escalaSelecionada", escalaSelecionada)
 
     const handleModalCadastro = () => {
         setOpenModalCdastro(prev => !prev);
     }
 
-    const handleSubmit = async (evento) => {
+    const handleSubmit = async (evento, ranking) => {
         console.log("evento", evento)
         evento.preventDefault();
-        setLoading(true)
-
 
         const dados = new FormData(evento.target);
         const nome = dados.get('nome')
@@ -29,16 +19,20 @@ const useNovoCadastroFuncionario = () => {
         const coren = dados.get('coren')
         const data_contratacao = dados.get('data_contratacao')
         const cargo = dados.get('cargo')
+        const tipo_escala = dados.get('tipo_escala')
+        const turno = dados.get('turno')
+        const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno)
+        console.log("turnoAjusta", turnoAjustado)
 
         const payload = {
             nome: nome,
             email: email,
             coren: coren,
-            turno: turnoSelecionado.id,
-            tipo_escala: escalaSelecionada.tipo,
+            turno: turnoAjustado.id,
+            tipo_escala: tipo_escala,
             data_contratacao: data_contratacao,
             cargo: cargo,
-            blocos: rankingBlocos.map((item, index) => {
+            blocos: ranking.map((item, index) => {
                 return {
                     id_bloco: item.id,
                     ordem: index + 1
@@ -51,6 +45,7 @@ const useNovoCadastroFuncionario = () => {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/funcionario`, payload);
             if (response.status === 201) {
                 console.log("response", response)
+                alert("Novo funcionário cadastrado com sucesso! ✅")
                 window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
@@ -58,48 +53,10 @@ const useNovoCadastroFuncionario = () => {
         } catch (error) {
             console.error('resposta indisponível', error)
         }
-
-        //chama api pra enviar os dados 
-        // handleCloseModal()
     }
-
-    const handleTurnos = (event, newValue) => {
-        setTurnoSelecionado(newValue)
-    }
-
-    const handleEscala = (event, newValue) => {
-        setEscalaSelecionada(newValue)
-        setTurnoSelecionado([])
-    }
-
-    const handleBlocosRanking = (indexOrArray, value) => {
-
-        // quando vier array inteiro (edição)
-        if (Array.isArray(indexOrArray)) {
-            setRankingBlocos(indexOrArray);
-            return;
-        }
-
-        // quando usuário escolher manualmente
-        setRankingBlocos(prev => {
-            const novo = [...prev];
-            novo[indexOrArray] = value;
-            return novo;
-        });
-    };
-
-    const getOptionsFiltradas = (index, allBlocos) => {
-        return allBlocos.filter((option) => {
-            return !rankingBlocos.some(
-                (item, i) => i !== index && item?.nome === option.nome
-            );
-        });
-    };
-
 
     return {
-        openModalCadastro, handleModalCadastro, handleSubmit, loading,
-        handleBlocosRanking, getOptionsFiltradas, rankingBlocos, handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala
+        openModalCadastro, handleModalCadastro, handleSubmit,
     }
 }
 

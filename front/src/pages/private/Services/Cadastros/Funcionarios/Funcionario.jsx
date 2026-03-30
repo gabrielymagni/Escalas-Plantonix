@@ -1,12 +1,15 @@
 import { Backdrop, CircularProgress, Grid, TextField, Typography } from '@mui/material'
 import TableFuncionarios from './components/TableFuncionarios'
 import useFuncionarioHook from './hooks/useFuncionarioHook';
-import ModalFuncionario from './components/ModalFuncionario';
 import AdicionarCadastro from './components/AdicionarCadastro';
 import { useEffect } from 'react';
+import ModalEdicao from './components/ModalEdicao';
+import AlertRemove from './components/AlertRemove';
 
 const Funcionario = () => {
-    const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading } = useFuncionarioHook();
+    const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading,
+        openRemove, handleModalRemover, 
+     } = useFuncionarioHook();
 
     useEffect(() => {
         getAllFuncionarios()
@@ -18,8 +21,7 @@ const Funcionario = () => {
                 Funcionários
             </Typography>
 
-            <Backdrop
-                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={loading}
             >
                 <CircularProgress color="inherit" />
@@ -42,7 +44,11 @@ const Funcionario = () => {
             <TableFuncionarios rows={rows} columns={columns} />
 
             {openModal &&
-                <ModalFuncionario open={openModal} info={infoLinha} handleCloseModal={handleCloseModal} />
+                <ModalEdicao open={openModal} info={infoLinha} handleCloseModal={handleCloseModal} />
+            }
+
+            {openRemove &&
+                <AlertRemove open={openRemove} onClose={handleModalRemover} item={infoLinha} />
             }
         </>
     )

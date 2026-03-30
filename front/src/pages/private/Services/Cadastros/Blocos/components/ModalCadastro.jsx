@@ -1,8 +1,8 @@
 import { Backdrop, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
-import { sxButton } from "../../Funcionarios/components/ModalCadastro";
 import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import SendIcon from '@mui/icons-material/Send';
+import { sxButton } from "./ModalEdicao";
 
 const ModalCadastro = ({ open, handleOpen }) => {
 

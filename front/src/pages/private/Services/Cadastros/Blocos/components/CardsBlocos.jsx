@@ -69,22 +69,3 @@ const CardsBlocos = () => {
 }
 
 export default CardsBlocos
-
-export const simulaDadosBloco = [
-    {
-        id: 1,
-        bloco: 'Cirúrgico',
-    },
-    {
-        id: 2,
-        bloco: 'Maternidade',
-    },
-    {
-        id: 3,
-        bloco: 'Clínica',
-    },
-    {
-        id: 4,
-        bloco: 'Ambulatório',
-    },
-]

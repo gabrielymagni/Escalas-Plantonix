@@ -2,20 +2,18 @@ import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle
 import CloseIcon from '@mui/icons-material/Close';
 import useFuncionarioHook from "../hooks/useFuncionarioHook";
 import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { tipoEscala, turnosDisponiveis } from "./ModalCadastro";
-import useNovoCadastroFuncionario from "../hooks/useNovoCadastroFuncionario";
+import { getOptionsFiltradas } from "../../../../../../../utils/filtraBlocosSelecionados";
+import { sxButton } from "../../Blocos/components/ModalEdicao";
+import SaveIcon from '@mui/icons-material/Save';
 
-const ModalFuncionario = ({ open, info, handleCloseModal }) => {
+const ModalEdicao = ({ open, info, handleCloseModal }) => {
 
-    const { editarFuncionario, rankingBlocos, handleBlocosRanking } = useFuncionarioHook();
-
-    const { getOptionsFiltradas, handleTurnos, handleEscala } = useNovoCadastroFuncionario();
+    const { editarFuncionario, rankingBlocos, handleBlocosRanking, handleTurnos, turnoSelecionado,
+        escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado } = useFuncionarioHook();
 
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
-
-    const [escalaSelecionada, setEscalaSelecionada] = useState(null);
-    const [turnoSelecionado, setTurnoSelecionado] = useState(null);
 
     useEffect(() => {
         getAllBlocos();
@@ -33,7 +31,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
 
         const turnos = escala
             ? turnosDisponiveis(escala.tipo)
-            : []; 
+            : [];
 
         const turno = turnos.find(
             item => item.id === info.turno
@@ -60,7 +58,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
     return (
         <Dialog fullWidth maxWidth="md" open={open} onClose={handleCloseModal}>
 
-            <DialogTitle sx={{textAlign: "center", fontWeight: "bold", color: "#141259", position: "relative"}}>
+            <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: "#141259", position: "relative" }}>
                 Detalhes
 
                 <IconButton onClick={handleCloseModal} sx={{ position: "absolute", right: 8, top: 8 }} >
@@ -74,7 +72,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
 
                     <Grid container spacing={2}>
 
-                        <Grid size={{ md: 6, xs: 12 }}>
+                        <Grid size={{ md: 12, xs: 12 }}>
                             <TextField label="Nome Completo" name="nome" fullWidth variant="filled" required defaultValue={info?.nome} />
                         </Grid>
 
@@ -91,53 +89,42 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField label="Data contratação" name="data_contratacao" type="date" fullWidth required variant="filled" defaultValue={info?.data_contratacao} />
+                            <TextField label="Data contratação" name="data_contratacao" type="date" fullWidth required variant="filled"
+                                defaultValue={info?.data_contratacao}
+                                slotProps={{
+                                    inputLabel: { shrink: true }
+                                }}
+                            />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
                                 value={escalaSelecionada}
                                 options={tipoEscala}
-                                getOptionLabel={(option) => option?.tipo ?? ""}
-                                isOptionEqualToValue={(option, value) =>
-                                    option.tipo === value.tipo
-                                }
-                                onChange={(event, newValue) => {
-                                    setEscalaSelecionada(newValue);
-                                    setTurnoSelecionado(null);
-                                    handleEscala(event, newValue);
-                                }}
+                                getOptionLabel={(option) => option.tipo}
+                                onChange={handleEscala}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Tipos de escala" name="tipo_escala" required />
+                                    <TextField {...params} label="Tipos de escala" required />
                                 )}
                             />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
+                                disabled={!escalaSelecionada}
+                                options={turnosDisponiveis(escalaSelecionada?.tipo)}
+                                getOptionLabel={(option) => option.turno}
+                                onChange={handleTurnos}
                                 value={turnoSelecionado}
-                                options={
-                                    escalaSelecionada
-                                        ? turnosDisponiveis(escalaSelecionada.tipo)
-                                        : []
-                                }
-                                getOptionLabel={(option) => option?.turno ?? ""}
-                                isOptionEqualToValue={(option, value) =>
-                                    option.id === value.id
-                                }
-                                onChange={(event, newValue) => {
-                                    setTurnoSelecionado(newValue);
-                                    handleTurnos(event, newValue);
-                                }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Disponibilidade de turnos" name="turno" required />
+                                    <TextField {...params} label="Disponibilidade de turnos" required />
                                 )}
                             />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
 
-                            <Grid container spacing={2} sx={{border: '2px solid #141259', p: 2, borderRadius: 5 }} >
+                            <Grid container spacing={2} sx={{ border: '2px solid #141259', p: 2, borderRadius: 5 }} >
 
                                 <Typography sx={{ textAlign: 'center', width: '100%' }}>
                                     Ordem de preferência de blocos
@@ -148,7 +135,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                                         key={index}
                                         size="small"
                                         fullWidth
-                                        options={getOptionsFiltradas(index, allBlocos)}
+                                        options={getOptionsFiltradas(index, allBlocos, rankingBlocos)}
                                         value={rankingBlocos[index] || null}
                                         getOptionLabel={(option) => option?.nome ?? ""}
                                         onChange={(event, newValue) =>
@@ -169,7 +156,7 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button type="submit">Editar</Button>
+                    <Button type="submit" endIcon={<SaveIcon />} sx={sxButton}> Salvar edição</Button>
                 </DialogActions>
 
             </form>
@@ -178,4 +165,4 @@ const ModalFuncionario = ({ open, info, handleCloseModal }) => {
     );
 };
 
-export default ModalFuncionario;
+export default ModalEdicao;

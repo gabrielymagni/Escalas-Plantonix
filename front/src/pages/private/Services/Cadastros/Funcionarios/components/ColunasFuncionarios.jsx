@@ -3,13 +3,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { formataDataDiaMesAno } from '../../../../../../../utils/formataDataDiaMesAno';
 
-export const getColumnsFuncionario = (handleModal, deleteFuncionario) => [
+export const getColumnsFuncionario = (handleModal, handleModalRemover) => [
     { id: "id", label: "ID", minWidth: 50 },
-    { id: "nome", label: "Nome", minWidth: 100 },
-    { id: "email", label: "Email", minWidth: 100 },
+    { id: "nome", label: "Nome", minWidth: 200 },
+    { id: "email", label: "Email", minWidth: 200 },
     { id: "coren", label: "Coren", minWidth: 100 },
-    { id: "cargo", label: "Cargo", minWidth: 100 },
-    { id: "turno", label: "Turno", minWidth: 100 },
+    { id: "cargo", label: "Cargo", minWidth: 200 },
+    {
+        id: "turno", label: "Turno", minWidth: 200,
+        render: (row) => (
+            <span>{retornaTurno(row.turno)}</span>
+        )
+    },
     { id: "tipo_escala", label: "Tipo escala", minWidth: 100 },
     {
         id: "data_contratacao", label: "Data de contratação", minWidth: 200,
@@ -45,7 +50,7 @@ export const getColumnsFuncionario = (handleModal, deleteFuncionario) => [
                     <EditIcon />
                 </IconButton>
 
-                <IconButton sx={{ color: '#b8492d' }} onClick={() => deleteFuncionario(row.id)} title="Remover" >
+                <IconButton sx={{ color: '#b8492d' }} onClick={() => handleModalRemover(row)} title="Remover" >
                     <DeleteIcon />
                 </IconButton>
             </Box >
@@ -69,3 +74,9 @@ export const getRowsFuncionario = (dados) =>
 
 
 
+export const retornaTurno = (sigla) => {
+    if (sigla === 'M') return 'Manhã';
+    if (sigla === 'T') return 'Tarde';
+    if (sigla === 'MT') return 'Manhã e Tarde';
+    if (sigla === 'N') return 'Noite';
+}
