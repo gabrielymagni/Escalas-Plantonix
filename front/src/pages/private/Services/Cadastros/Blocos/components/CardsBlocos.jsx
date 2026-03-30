@@ -1,4 +1,4 @@
-import { Chip, Divider, Grid, IconButton, Typography } from "@mui/material";
+import { Backdrop, Chip, CircularProgress, Divider, Grid, IconButton, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import { useEffect, useState } from "react";
@@ -7,10 +7,9 @@ import ModalEdicao from "./ModalEdicao";
 
 const CardsBlocos = () => {
 
-    const { allBlocos, getAllBlocos, deleteBloco, editarBloco } = useModalBlocoHook();
+    const { allBlocos, getAllBlocos, deleteBloco, loading } = useModalBlocoHook();
     const { openCadastro, handleOpenCadastro } = useModalBlocoHook();
     const [itemSelecionado, setItemSelecionado] = useState({})
-
 
     useEffect(() => {
         getAllBlocos()
@@ -18,6 +17,14 @@ const CardsBlocos = () => {
 
     return (
         <>
+
+            <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
             <Grid container spacing={3} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
                 {allBlocos.map((item) => (

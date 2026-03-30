@@ -3,6 +3,7 @@ import { simulaDadosBloco } from "../../Blocos/components/CardsBlocos";
 import axios from "axios";
 
 const useNovoCadastroFuncionario = () => {
+    const [loading, setLoading] = useState(false);
 
     const [openModalCadastro, setOpenModalCdastro] = useState(false);
     const [rankingBlocos, setRankingBlocos] = useState([]);
@@ -19,6 +20,8 @@ const useNovoCadastroFuncionario = () => {
     const handleSubmit = async (evento) => {
         console.log("evento", evento)
         evento.preventDefault();
+        setLoading(true)
+
 
         const dados = new FormData(evento.target);
         const nome = dados.get('nome')
@@ -46,8 +49,9 @@ const useNovoCadastroFuncionario = () => {
 
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/funcionario`, payload);
-            if (response.status === 200) {
+            if (response.status === 201) {
                 console.log("response", response)
+                window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -68,14 +72,21 @@ const useNovoCadastroFuncionario = () => {
         setTurnoSelecionado([])
     }
 
-    const handleBlocosRanking = (index, newValue) => {
-        setRankingBlocos((prev) => {
-            const novaLista = [...prev];
-            novaLista[index] = newValue;
-            console.log("novaLista", novaLista)
-            return novaLista;
-        })
-    }
+    const handleBlocosRanking = (indexOrArray, value) => {
+
+        // quando vier array inteiro (edição)
+        if (Array.isArray(indexOrArray)) {
+            setRankingBlocos(indexOrArray);
+            return;
+        }
+
+        // quando usuário escolher manualmente
+        setRankingBlocos(prev => {
+            const novo = [...prev];
+            novo[indexOrArray] = value;
+            return novo;
+        });
+    };
 
     const getOptionsFiltradas = (index, allBlocos) => {
         return allBlocos.filter((option) => {
@@ -85,32 +96,10 @@ const useNovoCadastroFuncionario = () => {
         });
     };
 
-    const editarBloco = async (evento, id) => {
-        evento.preventDefault();
-
-        const dados = new FormData(evento.target);
-        const bloco = dados.get("nome");
-
-        const payload = {
-            nome: bloco,
-        }
-
-        try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/bloco/${id}`, payload);
-            if (response.status === 200) {
-                console.log("response", response)
-            } else {
-                console.log("erro ao chamar api ")
-            }
-        } catch (error) {
-            console.error('resposta indisponível', error)
-        }
-
-    }
-
 
     return {
-        openModalCadastro, handleModalCadastro, handleSubmit, handleBlocosRanking, getOptionsFiltradas, rankingBlocos, handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala
+        openModalCadastro, handleModalCadastro, handleSubmit, loading,
+        handleBlocosRanking, getOptionsFiltradas, rankingBlocos, handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala
     }
 }
 

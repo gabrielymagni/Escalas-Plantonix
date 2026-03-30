@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
+import { Autocomplete, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import useNovoCadastroFuncionario from "../hooks/useNovoCadastroFuncionario";
@@ -7,7 +7,8 @@ import { useEffect } from "react";
 
 const ModalCadastro = ({ open, handleCloseModal }) => {
 
-    const { handleSubmit, handleBlocosRanking, getOptionsFiltradas, rankingBlocos, handleTurnos, handleEscala, escalaSelecionada } = useNovoCadastroFuncionario();
+    const { handleSubmit, handleBlocosRanking, getOptionsFiltradas, loading,
+        rankingBlocos, handleTurnos, handleEscala, escalaSelecionada } = useNovoCadastroFuncionario();
     const { allBlocos, getAllBlocos, } = useModalBlocoHook();
 
     useEffect(() => {
@@ -17,6 +18,13 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
 
     return (
         <>
+
+            <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Dialog fullWidth={'md'} open={open} onClose={handleCloseModal} >
 
                 <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: "#141259", position: "relative" }}>

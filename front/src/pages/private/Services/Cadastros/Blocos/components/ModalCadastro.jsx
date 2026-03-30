@@ -1,11 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField } from "@mui/material"
+import { Backdrop, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import { sxButton } from "../../Funcionarios/components/ModalCadastro";
 import useModalBlocoHook from "../hooks/useModalBlocoHook";
 
 const ModalCadastro = ({ open, handleOpen }) => {
 
-     const { handleSubmit } = useModalBlocoHook();
+    const { handleSubmit, loading } = useModalBlocoHook();
 
     return (
         <Dialog open={open} onClose={handleOpen} aria-labelledby="alert-dialog-title" >
@@ -31,10 +31,16 @@ const ModalCadastro = ({ open, handleOpen }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button type="submit" sx={sxButton}>
-                        Cadastrar 
+                        Cadastrar
                     </Button>
                 </DialogActions>
             </form>
+
+                <Backdrop
+                    sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                    open={loading} >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
         </Dialog>
     )
 }

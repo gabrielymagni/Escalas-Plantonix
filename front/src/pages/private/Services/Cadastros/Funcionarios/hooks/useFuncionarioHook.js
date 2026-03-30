@@ -1,21 +1,28 @@
 import { useState } from 'react'
 import { getColumnsFuncionario, getRowsFuncionario } from '../components/ColunasFuncionarios';
 import axios from 'axios';
+import { turnosDisponiveis } from '../components/ModalCadastro';
 
 const useFuncionarioHook = () => {
 
     const [infoLinha, setInfoLinha] = useState();
     const [openModal, setOpenModal] = useState(false);
+    const [rankingBlocos, setRankingBlocos] = useState([]);
+    const [loading, setLoading] = useState(false);
+
 
     const [allFuncionarios, setAllFuncionarios] = useState([]);
 
     const getAllFuncionarios = async () => {
+        setLoading(true)
 
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/funcionario`);
             if (response.status === 200) {
                 console.log("response", response)
                 setAllFuncionarios(response.data);
+                setLoading(false)
+
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -31,12 +38,30 @@ const useFuncionarioHook = () => {
         console.log("item", row)
     }
 
+    const handleBlocosRanking = (indexOrArray, value) => {
+
+        // quando vier array inteiro (edição)
+        if (Array.isArray(indexOrArray)) {
+            setRankingBlocos(indexOrArray);
+            return;
+        }
+
+        // quando usuário escolher manualmente
+        setRankingBlocos(prev => {
+            const novo = [...prev];
+            novo[indexOrArray] = value;
+            return novo;
+        });
+    };
+
     const deleteFuncionario = async (id) => {
+        setLoading(true)
 
         try {
             const response = await axios.delete(`${import.meta.env.VITE_API_URL}/funcionario/${id}`);
-            if (response.status === 200) {
+            if (response.status === 204) {
                 console.log("response", response)
+                window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -56,6 +81,8 @@ const useFuncionarioHook = () => {
 
     const editarFuncionario = async (evento, id) => {
         evento.preventDefault();
+        setLoading(true)
+
 
         const dados = new FormData(evento.target);
         const nome = dados.get('nome')
@@ -63,13 +90,20 @@ const useFuncionarioHook = () => {
         const coren = dados.get('coren')
         const data_contratacao = dados.get('data_contratacao')
         const cargo = dados.get('cargo')
+        const tipo_escala = dados.get('tipo_escala')
+        const turno = dados.get('turno')
+        const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno)
+        console.log("turnoAjusta", turnoAjustado)
+        const blocos = dados.get('blocos')
+        console.log("blocos", blocos)
+
 
         const payload = {
             nome: nome,
             email: email,
             coren: coren,
-            turno: turnoSelecionado.id,
-            tipo_escala: escalaSelecionada.tipo,
+            turno: turnoAjustado.id,
+            tipo_escala: tipo_escala,
             data_contratacao: data_contratacao,
             cargo: cargo,
             blocos: rankingBlocos.map((item, index) => {
@@ -85,6 +119,7 @@ const useFuncionarioHook = () => {
             const response = await axios.put(`${import.meta.env.VITE_API_URL}/funcionario/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
+                window.location.reload()
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -96,7 +131,8 @@ const useFuncionarioHook = () => {
 
 
     return {
-        rows, columns, infoLinha, openModal, handleCloseModal, allFuncionarios, getAllFuncionarios, editarFuncionario
+        rows, columns, infoLinha, openModal, handleCloseModal, allFuncionarios,
+        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading
     }
 }
 
