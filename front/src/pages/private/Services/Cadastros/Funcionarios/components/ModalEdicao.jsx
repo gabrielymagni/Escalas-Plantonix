@@ -92,7 +92,13 @@ const ModalEdicao = ({ open, info, handleCloseModal }) => {
                             <TextField label="Data contratação" name="data_contratacao" type="date" fullWidth required variant="filled"
                                 defaultValue={info?.data_contratacao}
                                 slotProps={{
-                                    inputLabel: { shrink: true }
+                                    inputLabel: { shrink: true },
+                                    input: {
+                                        inputProps: {
+                                            min: "0001-01-01",
+                                            max: "9999-12-31"
+                                        }
+                                    }
                                 }}
                             />
                         </Grid>
@@ -104,7 +110,7 @@ const ModalEdicao = ({ open, info, handleCloseModal }) => {
                                 getOptionLabel={(option) => option.tipo}
                                 onChange={handleEscala}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Tipos de escala" required />
+                                    <TextField {...params} label="Tipos de escala" required name="tipo_escala" />
                                 )}
                             />
                         </Grid>
@@ -117,7 +123,7 @@ const ModalEdicao = ({ open, info, handleCloseModal }) => {
                                 onChange={handleTurnos}
                                 value={turnoSelecionado}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Disponibilidade de turnos" required />
+                                    <TextField {...params} label="Disponibilidade de turnos" required name="turno" />
                                 )}
                             />
                         </Grid>

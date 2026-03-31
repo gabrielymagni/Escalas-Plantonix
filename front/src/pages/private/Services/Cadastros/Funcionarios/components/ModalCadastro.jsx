@@ -57,7 +57,13 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                                 <TextField label="Data contratação" variant="filled" name="data_contratacao" size="small"
                                     fullWidth type="date" required
                                     slotProps={{
-                                        inputLabel: { shrink: true }
+                                        inputLabel: { shrink: true },
+                                        input: {
+                                            inputProps: {
+                                                min: "0001-01-01",
+                                                max: "9999-12-31"
+                                            }
+                                        }
                                     }}
                                 />
                             </Grid>
@@ -68,7 +74,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                                     getOptionLabel={(option) => option.tipo}
                                     onChange={handleEscala}
                                     renderInput={(params) => (
-                                        <TextField {...params} label="Tipos de escala" required />
+                                        <TextField {...params} label="Tipos de escala" required name="tipo_escala" />
                                     )}
                                 />
                             </Grid>
@@ -81,7 +87,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                                     onChange={handleTurnos}
                                     value={turnoSelecionado}
                                     renderInput={(params) => (
-                                        <TextField {...params} label="Disponibilidade de turnos" required />
+                                        <TextField {...params} label="Disponibilidade de turnos" required name="turno" />
                                     )}
                                 />
                             </Grid>
