@@ -3,10 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import SaveIcon from '@mui/icons-material/Save';
 
-const ModalEdicao = ({ open, handleOpen, item }) => {
-
-    const { editarBloco } = useModalBlocoHook();
-    console.log("item", item)
+const ModalEdicao = ({ open, handleOpen, item, editarBloco }) => {
 
     return (
         <div>

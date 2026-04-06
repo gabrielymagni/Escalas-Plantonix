@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { getColumnsFuncionario, getRowsFuncionario } from '../components/ColunasFuncionarios';
 import axios from 'axios';
 import { turnosDisponiveis } from '../components/ModalCadastro';
+import { toast } from 'sonner';
 
 const useFuncionarioHook = () => {
 
@@ -78,8 +79,14 @@ const useFuncionarioHook = () => {
             const response = await axios.delete(`${import.meta.env.VITE_API_URL}/funcionario/${id}`);
             if (response.status === 204) {
                 console.log("response", response)
-                alert("Funcionário removido com sucesso! ✅")
-                window.location.reload()
+                setOpenRemove(false)
+                getAllFuncionarios()
+                toast.success("Funcionário removido com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -127,8 +134,16 @@ const useFuncionarioHook = () => {
             const response = await axios.put(`${import.meta.env.VITE_API_URL}/funcionario/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
-                alert("Funcionário editado com sucesso! ✅")
-                window.location.reload()
+                toast.success("Funcionário editado com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 console.log("erro ao chamar api ")
             }

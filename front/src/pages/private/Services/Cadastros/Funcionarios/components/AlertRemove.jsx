@@ -4,14 +4,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import { sxButton } from "../../Blocos/components/AlertRemove";
 import useFuncionarioHook from "../hooks/useFuncionarioHook";
 
-const AlertRemove = ({ open, onClose, item }) => {
-    const { deleteFuncionario } = useFuncionarioHook();
+const AlertRemove = ({ open, onClose, item, deleteFuncionario }) => {
     console.log("item", item);
 
     return (
         <Dialog open={open} onClose={onClose} >
             <DialogTitle id="alert-dialog-title" sx={{ fontWeight: 'bold', fontSize: 18 }}>
-                Tem certeza que deseja remover o funcionário '{item.nome}'?
+                Remover o funcionário '{item.nome}'?
             </DialogTitle>
 
             <DialogActions>

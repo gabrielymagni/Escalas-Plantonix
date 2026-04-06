@@ -5,10 +5,11 @@ import AdicionarCadastro from './components/AdicionarCadastro';
 import { useEffect } from 'react';
 import ModalEdicao from './components/ModalEdicao';
 import AlertRemove from './components/AlertRemove';
+import { Toaster } from 'sonner';
 
 const Funcionario = () => {
     const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading,
-        openRemove, handleModalRemover, 
+        openRemove, handleModalRemover, deleteFuncionario
      } = useFuncionarioHook();
 
     useEffect(() => {
@@ -44,12 +45,16 @@ const Funcionario = () => {
             <TableFuncionarios rows={rows} columns={columns} />
 
             {openModal &&
-                <ModalEdicao open={openModal} info={infoLinha} handleCloseModal={handleCloseModal} />
+                <ModalEdicao open={openModal} info={infoLinha} 
+                handleCloseModal={handleCloseModal}/>
             }
 
             {openRemove &&
-                <AlertRemove open={openRemove} onClose={handleModalRemover} item={infoLinha} />
+                <AlertRemove open={openRemove} onClose={handleModalRemover} 
+                item={infoLinha} deleteFuncionario={deleteFuncionario} />
             }
+
+            <Toaster />
         </>
     )
 }

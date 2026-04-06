@@ -1,5 +1,6 @@
 import { useState } from "react"
 import axios from "axios";
+import { toast } from "sonner";
 
 
 const useModalBlocoHook = () => {
@@ -40,9 +41,14 @@ const useModalBlocoHook = () => {
         try {
             const response = await axios.delete(`${import.meta.env.VITE_API_URL}/bloco/${id}`);
             if (response.status === 204) {
-                console.log("response", response)
-                alert("Bloco removido com sucesso! ✅")
-                window.location.reload()
+                setModalRemover(false);
+                getAllBlocos()
+                toast.success("Bloco removido com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -66,8 +72,16 @@ const useModalBlocoHook = () => {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/bloco`, payload);
             if (response.status === 201) {
                 console.log("response", response)
-                alert("Novo bloco adicionado! ✅")
-                window.location.reload()
+                toast.success("Novo bloco adicionado! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 console.log("erro ao chamar api ")
             }
@@ -91,8 +105,14 @@ const useModalBlocoHook = () => {
             const response = await axios.put(`${import.meta.env.VITE_API_URL}/bloco/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
-                alert("Bloco editado com sucesso! ✅")
-                window.location.reload()
+                setOpenCadastro(false);
+                getAllBlocos()
+                toast.success("Bloco editado com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
             } else {
                 console.log("erro ao chamar api ")
             }

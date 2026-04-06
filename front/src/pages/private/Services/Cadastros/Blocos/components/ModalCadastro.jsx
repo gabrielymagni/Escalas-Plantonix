@@ -4,9 +4,7 @@ import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import SendIcon from '@mui/icons-material/Send';
 import { sxButton } from "./ModalEdicao";
 
-const ModalCadastro = ({ open, handleOpen }) => {
-
-    const { cadastrarSubmit, loading } = useModalBlocoHook();
+const ModalCadastro = ({ open, handleOpen, cadastrarSubmit, loading }) => {
 
     return (
         <Dialog open={open} onClose={handleOpen} aria-labelledby="alert-dialog-title" >

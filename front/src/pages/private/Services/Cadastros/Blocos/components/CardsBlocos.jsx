@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import ModalEdicao from "./ModalEdicao";
 import AlertRemove from "./AlertRemove";
+import { Toaster } from "sonner";
 
 const CardsBlocos = () => {
 
-    const { allBlocos, getAllBlocos, loading, modalRemover, handleModalRemover } = useModalBlocoHook();
-    const { openCadastro, handleOpenCadastro } = useModalBlocoHook();
+    const { allBlocos, getAllBlocos, loading, modalRemover, handleModalRemover, deleteBloco,
+        editarBloco, openCadastro, handleOpenCadastro } = useModalBlocoHook();
     const [itemSelecionado, setItemSelecionado] = useState({})
 
     useEffect(() => {
@@ -35,7 +36,7 @@ const CardsBlocos = () => {
                         <Divider />
 
                         <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            
+
                             <Grid size={{ md: 9, xs: 12 }} sx={{ display: 'flex' }}>
                                 <Typography sx={{ fontSize: 20, fontWeight: 'bold', mt: 2 }}>
                                     {item.nome}
@@ -56,12 +57,16 @@ const CardsBlocos = () => {
                 ))}
 
                 {openCadastro &&
-                    <ModalEdicao open={openCadastro} handleOpen={handleOpenCadastro} item={itemSelecionado} />
+                    <ModalEdicao open={openCadastro} handleOpen={handleOpenCadastro}
+                        item={itemSelecionado} editarBloco={editarBloco} />
                 }
 
                 {modalRemover &&
-                    <AlertRemove open={modalRemover} onClose={handleModalRemover} item={itemSelecionado}/>
+                    <AlertRemove open={modalRemover} onClose={handleModalRemover}
+                        item={itemSelecionado} deleteBloco={deleteBloco} />
                 }
+
+                <Toaster />
             </Grid>
 
         </>

@@ -8,9 +8,9 @@ import { getOptionsFiltradas } from "../../../../../../../utils/filtraBlocosSele
 import { sxButton } from "../../Blocos/components/ModalEdicao";
 import SaveIcon from '@mui/icons-material/Save';
 
-const ModalEdicao = ({ open, info, handleCloseModal }) => {
+const ModalEdicao = ({ open, info, handleCloseModal, }) => {
 
-    const { editarFuncionario, rankingBlocos, handleBlocosRanking, handleTurnos, turnoSelecionado,
+    const { rankingBlocos, handleBlocosRanking, handleTurnos, turnoSelecionado, editarFuncionario, 
         escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado } = useFuncionarioHook();
 
     const { allBlocos, getAllBlocos } = useModalBlocoHook();

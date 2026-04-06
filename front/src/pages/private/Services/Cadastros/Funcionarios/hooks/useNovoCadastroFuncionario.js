@@ -1,6 +1,7 @@
 import { useState } from "react"
 import axios from "axios";
 import { turnosDisponiveis } from "../components/ModalCadastro";
+import { toast } from "sonner";
 
 const useNovoCadastroFuncionario = () => {
     const [openModalCadastro, setOpenModalCdastro] = useState(false);
@@ -45,8 +46,16 @@ const useNovoCadastroFuncionario = () => {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/funcionario`, payload);
             if (response.status === 201) {
                 console.log("response", response)
-                alert("Novo funcionário cadastrado com sucesso! ✅")
-                window.location.reload()
+                toast.success("Novo funcionário cadastrado com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
                 console.log("erro ao chamar api ")
             }

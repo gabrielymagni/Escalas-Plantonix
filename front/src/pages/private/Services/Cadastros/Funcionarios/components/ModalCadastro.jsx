@@ -18,8 +18,6 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
         getAllBlocos()
     }, [])
 
-
-
     return (
         <>
             <Dialog fullWidth={'md'} open={open} onClose={handleCloseModal} >

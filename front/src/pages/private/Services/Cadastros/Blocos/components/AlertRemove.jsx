@@ -3,14 +3,13 @@ import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CloseIcon from '@mui/icons-material/Close';
 
-const AlertRemove = ({ open, onClose, item }) => {
-    const { deleteBloco } = useModalBlocoHook();
-    console.log("item", item);
+const AlertRemove = ({ open, onClose, item, deleteBloco }) => {
+    console.log("item", item)
 
     return (
         <Dialog open={open} onClose={onClose} >
             <DialogTitle id="alert-dialog-title" sx={{ fontWeight: 'bold', fontSize: 18 }}>
-                Tem certeza que deseja remover o bloco '{item.nome}'?
+                Remover o bloco '{item.nome}'?
             </DialogTitle>
 
             <DialogActions>

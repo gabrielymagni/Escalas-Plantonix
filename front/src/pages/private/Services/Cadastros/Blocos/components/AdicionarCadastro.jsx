@@ -2,10 +2,12 @@ import { Button, Grid } from "@mui/material";
 import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import ModalCadastro from "./ModalCadastro";
 import AddIcon from '@mui/icons-material/Add';
+import { Toaster } from "sonner";
 
 
 const AdicionarCadastro = () => {
-    const { openCadastro, handleOpenCadastro } = useModalBlocoHook();
+    const { openCadastro, handleOpenCadastro, cadastrarSubmit, loading } = useModalBlocoHook();
+
     return (
         <>
             <Grid container sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', mt: 3, mb: 5 }} >
@@ -19,8 +21,11 @@ const AdicionarCadastro = () => {
             </Grid>
 
             {openCadastro &&
-                <ModalCadastro open={openCadastro} handleOpen={handleOpenCadastro} />
+                <ModalCadastro open={openCadastro} handleOpen={handleOpenCadastro}
+                 cadastrarSubmit={cadastrarSubmit} loading={loading} />
             }
+
+            <Toaster />
         </>
     )
 }
