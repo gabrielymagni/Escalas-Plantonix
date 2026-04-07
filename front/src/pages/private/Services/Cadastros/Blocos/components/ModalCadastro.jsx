@@ -1,6 +1,5 @@
 import { Backdrop, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
-import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import SendIcon from '@mui/icons-material/Send';
 import { sxButton } from "./ModalEdicao";
 
