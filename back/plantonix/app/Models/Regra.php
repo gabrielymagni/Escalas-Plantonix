@@ -42,7 +42,7 @@ class Regra extends Model
             return ['regra' => $regra, 'err' => null];
 
         } catch (Exception $e) {
-            return ["regra" => null, "err" => $e];
+            return ["regra" => null, "err" => 'aaa' . $e];
         }
     }
 
@@ -99,7 +99,12 @@ class Regra extends Model
 
     public function blocos()
     {
-        return $this->hasMany(Bloco::class, 'regra_blocos')
+        return $this->belongsToMany(
+            Bloco::class,
+            'regra_blocos',
+            'regra_id',
+            'bloco_id'
+        )
             ->withPivot('qtd_manha', 'qtd_tarde', 'qtd_noite')
             ->withTimestamps();
     }

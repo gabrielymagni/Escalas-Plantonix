@@ -62,7 +62,7 @@ class RegraController extends Controller
                 ], $cod);
             }
 
-            return response()->json([$regra['regra'], 200]);
+            return response()->json([$regra['regra']], 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Erro ao atualizar a regra', 'err' => $e], 500);
         }
