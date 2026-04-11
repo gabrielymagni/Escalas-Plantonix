@@ -2,10 +2,9 @@ import { Grid, Typography } from '@mui/material'
 import AdicionarRegras from './components/AdicionarRegras'
 import ModalEditar, { retornaRegras } from './components/ModalEditar'
 import useModalRegras from './hooks/useModalRegras';
+import TabelaRegras from './components/TabelaRegras';
 
 const Regras = () => {
-
-    const { open, handleOpen, } = useModalRegras();
 
     return (
         <>
@@ -13,15 +12,9 @@ const Regras = () => {
                 Regras
             </Typography>
 
-
             <AdicionarRegras />
 
-            <button onClick={() => handleOpen()}>abre editar</button>
-            
-            {open &&
-                <ModalEditar open={open} handleOpen={handleOpen} info={retornaRegras[0]} />
-            }
-
+            <TabelaRegras /> 
         </>
     )
 }

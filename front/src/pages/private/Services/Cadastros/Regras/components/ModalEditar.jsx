@@ -2,24 +2,18 @@ import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import { sxButton } from "../../Blocos/components/ModalEdicao";
-import useModalRegras from "../hooks/useModalRegras";
+import useModalRegras, { tipoDias, tipoProfissional } from "../hooks/useModalRegras";
 import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
 import { useEffect } from "react";
 
 const ModalEditar = ({ open, handleOpen, info }) => {
 
-    const { getOpcoesDias, getOpcoesTipoProfissionais, listaTipoDias, listaTipoProfissional, editarRegra } = useModalRegras();
-    const { allBlocos, getAllBlocos } = useModalBlocoHook();
+    const { editarRegra } = useModalRegras();
 
-    useEffect(() => {
-        getOpcoesDias()
-        getOpcoesTipoProfissionais()
-        getAllBlocos()
-    }, [])
     console.log("info", info)
 
     return (
-        <Dialog fullWidth={'md'} open={open} onClose={handleOpen} aria-labelledby="alert-dialog-title" >
+        <Dialog fullWidth={'md'} open={open} onClose={() => handleOpen(null)} aria-labelledby="alert-dialog-title" >
 
             <DialogTitle sx={{ position: "relative" }}>
 
@@ -27,7 +21,7 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                     Editar Regra
                 </Typography>
 
-                <IconButton aria-label="close" onClick={handleOpen}
+                <IconButton aria-label="close" onClick={() => handleOpen(null)}
                     sx={{ position: "absolute", right: 5, top: 5 }} >
                     <CloseIcon />
                 </IconButton>
@@ -38,8 +32,8 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                     <Grid container spacing={2} sx={{ justifyContent: 'flex-start' }}>
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                options={listaTipoProfissional}
-                                value={listaTipoProfissional.find(item => item.tipo === info.tipo_profissional) || null}
+                                options={tipoProfissional}
+                                defaultValue={tipoProfissional.find(item => item.tipo === info.tipo_profissional) || null}
                                 getOptionLabel={(option) => option.tipo}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Tipo profissional" required name="tipo_profissional"  />
@@ -49,8 +43,8 @@ const ModalEditar = ({ open, handleOpen, info }) => {
 
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                options={listaTipoDias}
-                                value={listaTipoDias.find(item => item.tipo === info.tipo_dia) || null}
+                                options={tipoDias}
+                                defaultValue={tipoDias.find(item => item.id === info.tipo_dia) || null}
                                 getOptionLabel={(option) => option.tipo}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Dias" required name="tipo_dia"  />
@@ -65,22 +59,22 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                             m: 2, display: 'flex', borderRadius: 5,
                             justifyContent: 'center', border: '2px solid #55B2B0', p: 1
                         }}>
-                            <Grid size={{ md: 4, xs: 12 }}
+                            <Grid size={{ md: 12, xs: 12 }}
                                 sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <Typography>{item.bloco}</Typography>
+                                <Typography>{item.nome}</Typography>
                             </Grid>
 
-                            <Grid size={{ md: 6, xs: 12 }} sx={{}}>
+                            <Grid size={{ md: 12, xs: 12 }} sx={{}}>
 
                                 <Typography sx={{ textAlign: 'center', mb: 1 }}>Quantidade de pessoas: </Typography>
 
                                 <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                                     <TextField size='small' variant="standard" label="Manhã" fullWidth required type='number'
-                                        name={`${item.bloco} - manha`} defaultValue={item.manha} />
+                                        name={`${item.nome} - manha`} defaultValue={item.pivot.qtd_manha} />
                                     <TextField size='small' variant="standard" label="Tarde" fullWidth required type='number'
-                                        name={`${item.bloco} - tarde`} defaultValue={item.tarde}/>
+                                        name={`${item.nome} - tarde`} defaultValue={item.pivot.qtd_tarde}/>
                                     <TextField size='small' variant="standard" label="Noite" fullWidth required type='number'
-                                        name={`${item.bloco} - noite`} defaultValue={item.noite} />
+                                        name={`${item.nome} - noite`} defaultValue={item.pivot.qtd_noite} />
                                 </Grid>
 
                             </Grid>

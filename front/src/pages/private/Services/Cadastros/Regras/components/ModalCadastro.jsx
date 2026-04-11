@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from '@mui/material'
+import { Autocomplete, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import { sxButton } from '../../Blocos/components/ModalEdicao';
 import SendIcon from '@mui/icons-material/Send';
@@ -9,17 +9,15 @@ import useModalBlocoHook from '../../Blocos/hooks/useModalBlocoHook';
 
 const ModalCadastro = ({ open, handleOpen }) => {
 
-    const { getOpcoesDias, getOpcoesTipoProfissionais, listaTipoDias, listaTipoProfissional, submitCadastro } = useModalRegras();
-    const { allBlocos, getAllBlocos } = useModalBlocoHook();
+    const { submitCadastro } = useModalRegras();
+    const { allBlocos, getAllBlocos, loading } = useModalBlocoHook();
 
     useEffect(() => {
-        getOpcoesDias()
-        getOpcoesTipoProfissionais()
         getAllBlocos()
     }, [])
 
     return (
-        <Dialog fullWidth={'md'} open={open} onClose={handleOpen} aria-labelledby="alert-dialog-title" >
+        <Dialog fullWidth={'md'} open={open} onClose={() => handleOpen(null)} aria-labelledby="alert-dialog-title" >
 
             <DialogTitle sx={{ position: "relative" }}>
 
@@ -27,7 +25,7 @@ const ModalCadastro = ({ open, handleOpen }) => {
                     Cadastro de nova regra
                 </Typography>
 
-                <IconButton aria-label="close" onClick={handleOpen} sx={{ position: "absolute", right: 5, top: 5 }} >
+                <IconButton aria-label="close" onClick={() => handleOpen(null)} sx={{ position: "absolute", right: 5, top: 5 }} >
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
@@ -37,7 +35,7 @@ const ModalCadastro = ({ open, handleOpen }) => {
                     <Grid container spacing={2} sx={{ justifyContent: 'flex-start' }}>
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                options={listaTipoProfissional}
+                                options={tipoProfissional}
                                 getOptionLabel={(option) => option.tipo}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Tipo profissional" required name="tipo_profissional" />
@@ -47,7 +45,7 @@ const ModalCadastro = ({ open, handleOpen }) => {
 
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                options={listaTipoDias}
+                                options={tipoDias}
                                 getOptionLabel={(option) => option.tipo}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Dias" required name="tipo_dia" />
@@ -62,12 +60,12 @@ const ModalCadastro = ({ open, handleOpen }) => {
                             m: 2, display: 'flex', borderRadius: 5,
                             justifyContent: 'center', border: '2px solid #55B2B0', p: 1
                         }}>
-                            <Grid size={{ md: 4, xs: 12 }} 
+                            <Grid size={{ md: 12, xs: 12 }} 
                             sx={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 <Typography>{item.nome}</Typography>
                             </Grid>
 
-                            <Grid size={{ md: 6, xs: 12 }} sx={{}}>
+                            <Grid size={{ md: 12, xs: 12 }} sx={{}}>
                                 <Typography sx={{ textAlign: 'center', mb: 1 }}>Quantidade de pessoas: </Typography>
 
                                 <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
@@ -90,10 +88,10 @@ const ModalCadastro = ({ open, handleOpen }) => {
                 </DialogActions>
             </form>
 
-            {/* <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={loading} >
                 <CircularProgress color="inherit" />
-            </Backdrop> */}
+            </Backdrop>
         </Dialog >
     )
 }

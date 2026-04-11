@@ -1,4 +1,4 @@
-import { Button, Grid } from '@mui/material'
+import { Backdrop, Button, CircularProgress, Grid } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import ModalCadastro from './ModalCadastro';
 import useModalRegras from '../hooks/useModalRegras';
@@ -13,7 +13,7 @@ const AdicionarRegras = () => {
 
             <Grid size={{ xs: 12, md: 3 }}>
                 <Button variant="outlined" startIcon={<AddIcon />} fullWidth
-                    onClick={handleOpen}
+                    onClick={() => handleOpen(null)}
                     sx={{ bgcolor: '#141259', color: '#fff', fontWeight: 'bold' }}>
                     Adicionar
                 </Button>
@@ -22,6 +22,7 @@ const AdicionarRegras = () => {
             {open &&
                 <ModalCadastro open={open} handleOpen={handleOpen} />
             }
+
         </Grid>
     )
 }

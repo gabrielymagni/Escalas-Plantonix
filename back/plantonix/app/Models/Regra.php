@@ -23,7 +23,7 @@ class Regra extends Model
     {
         try {
             $regra = self::create([
-                'tipo_profissionarl' => $dados->tipo_profissional,
+                'tipo_profissional' => $dados->tipo_profissional,
                 'tipo_dia' => $dados->tipo_dia,
             ]);
 
@@ -42,7 +42,7 @@ class Regra extends Model
             return ['regra' => $regra, 'err' => null];
 
         } catch (Exception $e) {
-            return ["regra" => null, "err" => 'aaa' . $e];
+            return ["regra" => null, "err" => $e];
         }
     }
 
@@ -67,7 +67,7 @@ class Regra extends Model
             }
 
             $regra->update([
-                'tipo_profissionarl' => $dados->tipo_profissional,
+                'tipo_profissional' => $dados->tipo_profissional,
                 'tipo_dia' => $dados->tipo_dia,
             ]);
 

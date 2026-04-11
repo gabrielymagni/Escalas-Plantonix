@@ -1,65 +1,98 @@
+import axios from "axios";
 import { useState } from "react"
+import { toast } from "sonner";
 
 const useModalRegras = () => {
 
     const [open, setOpen] = useState(false);
-    const [listaTipoProfissional, setListaTipoProfissional] = useState([]);
-    const [listaTipoDias, setListaTipoDias] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [openRemover, setOpenRemover] = useState(false);
+    const [infoLinha, setInfoLinha] = useState([]);
+    const [allRegras, setAllRegras] = useState([]);
 
-    const handleOpen = () => {
-        setOpen(prev => !prev)
+    const handleOpen = (row) => {
+        if (row) {
+            setInfoLinha(row)
+            setOpen(prev => !prev)
+        } else {
+            setOpen(prev => !prev)
+        }
+
+        console.log("item", row)
     }
 
-    const getOpcoesDias = async () => {
-        try {
-            // const { status, message } = await apiTipoDias(); 
-
-            // if (status === 200){
-            setListaTipoDias(tipoDias);
-            // } else {
-            //     console.log('Erro: resposta inválida da API');
-            // }
-        } catch (error) {
-            console.error('Erro: resposta inválida da API');
+    const handleRemover = (row) => {
+        if (row) {
+            setInfoLinha(row)
+            setOpenRemover((prev) => !prev);
+        } else {
+            setOpenRemover((prev) => !prev);
         }
     }
 
-    const getOpcoesTipoProfissionais = async () => {
-        try {
-            // const { status, message } = await apiTipoDias(); 
+    const getAllRegras = async () => {
+        setLoading(true)
 
-            // if (status === 200){
-            setListaTipoProfissional(tipoProfissional);
-            // } else {
-            //     console.log('Erro: resposta inválida da API');
-            // }
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/regra`);
+            if (response.status === 200) {
+                console.log("response", response)
+                setAllRegras(response.data);
+                setLoading(false)
+            } else {
+                console.log("erro ao chamar api ")
+            }
         } catch (error) {
-            console.error('Erro: resposta inválida da API');
+            console.error('resposta indisponível', error)
         }
     }
 
-    const submitCadastro = (evento, blocos) => {
+    const submitCadastro = async (evento, blocos) => {
         evento.preventDefault();
         console.log("CADASTRAR")
 
         const dados = new FormData(evento.target);
 
         const encontraBlocos = blocos.map(item => ({
-            bloco: item.nome,
-            manha: dados.get(`${item.nome} - manha`),
-            tarde: dados.get(`${item.nome} - tarde`),
-            noite: dados.get(`${item.nome} - noite`),
+            bloco_id: item.id,
+            qtd_manha: dados.get(`${item.nome} - manha`),
+            qtd_tarde: dados.get(`${item.nome} - tarde`),
+            qtd_noite: dados.get(`${item.nome} - noite`),
         }))
         console.log("encontraBlocos", encontraBlocos)
 
+        const encontraTipoDia = tipoDias.find(item => item.tipo === dados.get('tipo_dia'))
+        console.log("encontraTipoDia", encontraTipoDia)
+
+
         const payload = {
             tipo_profissional: dados.get('tipo_profissional'),
-            tipo_dia: dados.get('tipo_dias'),
-            info_blocos: encontraBlocos
+            tipo_dia: encontraTipoDia.id,
+            blocos: encontraBlocos
         }
         console.log("payload", payload)
-    }
 
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/regra`, payload);
+            if (response.status === 201) {
+                console.log("response", response)
+                toast.success("Nova regra cadastrada com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                console.log("erro ao chamar api ")
+            }
+        } catch (error) {
+            console.error('resposta indisponível', error)
+        }
+    }
 
     const editarRegra = async (evento, blocos, id) => {
         evento.preventDefault();
@@ -68,48 +101,71 @@ const useModalRegras = () => {
         const dados = new FormData(evento.target);
 
         const encontraBlocos = blocos.map(item => ({
-            bloco: item.bloco,
-            manha: dados.get(`${item.bloco} - manha`),
-            tarde: dados.get(`${item.bloco} - tarde`),
-            noite: dados.get(`${item.bloco} - noite`),
+            bloco_id: item.id,
+            qtd_manha: dados.get(`${item.nome} - manha`),
+            qtd_tarde: dados.get(`${item.nome} - tarde`),
+            qtd_noite: dados.get(`${item.nome} - noite`),
         }))
         console.log("encontraBlocos", encontraBlocos)
 
+        const encontraTipoDia = tipoDias.find(item => item.tipo === dados.get('tipo_dia'))
+        console.log("encontraTipoDia", encontraTipoDia)
+
         const payload = {
-            id: id,
             tipo_profissional: dados.get('tipo_profissional'),
-            tipo_dia: dados.get('tipo_dia'),
-            info_blocos: encontraBlocos
+            tipo_dia: encontraTipoDia.id,
+            blocos: encontraBlocos
         }
         console.log("payload", payload)
+
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/regra/${id}`, payload);
+            if (response.status === 200) {
+                console.log("response", response)
+                toast.success("Regra editada com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                console.log("erro ao chamar api ")
+            }
+        } catch (error) {
+            console.error('resposta indisponível', error)
+        }
     }
 
     const deleteRegra = async (id) => {
-        // setLoading(true)
 
-        // try {
-        //     const response = await axios.delete(`${import.meta.env.VITE_API_URL}/funcionario/${id}`);
-        //     if (response.status === 204) {
-        //         console.log("response", response)
-        //         setOpenRemove(false)
-        //         getAllFuncionarios()
-        //         toast.success("Funcionário removido com sucesso! ✅", {
-        //             style: {
-        //                 background: "#227212",
-        //                 color: "white"
-        //             }
-        //         })
-        //     } else {
-        //         console.log("erro ao chamar api ")
-        //     }
-        // } catch (error) {
-        //     console.error('resposta indisponível', error)
-        // }
+        try {
+            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/regra/${id}`);
+            if (response.status === 204) {
+                console.log("response", response)
+                setOpenRemover(false)
+                getAllRegras()
+                toast.success("Regra removida com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+            } else {
+                console.log("erro ao chamar api ")
+            }
+        } catch (error) {
+            console.error('resposta indisponível', error)
+        }
 
     }
 
     return {
-        open, handleOpen, getOpcoesDias, getOpcoesTipoProfissionais, listaTipoDias, listaTipoProfissional, submitCadastro, editarRegra, deleteRegra
+        open, handleOpen, submitCadastro, editarRegra, deleteRegra, loading, 
+        infoLinha, handleRemover, allRegras, getAllRegras, openRemover
     }
 }
 
@@ -122,6 +178,6 @@ export const tipoProfissional = [
 ]
 
 export const tipoDias = [
-    { id: 1, tipo: 'Dia útil' },
-    { id: 2, tipo: 'Final de semana' },
+    { id: 'U', tipo: 'Dia útil' },
+    { id: 'I', tipo: 'Final de semana' },
 ]

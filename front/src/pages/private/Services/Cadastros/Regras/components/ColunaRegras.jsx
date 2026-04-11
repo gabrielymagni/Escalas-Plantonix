@@ -1,76 +1,126 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, IconButton } from '@mui/material';
+import { Box, Chip, IconButton } from '@mui/material';
 
 
-export const getColumnsRegras = (handleModal, handleModalRemover) => [
-    { id: "id", label: "ID", minWidth: 50 },
-    { id: "tipo_profissional", label: "Profissional", minWidth: 200 },
-    { id: "tipo_dia", label: "Tipo dias", minWidth: 200 },
-    {id: "blocos", label: "Quantidade de pessoas", minWidth: 300,
+export const getColumnsRegras = (handleModal, handleRemover) => [
+    { id: "tipo_profissional", label: "Tipo de Profissional", minWidth: 200 },
+    { id: "tipo_dia", label: "Tipo de dias", minWidth: 200,
+        render: (row) => (
+            <strong>{retornaTipoDias(row.tipo_dia)}</strong>
+        )
+     },
+    {
+        id: "blocos", label: "Manhã", minWidth: 200,
         render: (row) => {
-            if (row.blocos?.length === 0) return "-";
+            if (!row.blocos?.length) return "-";
 
             return (
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: 'center' }}>
-                    {row.blocos.map(bloco => (
-                        <>
-                            <Chip key={bloco.id} label={`Manhã: ${bloco.manha}`}
-                                size="small" color="primary" variant="outlined"
-                            />
-                            <Chip key={bloco.id} label={`Tarde: ${bloco.tarde}`}
-                                size="small" color="primary" variant="outlined"
-                            />
-                            <Chip key={bloco.id} label={`Noite: ${bloco.noite}`}
-                                size="small" color="primary" variant="outlined"
-                            />
-                        </>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: 'center', alignItems:'center' }}>
+                    {row.blocos.map(item => (
+                        <Chip key={`m-${item.id}`}
+                            label={`${item.nome}: ${item.pivot.qtd_manha}`}
+                            size="small" color="primary" variant="outlined"
+                        />
                     ))}
                 </Box>
             );
         }
     },
-    {
-        id: "icones", label: "", minWidth: 50,
-        render: (row) => (
-            <Box sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', height: '100%' }}>
+    {id: "tarde", label: "Tarde", minWidth: 200,
+        render: (row) => {
+            if (!row.blocos?.length) return "-";
 
-                <IconButton sx={{ color: '#1b1464' }} onClick={() => handleModal(row)} title="Editar" >
+            return (
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: 'center', alignItems:'center' }}>
+                    {row.blocos.map(item => (
+                        <Chip key={`m-${item.id}`}
+                            label={`${item.nome}: ${item.pivot.qtd_tarde}`}
+                            size="small" color="primary" variant="outlined"
+                        />
+                    ))}
+                </Box>
+            );
+        }
+    },
+    {id: "noite", label: "Noite", minWidth: 200,
+        render: (row) => {
+            if (!row.blocos?.length) return "-";
+
+            return (
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", justifyContent: 'center', alignItems:'center' }}>
+                    {row.blocos.map(item => (
+                        <Chip key={`m-${item.id}`}
+                            label={`${item.nome}: ${item.pivot.qtd_noite}`}
+                            size="small" color="primary" variant="outlined"
+                        />
+                    ))}
+                </Box>
+            );
+        }
+    },
+    {id: "icones", label: "", minWidth: 50,
+        render: (row) => (
+            <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", height: "100%"}}>
+                <IconButton sx={{ color: "#1b1464" }} onClick={() => handleModal(row)} title="Editar">
                     <EditIcon />
                 </IconButton>
 
-                <IconButton sx={{ color: '#b8492d' }} onClick={() => handleModalRemover(row)} title="Remover" >
+                <IconButton sx={{ color: "#b8492d" }} onClick={() => handleRemover(row)} title="Remover">
                     <DeleteIcon />
                 </IconButton>
-            </Box >
-        ),
-    },
-]
-
-export default ColunaRegras
-
+            </Box>
+        )
+    }
+];
 
 
 export const retornaRegras = [
     {
-        id: 1,
-        tipo_profissional: 'Enfermeira',
-        tipo_dia: 'Final de semana',
-        blocos: [
+        "id": 4,
+        "tipo_profissional": null,
+        "tipo_dia": "u",
+        "created_at": "2026-04-11T19:06:53.000000Z",
+        "updated_at": "2026-04-11T19:06:53.000000Z",
+        "blocos": [
             {
-                id: 1,
-                bloco: 'Uti',
-                manha: 1,
-                tarde: 2,
-                noite: 3
+                "id": 6,
+                "nome": "cirurgico",
+                "created_at": "2026-03-28T04:37:16.000000Z",
+                "updated_at": "2026-03-28T04:37:16.000000Z",
+                "deleted_at": null,
+                "pivot": {
+                    "regra_id": 4,
+                    "bloco_id": 6,
+                    "qtd_manha": 2,
+                    "qtd_tarde": 1,
+                    "qtd_noite": 0,
+                    "created_at": "2026-04-11T19:06:53.000000Z",
+                    "updated_at": "2026-04-11T19:06:53.000000Z"
+                }
             },
             {
-                id: 1,
-                bloco: 'Maternidade rert',
-                manha: 4,
-                tarde: 5,
-                noite: 9
+                "id": 7,
+                "nome": "mater",
+                "created_at": "2026-03-28T04:37:16.000000Z",
+                "updated_at": "2026-03-28T04:37:16.000000Z",
+                "deleted_at": null,
+                "pivot": {
+                    "regra_id": 4,
+                    "bloco_id": 7,
+                    "qtd_manha": 1,
+                    "qtd_tarde": 1,
+                    "qtd_noite": 1,
+                    "created_at": "2026-04-11T19:06:53.000000Z",
+                    "updated_at": "2026-04-11T19:06:53.000000Z"
+                }
             }
         ]
-    }
+    },
 ]
+
+
+export const retornaTipoDias = (tipo) => {
+    if (tipo === 'u' || tipo === 'U') return 'Dias útil';
+    if (tipo === 'i' || tipo === 'I') return 'Final de semana';
+}
