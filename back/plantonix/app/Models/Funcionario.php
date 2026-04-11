@@ -18,8 +18,7 @@ class Funcionario extends Model
 
     public static function findFuncionario($id)
     {
-        $funcionario = self::with('blocos')->find($id);
-        return $funcionario;
+        return self::with('blocos')->find($id);
     }
 
     public static function createFuncinario($dados)

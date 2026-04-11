@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RegraController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlocoController;
@@ -20,3 +21,10 @@ Route::post('/funcionario', [FuncionarioController::class, 'store']);
 Route::get('/funcionario/{id}', [FuncionarioController::class, 'show']);
 Route::put('/funcionario/{id}', [FuncionarioController::class, 'update']);
 Route::delete('/funcionario/{id}', [FuncionarioController::class, 'destroy']);
+
+
+Route::get('/regra', [RegraController::class, 'index']);
+Route::post('/regra', [RegraController::class, 'store']);
+Route::get('/regra/{id}', [RegraController::class, 'show']);
+Route::put('/regra/{id}', [RegraController::class, 'update']);
+Route::delete('/regra/{id}', [RegraController::class, 'destroy']);
