@@ -2,10 +2,21 @@ import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle
 import CloseIcon from '@mui/icons-material/Close';
 import { sxButton } from '../../Blocos/components/ModalEdicao';
 import SendIcon from '@mui/icons-material/Send';
-import { tipoDias, tipoProfissional } from '../hooks/useModalRegras';
+import useModalRegras, { tipoDias, tipoProfissional } from '../hooks/useModalRegras';
+import { useEffect } from 'react';
+import useModalBlocoHook from '../../Blocos/hooks/useModalBlocoHook';
 
 
 const ModalCadastro = ({ open, handleOpen }) => {
+
+    const { getOpcoesDias, getOpcoesTipoProfissionais, listaTipoDias, listaTipoProfissional, submitCadastro } = useModalRegras();
+    const { allBlocos, getAllBlocos } = useModalBlocoHook();
+
+    useEffect(() => {
+        getOpcoesDias()
+        getOpcoesTipoProfissionais()
+        getAllBlocos()
+    }, [])
 
     return (
         <Dialog fullWidth={'md'} open={open} onClose={handleOpen} aria-labelledby="alert-dialog-title" >
@@ -21,16 +32,13 @@ const ModalCadastro = ({ open, handleOpen }) => {
                 </IconButton>
             </DialogTitle>
 
-            <form
-            // onSubmit={cadastrarSubmit}
-            >
+            <form onSubmit={(e) => submitCadastro(e, allBlocos)} >
                 <DialogContent>
                     <Grid container spacing={2} sx={{ justifyContent: 'flex-start' }}>
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                options={tipoProfissional}
+                                options={listaTipoProfissional}
                                 getOptionLabel={(option) => option.tipo}
-                                // onChange={handleEscala}
                                 renderInput={(params) => (
                                     <TextField {...params} label="Tipo profissional" required name="tipo_profissional" />
                                 )}
@@ -39,70 +47,48 @@ const ModalCadastro = ({ open, handleOpen }) => {
 
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                options={tipoDias}
+                                options={listaTipoDias}
                                 getOptionLabel={(option) => option.tipo}
-                                // onChange={handleEscala}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Dias" required name="tipo_dias" />
+                                    <TextField {...params} label="Dias" required name="tipo_dia" />
                                 )}
                             />
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={2} sx={{m: 2, 
-                        display: 'flex', borderRadius: 5, 
-                        justifyContent: 'center', border: '2px solid #55B2B0', p: 1
-                    }}>
-                        <Grid size={{ md: 4, xs: 12 }} sx={{
-                            textAlign: 'center',
-                            display: 'flex', justifyContent: 'center', alignItems: 'center'
+
+                    {allBlocos.map((item, index) => (
+                        <Grid container key={index} spacing={2} sx={{
+                            m: 2, display: 'flex', borderRadius: 5,
+                            justifyContent: 'center', border: '2px solid #55B2B0', p: 1
                         }}>
-                            <Typography>Maternidade: </Typography>
-                        </Grid>
-
-                        <Grid size={{ md: 6, xs: 12 }} sx={{}}>
-                            <Typography sx={{ textAlign: 'center', mb: 1 }}>Quantidade de pessoas: </Typography>
-
-                            <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                                <TextField size='small' variant="standard" label="Manhã" name="nome" fullWidth required />
-                                <TextField size='small' variant="standard" label="Tarde" name="nome" fullWidth required />
-                                <TextField size='small' variant="standard" label="Noite" name="nome" fullWidth required />
+                            <Grid size={{ md: 4, xs: 12 }} 
+                            sx={{textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <Typography>{item.nome}</Typography>
                             </Grid>
 
-                        </Grid>
-                </Grid>
-                    <Grid container spacing={2} sx={{m: 2, 
-                        display: 'flex', borderRadius: 5, 
-                        justifyContent: 'center', border: '2px solid #55B2B0', p: 1
-                    }}>
-                        <Grid size={{ md: 4, xs: 12 }} sx={{
-                            textAlign: 'center',
-                            display: 'flex', justifyContent: 'center', alignItems: 'center'
-                        }}>
-                            <Typography>UTI: </Typography>
-                        </Grid>
+                            <Grid size={{ md: 6, xs: 12 }} sx={{}}>
+                                <Typography sx={{ textAlign: 'center', mb: 1 }}>Quantidade de pessoas: </Typography>
 
-                        <Grid size={{ md: 6, xs: 12 }} sx={{}}>
-                            <Typography sx={{ textAlign: 'center', mb: 1 }}>Quantidade de pessoas: </Typography>
+                                <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                                    <TextField size='small' variant="standard" label="Manhã" name={`${item.nome} - manha`} fullWidth required type='number' />
+                                    <TextField size='small' variant="standard" label="Tarde" name={`${item.nome} - tarde`} fullWidth required type='number' />
+                                    <TextField size='small' variant="standard" label="Noite" name={`${item.nome} - noite`} fullWidth required type='number' />
+                                </Grid>
 
-                            <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                                <TextField size='small' variant="standard" label="Manhã" name="nome" fullWidth required />
-                                <TextField size='small' variant="standard" label="Tarde" name="nome" fullWidth required />
-                                <TextField size='small' variant="standard" label="Noite" name="nome" fullWidth required />
                             </Grid>
-
                         </Grid>
-                </Grid>
-                    
 
-            </DialogContent>
+                    ))}
 
-            <DialogActions>
-                <Button type="submit" sx={sxButton} endIcon={<SendIcon />} >
-                    Cadastrar
-                </Button>
-            </DialogActions>
-        </form>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button type="submit" sx={sxButton} endIcon={<SendIcon />} >
+                        Cadastrar
+                    </Button>
+                </DialogActions>
+            </form>
 
             {/* <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={loading} >

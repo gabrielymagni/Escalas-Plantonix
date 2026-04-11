@@ -1,11 +1,11 @@
 import { Backdrop, CircularProgress, Grid, TextField, Typography } from '@mui/material'
-import TableFuncionarios from './components/TableFuncionarios'
 import useFuncionarioHook from './hooks/useFuncionarioHook';
 import AdicionarCadastro from './components/AdicionarCadastro';
 import { useEffect } from 'react';
 import ModalEdicao from './components/ModalEdicao';
 import AlertRemove from './components/AlertRemove';
 import { Toaster } from 'sonner';
+import EstruturaTabela from './components/EstruturaTabela';
 
 const Funcionario = () => {
     const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading,
@@ -42,7 +42,7 @@ const Funcionario = () => {
                 <AdicionarCadastro />
             </Grid>
 
-            <TableFuncionarios rows={rows} columns={columns} />
+            <EstruturaTabela rows={rows} columns={columns} />
 
             {openModal &&
                 <ModalEdicao open={openModal} info={infoLinha} 

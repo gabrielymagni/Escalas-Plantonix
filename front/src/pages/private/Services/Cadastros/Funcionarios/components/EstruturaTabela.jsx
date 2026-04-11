@@ -1,6 +1,6 @@
 import { Paper, Table, TableCell, TableContainer, TableRow } from "@mui/material";
 
-const TableFuncionarios = ({ rows, columns }) => {
+const EstruturaTabela = ({ rows, columns }) => {
 
     return (
         <div>
@@ -54,7 +54,7 @@ const TableFuncionarios = ({ rows, columns }) => {
     )
 }
 
-export default TableFuncionarios
+export default EstruturaTabela
 
 
 export const sxTableCell = (column) => ({
