@@ -3,13 +3,25 @@
 namespace App\Models;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Funcionario extends Model
+class Funcionario extends Authenticatable
 {
-    use SoftDeletes;
-    protected $fillable = ['nome', 'email', 'coren', 'turno', 'tipo_escala', 'data_contratacao', 'cargo'];
+    use SoftDeletes, Notifiable;
+
+    protected $fillable = ['nome', 'email', 'coren', 'turno', 'tipo_escala', 'data_contratacao', 'cargo', 'password', 'faz_plantao'];
+    protected $hidden = ['password', 'remember_token'];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+            'faz_plantao' => 'boolean',
+            'email_verified_at' => 'datetime',
+        ];
+    }
 
     public static function getFuncionarios()
     {

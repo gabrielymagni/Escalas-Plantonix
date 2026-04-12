@@ -1,0 +1,19 @@
+# docker-compose de DESENVOLVIMENTO — sobe apenas o banco de dados.
+# Back e front rodam localmente (php artisan serve / npm run dev).
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: plantonix-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-plantonix}
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

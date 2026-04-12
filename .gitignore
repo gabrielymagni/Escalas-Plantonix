@@ -1,0 +1,30 @@
+# Variáveis de ambiente (nunca commitar)
+.env
+.env.local
+.env.*.local
+
+# Dependências
+node_modules/
+vendor/
+
+# Build do frontend
+front/dist/
+front/build/
+
+# Laravel
+back/plantonix/bootstrap/cache/*.php
+back/plantonix/storage/logs/
+back/plantonix/storage/framework/cache/
+back/plantonix/storage/framework/sessions/
+back/plantonix/storage/framework/views/
+back/plantonix/public/storage
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

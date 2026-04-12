@@ -1,0 +1,65 @@
+name: Build e publica imagens Docker no GHCR
+
+on:
+  push:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-backend:
+    name: Backend (Laravel)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e push — backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./back/plantonix
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/plantonix-backend:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/plantonix-backend:${{ github.sha }}
+
+  build-frontend:
+    name: Frontend (React)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e push — frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./front
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/plantonix-frontend:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/plantonix-frontend:${{ github.sha }}
+          build-args: |
+            VITE_API_URL=/api

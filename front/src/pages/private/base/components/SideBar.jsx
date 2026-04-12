@@ -8,18 +8,48 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
+import Box from "@mui/material/Box";
 import useAdminBase from "../hooks/useAdminBase.js";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
 
 export function SideBar({ openSideBar, handleDrawer }) {
 
     const { isMobile } = useAdminBase();
-
     const location = useLocation();
+    const navigate = useNavigate();
     const pathMatch = RoutesSidebar.find(item => item.path === location.pathname);
 
+    const isLoggedIn = !!localStorage.getItem('access_token');
+
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem('access_token');
+            await axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, {
+                withCredentials: true,
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        } catch {
+            // ignora erro de rede — limpa sessão de qualquer forma
+        } finally {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('funcionario');
+            toast.success('Sessão encerrada.', {
+                style: { background: '#141259', color: 'white' }
+            });
+            navigate('/login');
+        }
+    };
+
     return (
-        <Drawer open={openSideBar} variant={(isMobile && !openSideBar) ? "temporary" : "permanent"} >
+        <Drawer
+            open={openSideBar}
+            variant={(isMobile && !openSideBar) ? "temporary" : "permanent"}
+            sx={{ '& .MuiDrawer-paper': { display: 'flex', flexDirection: 'column' } }}
+        >
             <DrawerHeader>
                 <IconButton onClick={handleDrawer} >
                     <ChevronLeftIcon sx={{ color: '#787878' }} />
@@ -27,7 +57,7 @@ export function SideBar({ openSideBar, handleDrawer }) {
             </DrawerHeader>
             <Divider />
 
-            <List >
+            <List>
                 {RoutesSidebar.map(item => (
                     <ListItem key={item.path} disablePadding sx={{ display: "block" }} title={item.name}>
                         {item.divider &&
@@ -49,10 +79,35 @@ export function SideBar({ openSideBar, handleDrawer }) {
                                 sx={sxItemText(openSideBar, pathMatch?.path === item.path)}
                             />
                         </ListItemButton>
-
                     </ListItem>
                 ))}
             </List>
+
+            {/* Rodapé da sidebar */}
+            <Box sx={{ mt: 'auto' }}>
+                <Divider />
+                <List>
+                    {isLoggedIn ? (
+                        <ListItem disablePadding sx={{ display: 'block' }} title="Sair">
+                            <ListItemButton sx={sxItenButton(openSideBar, false)} onClick={handleLogout}>
+                                <ListItemIcon sx={sxItemIcon(openSideBar, false)}>
+                                    <LogoutIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Sair" sx={sxItemText(openSideBar, false)} />
+                            </ListItemButton>
+                        </ListItem>
+                    ) : (
+                        <ListItem disablePadding sx={{ display: 'block' }} title="Entrar">
+                            <ListItemButton sx={sxItenButton(openSideBar, false)} component={Link} to="/login">
+                                <ListItemIcon sx={sxItemIcon(openSideBar, false)}>
+                                    <LoginIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Entrar" sx={sxItemText(openSideBar, false)} />
+                            </ListItemButton>
+                        </ListItem>
+                    )}
+                </List>
+            </Box>
         </Drawer>
     )
 }
