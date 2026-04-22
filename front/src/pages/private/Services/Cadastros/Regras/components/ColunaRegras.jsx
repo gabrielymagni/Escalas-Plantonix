@@ -4,14 +4,14 @@ import { Box, Chip, IconButton } from '@mui/material';
 
 
 export const getColumnsRegras = (handleModal, handleRemover) => [
-    { id: "tipo_profissional", label: "Tipo de Profissional", minWidth: 200 },
-    { id: "tipo_dia", label: "Tipo de dias", minWidth: 200,
+    { id: "tipo_profissional", label: "Tipo de Profissional", width: "20%" },
+    { id: "tipo_dia", label: "Tipo de dias", width: "10%",
         render: (row) => (
             <strong>{retornaTipoDias(row.tipo_dia)}</strong>
         )
      },
     {
-        id: "blocos", label: "Manhã", minWidth: 200,
+        id: "blocos", label: "Manhã", width: "20%",
         render: (row) => {
             if (!row.blocos?.length) return "-";
 
@@ -27,7 +27,7 @@ export const getColumnsRegras = (handleModal, handleRemover) => [
             );
         }
     },
-    {id: "tarde", label: "Tarde", minWidth: 200,
+    {id: "tarde", label: "Tarde", width: "20%",
         render: (row) => {
             if (!row.blocos?.length) return "-";
 
@@ -43,7 +43,7 @@ export const getColumnsRegras = (handleModal, handleRemover) => [
             );
         }
     },
-    {id: "noite", label: "Noite", minWidth: 200,
+    {id: "noite", label: "Noite", width: "20%",
         render: (row) => {
             if (!row.blocos?.length) return "-";
 
@@ -59,7 +59,7 @@ export const getColumnsRegras = (handleModal, handleRemover) => [
             );
         }
     },
-    {id: "icones", label: "", minWidth: 50,
+    {id: "icones", label: "", width: "5%",
         render: (row) => (
             <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", height: "100%"}}>
                 <IconButton sx={{ color: "#1b1464" }} onClick={() => handleModal(row)} title="Editar">
@@ -74,50 +74,6 @@ export const getColumnsRegras = (handleModal, handleRemover) => [
     }
 ];
 
-
-export const retornaRegras = [
-    {
-        "id": 4,
-        "tipo_profissional": null,
-        "tipo_dia": "u",
-        "created_at": "2026-04-11T19:06:53.000000Z",
-        "updated_at": "2026-04-11T19:06:53.000000Z",
-        "blocos": [
-            {
-                "id": 6,
-                "nome": "cirurgico",
-                "created_at": "2026-03-28T04:37:16.000000Z",
-                "updated_at": "2026-03-28T04:37:16.000000Z",
-                "deleted_at": null,
-                "pivot": {
-                    "regra_id": 4,
-                    "bloco_id": 6,
-                    "qtd_manha": 2,
-                    "qtd_tarde": 1,
-                    "qtd_noite": 0,
-                    "created_at": "2026-04-11T19:06:53.000000Z",
-                    "updated_at": "2026-04-11T19:06:53.000000Z"
-                }
-            },
-            {
-                "id": 7,
-                "nome": "mater",
-                "created_at": "2026-03-28T04:37:16.000000Z",
-                "updated_at": "2026-03-28T04:37:16.000000Z",
-                "deleted_at": null,
-                "pivot": {
-                    "regra_id": 4,
-                    "bloco_id": 7,
-                    "qtd_manha": 1,
-                    "qtd_tarde": 1,
-                    "qtd_noite": 1,
-                    "created_at": "2026-04-11T19:06:53.000000Z",
-                    "updated_at": "2026-04-11T19:06:53.000000Z"
-                }
-            }
-        ]
-    },
-]
 
 
 export const retornaTipoDias = (tipo) => {

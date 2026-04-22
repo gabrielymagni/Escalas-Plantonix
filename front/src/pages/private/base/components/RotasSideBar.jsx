@@ -24,4 +24,18 @@ export const RoutesSidebar = [
         icon: <FeedIcon />,
         text_divider: " "
     },
+    {
+        name: "Gerar escalas",
+        path: "/private/gerarEscala",
+        divider: true,
+        icon: <FeedIcon />,
+        text_divider: "Escalas"
+    },
+    {
+        name: "Visualizar escalas",
+        path: "/private/visualizarEscala",
+        divider: false,
+        icon: <FeedIcon />,
+        text_divider: " "
+    },
 ];

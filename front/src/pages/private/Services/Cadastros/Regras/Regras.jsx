@@ -1,7 +1,5 @@
-import { Grid, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import AdicionarRegras from './components/AdicionarRegras'
-import ModalEditar, { retornaRegras } from './components/ModalEditar'
-import useModalRegras from './hooks/useModalRegras';
 import TabelaRegras from './components/TabelaRegras';
 
 const Regras = () => {

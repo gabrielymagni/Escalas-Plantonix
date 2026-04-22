@@ -21,7 +21,6 @@ const useFuncionarioHook = () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/funcionario`);
             if (response.status === 200) {
-                console.log("response", response)
                 setAllFuncionarios(response.data);
                 setLoading(false)
             } else {

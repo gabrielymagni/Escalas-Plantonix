@@ -23,7 +23,6 @@ const useModalBlocoHook = () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/bloco`);
             if (response.status === 200) {
-                console.log("response", response)
                 setAllBlocos(response.data);
                 setLoading(false)
             } else {
@@ -32,7 +31,6 @@ const useModalBlocoHook = () => {
         } catch (error) {
             console.error('resposta indisponível', error)
         }
-
     }
 
     const deleteBloco = async (id) => {

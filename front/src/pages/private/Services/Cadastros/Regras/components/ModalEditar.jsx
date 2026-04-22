@@ -3,8 +3,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import { sxButton } from "../../Blocos/components/ModalEdicao";
 import useModalRegras, { tipoDias, tipoProfissional } from "../hooks/useModalRegras";
-import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
-import { useEffect } from "react";
 
 const ModalEditar = ({ open, handleOpen, info }) => {
 
@@ -90,37 +88,8 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                 </DialogActions>
             </form>
 
-            {/* <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-                open={loading} >
-                <CircularProgress color="inherit" />
-            </Backdrop> */}
         </Dialog >
     )
 }
 
 export default ModalEditar
-
-
-export const retornaRegras = [
-    {
-        id: 1,
-        tipo_profissional: 'Enfermeira',
-        tipo_dia: 'Final de semana',
-        blocos: [
-            {
-                id: 1,
-                bloco: 'Uti',
-                manha: 1,
-                tarde: 2,
-                noite: 3
-            },
-            {
-                id: 1,
-                bloco: 'Maternidade rert',
-                manha: 4,
-                tarde: 5,
-                noite: 9
-            }
-        ]
-    }
-]

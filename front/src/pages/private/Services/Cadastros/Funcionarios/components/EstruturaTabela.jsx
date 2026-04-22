@@ -4,14 +4,14 @@ const EstruturaTabela = ({ rows, columns }) => {
 
     return (
         <div>
-            <Paper sx={{ width: "100%", overflow: "hidden", borderRadius: 3, }}>
+            <Paper sx={{ width: "100%", borderRadius: 3, border: '1px solid #fed400' }}>
                 <TableContainer sx={{ border: '3px solid #62acb5', borderRadius: 3, bgcolor: '#fff' }}>
-                    <Table stickyHeader  >
+                    <Table sx={{tableLayout: "fixed", width: "100%"}} >
 
                         <TableRow sx={{ borderBottom: "1px solid #1b1464", }}>
                             {columns.map((column) => (
                                 <TableCell key={column.id} sx={{
-                                    minWidth: column.minWidth,
+                                    width: column.width,
                                     color: '#1b1464',
                                     fontWeight: 'bold',
                                     fontSize: 16,
@@ -61,6 +61,6 @@ export const sxTableCell = (column) => ({
     borderColor: "#1b1464",
     py: 0.5, px: 1,
     fontWeight: 'bold',
-    minWidth: column.minWidth,
+    width: column.width,
     textAlign: 'center'
 })

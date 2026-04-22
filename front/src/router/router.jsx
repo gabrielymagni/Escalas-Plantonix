@@ -4,6 +4,8 @@ import Bloco from "../pages/private/Services/Cadastros/Blocos/Bloco";
 import Funcionario from "../pages/private/Services/Cadastros/Funcionarios/Funcionario";
 import Regras from "../pages/private/Services/Cadastros/Regras/Regras";
 import Login from "../pages/public/Login/Login";
+import GerarEscala from "../pages/private/Services/Escalas/GerarEscala/GerarEscala";
+import EscalaMensal from "../pages/private/Services/Escalas/Teste";
 
 export const router = createBrowserRouter([
     {
@@ -33,6 +35,14 @@ export const router = createBrowserRouter([
             {
                 path: 'cadastroRegras',
                 element: <Regras />,
+            },
+            {
+                path: 'gerarEscala',
+                element: <EscalaMensal />,
+            },
+            {
+                path: 'visualizarEscala',
+                element: <GerarEscala />,
             },
         ]
     }

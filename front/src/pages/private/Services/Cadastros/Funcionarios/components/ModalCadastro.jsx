@@ -142,7 +142,7 @@ const regrasEscala = {
     '12x36': ['N'],
 };
 
-const TODOS_TURNOS = [
+export const TODOS_TURNOS = [
     { id: 'M', turno: 'Manhã' },
     { id: 'T', turno: 'Tarde' },
     { id: 'MT', turno: 'Manhã e Tarde' },

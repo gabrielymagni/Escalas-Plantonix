@@ -1,4 +1,4 @@
-import { Backdrop, Button, CircularProgress, Grid } from '@mui/material'
+import { Button, Grid } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import ModalCadastro from './ModalCadastro';
 import useModalRegras from '../hooks/useModalRegras';

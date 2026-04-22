@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import EstruturaTabela from '../../Funcionarios/components/EstruturaTabela'
 import useModalRegras from '../hooks/useModalRegras';
-import { getColumnsRegras, retornaRegras } from './ColunaRegras';
+import { getColumnsRegras } from './ColunaRegras';
 import { getRowsRegras } from './LinhasRegras';
 import ModalEditar from './ModalEditar';
 import AlertRemove from './AlertRemove';
