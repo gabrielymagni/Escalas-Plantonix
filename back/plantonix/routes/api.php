@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlocoController;
 use App\Http\Controllers\FuncionarioController;
+use App\Http\Controllers\EscalaController;
+
+Route::post('/escala', [EscalaController::class, 'gerarEscala']);
+Route::get('/escala/{blocoId?}', [EscalaController::class, 'getEscala']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/refresh', [AuthController::class, 'refresh']);
