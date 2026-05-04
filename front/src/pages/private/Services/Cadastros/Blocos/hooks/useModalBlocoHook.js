@@ -1,5 +1,5 @@
 import { useState } from "react"
-import axios from "axios";
+import api from "../../../../../../services/api";
 import { toast } from "sonner";
 
 
@@ -21,7 +21,7 @@ const useModalBlocoHook = () => {
     const getAllBlocos = async () => {
         setLoading(true)
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/bloco`);
+            const response = await api.get(`/bloco`);
             if (response.status === 200) {
                 setAllBlocos(response.data);
                 setLoading(false)
@@ -37,7 +37,7 @@ const useModalBlocoHook = () => {
         setLoading(true)
 
         try {
-            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/bloco/${id}`);
+            const response = await api.delete(`/bloco/${id}`);
             if (response.status === 204) {
                 setModalRemover(false);
                 getAllBlocos()
@@ -67,7 +67,7 @@ const useModalBlocoHook = () => {
         }
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/bloco`, payload);
+            const response = await api.post(`/bloco`, payload);
             if (response.status === 201) {
                 console.log("response", response)
                 toast.success("Novo bloco adicionado! ✅", {
@@ -100,7 +100,7 @@ const useModalBlocoHook = () => {
         }
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/bloco/${id}`, payload);
+            const response = await api.put(`/bloco/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
                 setOpenCadastro(false);

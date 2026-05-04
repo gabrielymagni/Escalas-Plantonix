@@ -1,8 +1,8 @@
 
 import { useState } from "react"
 import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
-import axios from "axios";
 import { toast } from "sonner";
+import api from "../../../../../../services/api";
 
 const useGerarEscala = () => {
 
@@ -19,7 +19,7 @@ const useGerarEscala = () => {
         const encontraID = blocos.find(item => item.nome === dados.get('bloco'))
 
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/escala/${encontraID.id}`);
+            const response = await api.get(`/escala/${encontraID.id}`);
             if (response.status === 200) {
                 console.log("response", response)
                 setDadosEscala(response.data.data);
@@ -104,7 +104,7 @@ const useGerarEscala = () => {
         console.log("payload itens", payload)
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/escala`, payload);
+            const response = await api.put(`/escala`, payload);
             if (response.status === 200) {
                 toast.success("Escala atualizada com sucesso! ✅", {
                     style: {

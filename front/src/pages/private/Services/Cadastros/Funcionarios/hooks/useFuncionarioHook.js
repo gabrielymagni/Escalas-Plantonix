@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getColumnsFuncionario, getRowsFuncionario } from '../components/ColunasFuncionarios';
-import axios from 'axios';
+import api from '../../../../../../services/api';
 import { turnosDisponiveis } from '../components/ModalCadastro';
 import { toast } from 'sonner';
 
@@ -19,7 +19,7 @@ const useFuncionarioHook = () => {
         setLoading(true)
 
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/funcionario`);
+            const response = await api.get(`/funcionario`);
             if (response.status === 200) {
                 setAllFuncionarios(response.data);
                 setLoading(false)
@@ -75,7 +75,7 @@ const useFuncionarioHook = () => {
         setLoading(true)
 
         try {
-            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/funcionario/${id}`);
+            const response = await api.delete(`/funcionario/${id}`);
             if (response.status === 204) {
                 console.log("response", response)
                 setOpenRemove(false)
@@ -130,7 +130,7 @@ const useFuncionarioHook = () => {
         console.log("payload", payload)
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/funcionario/${id}`, payload);
+            const response = await api.put(`/funcionario/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
                 toast.success("Funcionário editado com sucesso! ✅", {
