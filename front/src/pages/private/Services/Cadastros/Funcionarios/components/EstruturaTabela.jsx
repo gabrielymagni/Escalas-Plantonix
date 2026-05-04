@@ -4,7 +4,7 @@ const EstruturaTabela = ({ rows, columns }) => {
 
     return (
         <div>
-            <Paper sx={{ width: "100%", borderRadius: 3, border: '1px solid #fed400' }}>
+            <Paper sx={{ width: "100%", borderRadius: 3 }}>
                 <TableContainer sx={{ border: '3px solid #62acb5', borderRadius: 3, bgcolor: '#fff' }}>
                     <Table sx={{tableLayout: "fixed", width: "100%"}} >
 

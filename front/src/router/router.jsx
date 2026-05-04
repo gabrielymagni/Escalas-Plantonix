@@ -5,7 +5,6 @@ import Funcionario from "../pages/private/Services/Cadastros/Funcionarios/Funcio
 import Regras from "../pages/private/Services/Cadastros/Regras/Regras";
 import Login from "../pages/public/Login/Login";
 import GerarEscala from "../pages/private/Services/Escalas/GerarEscala/GerarEscala";
-import EscalaMensal from "../pages/private/Services/Escalas/Teste";
 
 export const router = createBrowserRouter([
     {
@@ -38,10 +37,6 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'gerarEscala',
-                element: <EscalaMensal />,
-            },
-            {
-                path: 'visualizarEscala',
                 element: <GerarEscala />,
             },
         ]

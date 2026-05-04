@@ -1,0 +1,132 @@
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
+import CloseIcon from '@mui/icons-material/Close';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { useState } from "react";
+import { gerarPeriodos } from "../../../../../../../utils/gerarPeriodoEscala";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
+
+const ModalGerarEscala = ({ open, handleOpen }) => {
+
+    const periodos = gerarPeriodos();
+
+    const submitGerarEscala = async (evento) => {
+        evento.preventDefault();
+
+        const dados = new FormData(evento.target)
+        const [inicio, fim] = dados.get("periodo").split(" - ");
+
+        const payload = {
+            inicio: dayjs(inicio, "DD/MM/YYYY").format("YYYY-MM-DD"),
+            fim: dayjs(fim, "DD/MM/YYYY").format("YYYY-MM-DD"),
+        }
+
+        console.log("payload", payload)
+        // setTesteMostraEscala(true)
+
+        // try {
+        //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/regra`, payload);
+        //     if (response.status === 201) {
+        //         console.log("response", response)
+        //         toast.success("Nova regra cadastrada com sucesso! ✅", {
+        //             style: {
+        //                 background: "#227212",
+        //                 color: "white"
+        //             }
+        //         })
+
+        //         setTimeout(() => {
+        //             window.location.reload();
+        //         }, 1500);
+        //     } else {
+        //         console.log("erro ao chamar api ")
+        //     }
+        // } catch (error) {
+        //     console.error('resposta indisponível', error)
+        // }
+    }
+
+    return (
+        <Dialog fullWidth={'md'} open={open} onClose={() => handleOpen()}
+            aria-labelledby="alert-dialog-title" >
+
+            <DialogTitle sx={{ position: "relative" }}>
+
+                <Typography sx={{ p: 2, fontWeight: "bold", color: "#141259", textAlign: "center", fontSize: 20 }}>
+                    Gerar nova escala
+                </Typography>
+
+                <IconButton aria-label="close"
+                    onClick={() => handleOpen()}
+                    sx={{ position: "absolute", right: 5, top: 5 }} >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+
+            <form onSubmit={(e) => submitGerarEscala(e)}>
+                <DialogContent>
+                    <Grid container spacing={2} sx={{
+                        display: 'flex', justifyContent: 'center', alignItems: 'center', pb: 2
+                    }}>
+                        <Grid size={{ md: 12, xs: 8 }} sx={{ m: 2 }}>
+                            <Autocomplete
+                                options={periodos}
+                                getOptionLabel={(option) => option.label}
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Selecione o período" required
+                                        name="periodo" />
+                                )}
+                                renderOption={(props, option) => (
+                                    <li {...props}>
+                                        {option.label}
+                                        <input
+                                            type="hidden"
+                                            name="periodo_inicio"
+                                            value={option.inicio}
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="periodo_fim"
+                                            value={option.fim}
+                                        />
+                                    </li>
+                                )}
+                            />
+                        </Grid>
+                    </Grid>
+
+                </DialogContent>
+
+                <DialogActions>
+                    <Button type="submit" sx={{
+                        bgcolor: '#409158', color: '#fff',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                            transform: 'translateY(-3px)',
+                        }
+                    }} endIcon={<NoteAddIcon />}>
+                        Gerar escala
+                    </Button>
+                </DialogActions>
+            </form>
+
+            {/* <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={loading} >
+                <CircularProgress color="inherit" />
+            </Backdrop> */}
+        </Dialog >
+    )
+}
+
+export default ModalGerarEscala
+
+const top100Films = [
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+]

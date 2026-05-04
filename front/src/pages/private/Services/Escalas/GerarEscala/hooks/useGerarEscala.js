@@ -1,52 +1,90 @@
 
 import { useState } from "react"
-import moment from "../../../../../../../utils/moment";
+import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
 
 const useGerarEscala = () => {
 
-    const [dadosEscala, setDadosEscala] = useState();
-    const [semanaSelecionada, setSemanaSelecionada] = useState({
-        inicio: moment().startOf('week').valueOf(), //O início da semana atual em milissegundos.
-        fim: moment().endOf('week').valueOf() ////O fim da semana atual em milissegundos.
-    });
+    const [dadosEscala, setDadosEscala] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [mesAtual, setMesAtual] = useState(getPeriodoAtual());
 
-    const getEscala = async () => {
+    const filtraBloco = async (evento, blocos) => {
+        evento.preventDefault();
+        setLoading(true)
 
-        try {
-            const dadosFormatados = mock.map(item => ({
-                id: item.id,
-                group: item.pessoa,
-                title: item.title,
-                // Transforma "2026-04-20" em milissegundos, .startOf('day') garante que comece às 00:00:00 daquela data
-                start_time: moment(item.data).startOf('day').valueOf(),
-                // .endOf('day') termine às 23:59:59 e preenche o quadrado
-                end_time: moment(item.data).endOf('day').valueOf()
-            }));
-            setDadosEscala(dadosFormatados);
+        const dados = new FormData(evento.target);
+        console.log("regras selecionadas:", dados.get('bloco'));
 
-        } catch (error) {
-            console.error('Erro ao fazer requisição', error);
-        }
+        const encontraID = blocos.find(item => item.nome === dados.get('bloco'))
+        console.log("encontraID", encontraID);
+
+        setDadosEscala(mock);
+        setLoading(false)
+
+        // try {
+        //     const response = await axios.put(`${import.meta.env.VITE_API_URL}/regra/${encontraID.id}`);
+        //     if (response.status === 200) {
+        //         console.log("response", response)
+        //         toast.success("Regra editada com sucesso! ✅", {
+        //             style: {
+        //                 background: "#227212",
+        //                 color: "white"
+        //             }
+        //         })
+
+        //         setTimeout(() => {
+        //             window.location.reload();
+        //         }, 1500);
+        //     } else {
+        //         console.log("erro ao chamar api ")
+        //     }
+        // } catch (error) {
+        //     console.error('resposta indisponível', error)
+        // }
     }
 
-    const handlePrev = () => {
-        setSemanaSelecionada({
-            inicio: moment(semanaSelecionada.inicio).subtract(1, 'week').valueOf(),
-            fim: moment(semanaSelecionada.fim).subtract(1, 'week').valueOf()
-        });
+    const proximoMes = () =>
+        setMesAtual(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+
+    const mesAnterior = () =>
+        setMesAtual(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+
+    //qual turno o profissina faz naquele dia 
+    const getTurno = (profissional, data) => {
+        // console.log("dia", data)
+        const dia = profissional.dias.find(
+            d => d.data === data
+        );
+        //retorna o turno
+        // console.log("dia", dia)
+        // console.log("", dia?.turno || '')
+        return dia?.turno || '';
     };
 
-    const handleNext = () => {
-        setSemanaSelecionada({
-            inicio: moment(semanaSelecionada.inicio).add(1, 'week').valueOf(),
-            fim: moment(semanaSelecionada.fim).add(1, 'week').valueOf()
-        });
-    };
+    const handleChange = (idProfissional, data, turno) => {
+        setDadosEscala(prev =>
+            prev.map(prof => {
 
-    
+                if (prof.id !== idProfissional) return prof;
+
+                const existeDia = prof.dias.some(d => d.data === data);
+
+                return {
+                    ...prof,
+                    dias: existeDia
+                        ? prof.dias.map(d =>
+                            d.data === data
+                                ? { ...d, turno }
+                                : d
+                        )
+                        : [...prof.dias, { data, turno }]
+                };
+            })
+        );
+    };
 
     return {
-        getEscala, dadosEscala, semanaSelecionada, handlePrev, handleNext, setDadosEscala
+        dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco, loading
     }
 }
 
@@ -54,9 +92,59 @@ export default useGerarEscala
 
 
 const mock = [
-    { "id": 101, "pessoa": 29, "title": "Manhã e Tarde", "data": "2026-04-20" },
-    { "id": 102, "pessoa": 30, "title": "Noite", "data": "2026-04-21" },
-    { "id": 103, "pessoa": 28, "title": "Folga", "data": "2026-04-21" },
-    { "id": 104, "pessoa": 30, "title": "Manhã", "data": "2026-04-22" },
-    { "id": 105, "pessoa": 29, "title": "Tarde", "data": "2026-04-23" },
+    {
+        "id": 1,
+        "id_pessoa": 2,
+        "nome": "Gabriely",
+        "dias": [
+            {
+                "turno": "M",
+                "data": "2026-05-03"
+            },
+            {
+                "turno": "M",
+                "data": "2026-05-04"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "id_pessoa": 2,
+        "nome": "Maria",
+        "dias": [
+            {
+                "turno": "T",
+                "data": "2026-05-16"
+            },
+            {
+                "turno": "T",
+                "data": "2026-05-17"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "id_pessoa": 5,
+        "nome": "Joao",
+        "dias": [
+            {
+                "turno": "N",
+                "data": "2026-05-16"
+            },
+            {
+                "turno": "N",
+                "data": "2026-05-17"
+            }
+        ]
+    },
 ]
+
+
+export const OpcoesEventos = [
+    { id: 'M', turno: 'Manhã' },
+    { id: 'T', turno: 'Tarde' },
+    { id: 'MT', turno: 'Manhã e Tarde' },
+    { id: 'N', turno: 'Noite' },
+    { id: 'F', turno: 'Folga' },
+];
+
