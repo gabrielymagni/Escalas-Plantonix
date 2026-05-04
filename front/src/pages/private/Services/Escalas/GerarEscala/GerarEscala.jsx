@@ -17,6 +17,7 @@ export default function GerarEscala() {
         filtraBloco, loading } = useGerarEscala();
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
     console.log("loading", loading)
+    console.log("dadosEscala", dadosEscala)
 
     const [buttonEditar, setButtonEditar] = useState(true);
     const [open, setOpen] = useState(false);
@@ -129,7 +130,7 @@ export default function GerarEscala() {
                 <Grid container spacing={2} sx={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 2
                 }}>
-                    <Grid size={{ md: 4, xs: 6 }} >
+                    <Grid size={{ md: 4, xs: 9 }} >
                         <Autocomplete
                             options={allBlocos}
                             getOptionLabel={(option) => option.nome}
@@ -139,7 +140,7 @@ export default function GerarEscala() {
                         />
                     </Grid>
 
-                    <Grid size={{ md: 2, xs: 6 }} sx={{ display: 'flex', justifyContent: 'start' }} >
+                    <Grid size={{ md: 2, xs: 3 }} sx={{ display: 'flex', justifyContent: 'start' }} >
                         <Button type="submit"
                             sx={{
                                 bgcolor: '#1b1464', color: '#fff',
@@ -152,7 +153,7 @@ export default function GerarEscala() {
                         </Button>
                     </Grid>
 
-                    <Grid size={{ md: 6, xs: 6 }} gap={2} sx={{ display: 'flex', justifyContent: 'end' }} >
+                    <Grid size={{ md: 6, xs: 12 }} gap={2} sx={{ display: 'flex', justifyContent: 'end' }} >
                         <Button onClick={handleOpen}
                             sx={{
                                 bgcolor: '#1b1464', color: '#fff',
@@ -257,10 +258,10 @@ export default function GerarEscala() {
 }
 
 const background = (texto) => {
-    if (texto === 'MT') return '#5c8526';
-    if (texto === 'M') return '#7e8526';
-    if (texto === 'T') return '#d6660a';
-    if (texto === 'N') return '#141259';
+    if (texto === 'MT') return '#a2ff9a';
+    if (texto === 'M') return '#f4ff95';
+    if (texto === 'T') return '#ffbf8b';
+    if (texto === 'N') return '#bae0ff';
     if (texto === 'F') return '#797979';
 }
 

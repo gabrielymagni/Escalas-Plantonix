@@ -1,19 +1,24 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
+import { Autocomplete, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { useState } from "react";
 import { gerarPeriodos } from "../../../../../../../utils/gerarPeriodoEscala";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import axios from "axios";
+import { toast, Toaster } from "sonner";
 
 dayjs.extend(customParseFormat);
 
 const ModalGerarEscala = ({ open, handleOpen }) => {
 
     const periodos = gerarPeriodos();
+    const [loading, setLoading] = useState(false);
+
 
     const submitGerarEscala = async (evento) => {
         evento.preventDefault();
+        setLoading(true)
 
         const dados = new FormData(evento.target)
         const [inicio, fim] = dados.get("periodo").split(" - ");
@@ -24,28 +29,28 @@ const ModalGerarEscala = ({ open, handleOpen }) => {
         }
 
         console.log("payload", payload)
-        // setTesteMostraEscala(true)
 
-        // try {
-        //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/regra`, payload);
-        //     if (response.status === 201) {
-        //         console.log("response", response)
-        //         toast.success("Nova regra cadastrada com sucesso! ✅", {
-        //             style: {
-        //                 background: "#227212",
-        //                 color: "white"
-        //             }
-        //         })
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/escala`, payload);
+            if (response.status === 200) {
+                console.log("response", response)
+                setLoading(false)
+                toast.success("Escala gerada com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
 
-        //         setTimeout(() => {
-        //             window.location.reload();
-        //         }, 1500);
-        //     } else {
-        //         console.log("erro ao chamar api ")
-        //     }
-        // } catch (error) {
-        //     console.error('resposta indisponível', error)
-        // }
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                console.log("erro ao chamar api")
+            }
+        } catch (error) {
+            console.error('resposta indisponível', error)
+        }
     }
 
     return (
@@ -112,10 +117,12 @@ const ModalGerarEscala = ({ open, handleOpen }) => {
                 </DialogActions>
             </form>
 
-            {/* <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+            <Backdrop sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
                 open={loading} >
                 <CircularProgress color="inherit" />
-            </Backdrop> */}
+            </Backdrop>
+
+            <Toaster />
         </Dialog >
     )
 }
