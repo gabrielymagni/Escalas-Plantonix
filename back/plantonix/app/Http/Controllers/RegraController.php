@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Regra;
+use App\Services\AuditLogger;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,11 @@ class RegraController extends Controller
                 return response()->json(['message' => 'Erro ao criar nova regra', 'err' => $regra['err']], 500);
             }
 
+            AuditLogger::log('CREATE', 'Regra', $regra['regra']->id, [
+                'tipo_profissional' => $regra['regra']->tipo_profissional,
+                'tipo_dia'          => $regra['regra']->tipo_dia,
+            ]);
+
             return response()->json([$regra['regra']], 201);
 
         } catch (Exception $e) {
@@ -62,6 +68,11 @@ class RegraController extends Controller
                 ], $cod);
             }
 
+            AuditLogger::log('UPDATE', 'Regra', $id, [
+                'tipo_profissional' => $regra['regra']->tipo_profissional,
+                'tipo_dia'          => $regra['regra']->tipo_dia,
+            ]);
+
             return response()->json([$regra['regra']], 200);
         } catch (Exception $e) {
             return response()->json(['message' => 'Erro ao atualizar a regra', 'err' => $e], 500);
@@ -77,6 +88,9 @@ class RegraController extends Controller
         if ($r != null) {
             return response(['message' => 'Erro ao excluir regra', 'err' => $r], 500);
         }
+
+        AuditLogger::log('DELETE', 'Regra', $id);
+
         return response([null], 204);
     }
 }

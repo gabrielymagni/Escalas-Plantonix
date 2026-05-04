@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Bloco;
+use App\Services\AuditLogger;
 
 class BlocoController extends Controller
 {
@@ -39,6 +40,8 @@ class BlocoController extends Controller
                 'nome' => $request->nome,
             ]);
 
+            AuditLogger::log('CREATE', 'Bloco', $bloco->id, ['nome' => $bloco->nome]);
+
             return response()->json([$bloco], 201);
 
         } catch (Exception $e) {
@@ -67,8 +70,15 @@ class BlocoController extends Controller
                 ], 404);
             }
 
+            $nomeAnterior = $bloco->nome;
             $bloco->nome = $request->nome;
             $bloco->save();
+
+            AuditLogger::log('UPDATE', 'Bloco', $bloco->id, [
+                'nome_anterior' => $nomeAnterior,
+                'nome_novo'     => $bloco->nome,
+            ]);
+
             return response()->json([$bloco], 200);
 
         } catch (Exception $e) {
@@ -88,6 +98,8 @@ class BlocoController extends Controller
                     'message' => "Bloco não encontrado"
                 ], 404);
             }
+
+            AuditLogger::log('DELETE', 'Bloco', $bloco->id, ['nome' => $bloco->nome]);
 
             $bloco->delete();
             return response()->json([null], 204);

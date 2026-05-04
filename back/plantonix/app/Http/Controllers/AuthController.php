@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Funcionario;
+use App\Services\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +15,7 @@ class AuthController extends Controller {
 		]);
 
 		if (!Auth::attempt($credentials)) {
+			AuditLogger::log('LOGIN_FALHOU', 'Auth', null, ['email' => $request->email]);
 			return response()->json(['message' => 'Credenciais inválidas.'], 401);
 		}
 
@@ -24,6 +26,11 @@ class AuthController extends Controller {
 
 		$accessToken  = $funcionario->createToken('access', ['*'], now()->addHour());
 		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addDays(30));
+
+		AuditLogger::log('LOGIN', 'Auth', $funcionario->id, [
+			'nome'  => $funcionario->nome,
+			'cargo' => $funcionario->cargo,
+		]);
 
 		return response()->json([
 			'access_token' => $accessToken->plainTextToken,
@@ -95,7 +102,14 @@ class AuthController extends Controller {
 	}
 
 	public function logout(Request $request) {
-		Auth::user()->tokens()->delete();
+		/** @var Funcionario $funcionario */
+		$funcionario = Auth::user();
+
+		AuditLogger::log('LOGOUT', 'Auth', $funcionario->id, [
+			'nome' => $funcionario->nome,
+		]);
+
+		$funcionario->tokens()->delete();
 
 		return response()->json(['message' => 'Logout realizado com sucesso.'])
 			->withoutCookie('refresh_token');
