@@ -1,7 +1,6 @@
 
 import { useState } from "react"
 import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
-import { toast } from "sonner";
 import axios from "axios";
 
 const useGerarEscala = () => {
@@ -15,10 +14,7 @@ const useGerarEscala = () => {
         setLoading(true)
 
         const dados = new FormData(evento.target);
-        console.log("regras selecionadas:", dados.get('bloco'));
-
         const encontraID = blocos.find(item => item.nome === dados.get('bloco'))
-        console.log("encontraID", encontraID);
 
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/escala/${encontraID.id}`);
