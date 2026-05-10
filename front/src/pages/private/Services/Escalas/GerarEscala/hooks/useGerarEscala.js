@@ -1,6 +1,7 @@
 
 import { useState } from "react"
 import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
+import axios from "axios";
 
 const useGerarEscala = () => {
 
@@ -13,34 +14,20 @@ const useGerarEscala = () => {
         setLoading(true)
 
         const dados = new FormData(evento.target);
-        console.log("regras selecionadas:", dados.get('bloco'));
-
         const encontraID = blocos.find(item => item.nome === dados.get('bloco'))
-        console.log("encontraID", encontraID);
 
-        setDadosEscala(mock);
-        setLoading(false)
-
-        // try {
-        //     const response = await axios.put(`${import.meta.env.VITE_API_URL}/regra/${encontraID.id}`);
-        //     if (response.status === 200) {
-        //         console.log("response", response)
-        //         toast.success("Regra editada com sucesso! ✅", {
-        //             style: {
-        //                 background: "#227212",
-        //                 color: "white"
-        //             }
-        //         })
-
-        //         setTimeout(() => {
-        //             window.location.reload();
-        //         }, 1500);
-        //     } else {
-        //         console.log("erro ao chamar api ")
-        //     }
-        // } catch (error) {
-        //     console.error('resposta indisponível', error)
-        // }
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/escala/${encontraID.id}`);
+            if (response.status === 200) {
+                console.log("response", response)
+                setDadosEscala(response.data.data);
+                setLoading(false)
+            } else {
+                console.log("erro ao chamar api ")
+            }
+        } catch (error) {
+            console.error('resposta indisponível', error)
+        }
     }
 
     const proximoMes = () =>

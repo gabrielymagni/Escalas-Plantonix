@@ -24,7 +24,7 @@ const ButtonsPrevNext = ({ periodo, handleNext, handlePrev, liberaEditar }) => {
                 </IconButton>
             </Grid>
 
-            <Grid size={{ md: 2, xs: 1 }} sx={{ display: 'flex', justifyContent: 'end' }}>
+            <Grid size={{ md: 2, xs: 12 }} sx={{ display: 'flex', justifyContent: 'end' }}>
                 <Button onClick={liberaEditar}
                     sx={{
                         bgcolor: '#1b1464', color: '#fff',
