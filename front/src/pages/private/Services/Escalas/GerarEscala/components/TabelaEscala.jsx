@@ -6,14 +6,14 @@ import useGerarEscala, { OpcoesEventos } from "../hooks/useGerarEscala";
 import useControlarEscala from "../hooks/useControlarEscala";
 import { formatarDia } from "../../../../../../../utils/formataDataDiaMesAno";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Toaster } from "sonner";
 
-const TabelaEscala = ({dadosEscala, handleChange}) => {
+const TabelaEscala = ({ dadosEscala, handleChange, submitSalvar }) => {
 
     const { mesAtual, proximoMes, mesAnterior, getTurno } = useGerarEscala();
 
-    const { buttonEditar, liberaEditar, salvaAlteracao } = useControlarEscala()
+    const { buttonEditar, liberaEditar } = useControlarEscala()
     const hoje = new Date().toISOString().slice(0, 10);
-
 
     const { inicio, diasNoPeriodo } = useMemo(() =>
         gerarPeriodo16a15(mesAtual),
@@ -30,7 +30,7 @@ const TabelaEscala = ({dadosEscala, handleChange}) => {
             return (
                 <TableCell
                     key={i} align="center" sx={{
-                        border: '1px solid #50b5ae', p: 0.5,
+                        border: '1px solid #50b5ae', p: 0.7,
                         backgroundColor: ehHoje
                             ? "#e3f2fd"
                             : "transparent",
@@ -68,7 +68,7 @@ const TabelaEscala = ({dadosEscala, handleChange}) => {
                             handleChange(profissional.id, dataFormatada, e.target.value)
                         }
                         sx={{
-                            color: "#fff", borderRadius: 2, p: 0.5,
+                            color: "#000", borderRadius: 2, p: 0.5,
                             bgcolor: background(getTurno(profissional, dataFormatada))
                         }}
                     >
@@ -85,82 +85,82 @@ const TabelaEscala = ({dadosEscala, handleChange}) => {
 
     return (
         <Paper sx={{ p: 2, border: '2px solid #50b5ae' }}>
+                <Typography sx={{
+                    fontSize: '15px', color: buttonEditar ? '#000' : '#b61b1b',
+                    textAlign: 'start',
+                }}>
+                    * Tabela em modo de {buttonEditar ? 'visualização' : 'edição'}
+                </Typography>
 
-            <Typography sx={{
-                fontSize: '15px', color: buttonEditar ? '#000' : '#b61b1b',
-                textAlign: 'start',
-            }}>
-                * Tabela em modo de {buttonEditar ? 'visualização' : 'edição'}
-            </Typography>
+                <ButtonsPrevNext
+                    handleNext={proximoMes}
+                    handlePrev={mesAnterior}
+                    periodo={formatarPeriodo(inicio, diasNoPeriodo)}
+                    liberaEditar={liberaEditar}
+                />
 
-            <ButtonsPrevNext
-                handleNext={proximoMes}
-                handlePrev={mesAnterior}
-                periodo={formatarPeriodo(inicio, diasNoPeriodo)}
-                liberaEditar={liberaEditar}
-            />
+                <TableContainer sx={{ mt: 2 }}>
+                    <Table size="small">
 
-            <TableContainer sx={{ mt: 2 }}>
-                <Table size="small">
-
-                    <TableHead>
-                        <TableRow >
-                            <TableCell sx={{
-                                border: '1px solid #50b5ae', p: 0.5,
-                                position: "sticky", left: 0, bgcolor: "#f3f3f3", zIndex: 3
-                            }}>
-                                <b>Profissional</b>
-                            </TableCell>
-
-                            {renderDiasHeader()}
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {dadosEscala.map((prof) => (
-                            <TableRow key={prof.id} sx={{ p: 0 }}>
+                        <TableHead>
+                            <TableRow >
                                 <TableCell sx={{
                                     border: '1px solid #50b5ae', p: 0.5,
-                                    position: "sticky",
-                                    left: 0,
-                                    bgcolor: "#f3f3f3",
-                                    zIndex: 2
+                                    position: "sticky", left: 0, bgcolor: "#f3f3f3", zIndex: 3
                                 }}>
-                                    {prof.nome}
+                                    <b>Profissional</b>
                                 </TableCell>
 
-                                {renderCelulas(prof)}
-
+                                {renderDiasHeader()}
                             </TableRow>
-                        ))}
-                    </TableBody>
+                        </TableHead>
 
-                </Table>
-            </TableContainer>
+                        <TableBody>
+                            {dadosEscala.map((prof) => (
+                                <TableRow key={prof.id} sx={{ p: 0 }}>
+                                    <TableCell sx={{
+                                        border: '1px solid #50b5ae', p: 0.5,
+                                        position: "sticky",
+                                        left: 0,
+                                        bgcolor: "#f3f3f3",
+                                        zIndex: 2
+                                    }}>
+                                        {prof.nome}
+                                    </TableCell>
 
-            {!buttonEditar &&
-                <Grid container spacing={2} sx={{
-                    display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3
-                }}>
+                                    {renderCelulas(prof)}
 
-                    <Grid size={{ md: 6, xs: 12 }} sx={{
-                        display: 'flex', justifyContent: 'center', alignItems: 'center',
+                                </TableRow>
+                            ))}
+                        </TableBody>
+
+                    </Table>
+                </TableContainer>
+
+                {!buttonEditar &&
+                    <Grid container spacing={2} sx={{
+                        display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 3
                     }}>
-                        <Button onClick={salvaAlteracao}
-                            sx={{
-                                bgcolor: '#258119', color: '#fff',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    transform: 'translateY(-3px)',
-                                }
-                            }} endIcon={<CheckCircleIcon />}>
-                            Salvar alterações
-                        </Button>
+
+                        <Grid size={{ md: 6, xs: 12 }} sx={{
+                            display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        }}>
+                            <Button onClick={submitSalvar}
+                                sx={{
+                                    bgcolor: '#258119', color: '#fff',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'translateY(-3px)',
+                                    }
+                                }} endIcon={<CheckCircleIcon />}>
+                                Salvar alterações
+                            </Button>
+                        </Grid>
+
                     </Grid>
+                }
 
-                </Grid>
-            }
-
+                <Toaster />
         </Paper>
 
     )
@@ -174,5 +174,5 @@ const background = (texto) => {
     if (texto === 'M') return '#f4ff95';
     if (texto === 'T') return '#ffbf8b';
     if (texto === 'N') return '#bae0ff';
-    if (texto === 'F') return '#797979';
+    if (texto === 'F') return '#b8b8b8';
 }

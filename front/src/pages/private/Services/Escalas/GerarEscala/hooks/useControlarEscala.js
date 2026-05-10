@@ -9,16 +9,12 @@ const useControlarEscala = () => {
         setButtonEditar(false)
     }
 
-    const salvaAlteracao = () => {
-        setButtonEditar(true)
-    }
-
     const handleOpen = () => {
         setOpen(prev => !prev);
     }
 
     return {
-        buttonEditar, open, liberaEditar, salvaAlteracao, handleOpen
+        buttonEditar, open, liberaEditar, handleOpen
     }
 }
 

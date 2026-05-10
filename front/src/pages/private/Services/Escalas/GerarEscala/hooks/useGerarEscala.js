@@ -2,12 +2,14 @@
 import { useState } from "react"
 import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
 import axios from "axios";
+import { toast } from "sonner";
 
 const useGerarEscala = () => {
 
     const [dadosEscala, setDadosEscala] = useState([]);
     const [loading, setLoading] = useState(false);
     const [mesAtual, setMesAtual] = useState(getPeriodoAtual());
+    const [itensAlterados, setItensAlterados] = useState([]);
 
     const filtraBloco = async (evento, blocos) => {
         evento.preventDefault();
@@ -38,17 +40,17 @@ const useGerarEscala = () => {
 
     //qual turno o profissina faz naquele dia 
     const getTurno = (profissional, data) => {
-        // console.log("dia", data)
         const dia = profissional.dias.find(
             d => d.data === data
         );
-        //retorna o turno
-        // console.log("dia", dia)
-        // console.log("", dia?.turno || '')
+       
         return dia?.turno || '';
     };
 
+    console.log('itensAlterados', itensAlterados)
+
     const handleChange = (idProfissional, data, turno) => {
+
         setDadosEscala(prev =>
             prev.map(prof => {
 
@@ -68,10 +70,62 @@ const useGerarEscala = () => {
                 };
             })
         );
+
+        setItensAlterados(prev => {
+
+            const profissional = dadosEscala.find(prof => prof.id === idProfissional);
+
+            const dia = profissional?.dias.find(d => d.data === data);
+
+            const idEscala = dia?.id_item_escala;
+
+            const jaExiste = prev.find(item => item.id === idEscala);
+
+            if (jaExiste) {
+                return prev.map(item => item.id === idEscala ? { ...item, turno } : item);
+            }
+
+            return [
+                ...prev,
+                {
+                    id: idEscala,
+                    turno
+                }
+            ];
+        });
     };
 
+    const submitSalvar = async () => {
+
+        const payload = {
+            "itens": itensAlterados
+        }
+
+        console.log("payload itens", payload)
+
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_API_URL}/escala`, payload);
+            if (response.status === 200) {
+                toast.success("Escala atualizada com sucesso! ✅", {
+                    style: {
+                        background: "#227212",
+                        color: "white"
+                    }
+                })
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                console.log("erro ao chamar api ")
+            }
+        } catch (error) {
+            console.error('resposta indisponível', error)
+        }
+    }
+
     return {
-        dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco, loading
+        dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco, loading, submitSalvar
     }
 }
 

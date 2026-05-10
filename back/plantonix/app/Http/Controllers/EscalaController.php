@@ -58,8 +58,8 @@ class EscalaController extends Controller
     {
         $request->validate([
             'itens' => 'required|array',
-            'itens.*.id' => 'required|integer|exists:escala_itens,id',
-            'itens.*.turno' => 'required|in:M,T,N',
+            // 'itens.*.id' => 'required|integer|exists:escala_itens,id',
+            // 'itens.*.turno' => 'required|in:M,T,N',
         ]);
 
         $escalaModel = new Escala();
