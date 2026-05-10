@@ -14,6 +14,7 @@ class Escala extends Model
         $query = DB::table('escala_itens as ei')
             ->leftJoin('funcionarios as f', 'f.id', '=', 'ei.funcionario_id')
             ->select(
+                'ei.id',
                 'ei.escala_id',
                 'ei.funcionario_id',
                 'f.nome',
@@ -47,6 +48,7 @@ class Escala extends Model
             }
 
             $resultado[$id]['dias'][] = [
+                'id_item_escala' => $r->id,
                 'data' => $r->data,
                 'turno' => $r->turno
             ];
@@ -240,5 +242,27 @@ class Escala extends Model
             'escala' => $escala,
             'sobrando' => array_values($sobrando)
         ];
+    }
+
+    public function editarEscalaItens(array $itens)
+    {
+        $atualizados = [];
+
+        foreach ($itens as $item) {
+
+            DB::table('escala_itens')
+                ->where('id', $item['id'])
+                ->update([
+                    'turno' => $item['turno'],
+                    'updated_at' => now()
+                ]);
+
+            $atualizados[] = [
+                'id' => $item['id'],
+                'turno' => $item['turno']
+            ];
+        }
+
+        return $atualizados;
     }
 }

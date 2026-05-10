@@ -10,6 +10,7 @@ use App\Http\Controllers\EscalaController;
 
 Route::post('/escala', [EscalaController::class, 'gerarEscala']);
 Route::get('/escala/{blocoId?}', [EscalaController::class, 'getEscala']);
+Route::put('/escala', [EscalaController::class, 'editarEscala']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/refresh', [AuthController::class, 'refresh']);

@@ -50,4 +50,27 @@ class EscalaController extends Controller
             'data' => $resultado
         ]);
     }
+
+    /**
+     * 🔹 Edita turnos da escala
+     */
+    public function editarEscala(Request $request)
+    {
+        $request->validate([
+            'itens' => 'required|array',
+            'itens.*.id' => 'required|integer|exists:escala_itens,id',
+            'itens.*.turno' => 'required|in:M,T,N',
+        ]);
+
+        $escalaModel = new Escala();
+
+        $resultado = $escalaModel->editarEscalaItens(
+            $request->itens
+        );
+
+        return response()->json([
+            'message' => 'Escala atualizada com sucesso',
+            'data' => $resultado
+        ]);
+    }
 }
