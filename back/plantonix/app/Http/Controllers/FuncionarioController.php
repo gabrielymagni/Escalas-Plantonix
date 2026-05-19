@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Funcionario;
+use App\Services\AuditLogger;
 
 class FuncionarioController extends Controller
 {
@@ -43,6 +44,12 @@ class FuncionarioController extends Controller
                 return response()->json(["message" => "Erro ao criar novo funcionário", "err" => $funcionario['err']], 500);
             }
 
+            AuditLogger::log('CREATE', 'Funcionario', $funcionario['funcionario']->id, [
+                'nome'  => $funcionario['funcionario']->nome,
+                'cargo' => $funcionario['funcionario']->cargo,
+                'coren' => $funcionario['funcionario']->coren,
+            ]);
+
             return response()->json([$funcionario['funcionario']], 201);
         } catch (Exception $e) {
             return response()->json(["message" => "Erro ao criar novo funcionário", "err" => $e], 500);
@@ -72,11 +79,18 @@ class FuncionarioController extends Controller
                 ], $cod);
             }
 
+            AuditLogger::log('UPDATE', 'Funcionario', $id, [
+                'nome'  => $funcionario['funcionario']->nome,
+                'cargo' => $funcionario['funcionario']->cargo,
+                'coren' => $funcionario['funcionario']->coren,
+            ]);
+
             return response()->json([$funcionario['funcionario']], 200);
         } catch (Exception $e) {
             return response()->json(["message" => "Erro ao atualizar funcionário", "err" => $e], 500);
         }
     }
+
     public function destroy($id)
     {
         $r = Funcionario::destroyFuncionario($id);
@@ -86,6 +100,9 @@ class FuncionarioController extends Controller
         if ($r != null) {
             return response(['message' => 'Erro ao excluir funcionário', 'err' => $r], 500);
         }
+
+        AuditLogger::log('DELETE', 'Funcionario', $id);
+
         return response([null], 204);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Escala;
+use App\Services\AuditLogger;
 
 class EscalaController extends Controller
 {
@@ -22,6 +23,11 @@ class EscalaController extends Controller
         $resultado = $escalaModel->gerarEscalaMes([
             'inicio' => $request->inicio,
             'fim' => $request->fim
+        ]);
+
+        AuditLogger::log('GERAR_ESCALA', 'Escala', null, [
+            'inicio' => $request->inicio,
+            'fim'    => $request->fim,
         ]);
 
         return response()->json([
