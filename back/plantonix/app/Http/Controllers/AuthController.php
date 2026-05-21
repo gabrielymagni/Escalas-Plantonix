@@ -23,8 +23,8 @@ class AuthController extends Controller {
 
 		$funcionario->tokens()->delete();
 
-		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes(config('auth.access_token_ttl')));
-		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes(config('auth.refresh_token_ttl')));
+		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes((int) config('auth.access_token_ttl')));
+		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes((int) config('auth.refresh_token_ttl')));
 
 		AuditLogger::log('LOGIN', 'Auth', $funcionario->id, [
 			'nome'  => $funcionario->nome,
@@ -80,8 +80,8 @@ class AuthController extends Controller {
 
 		$funcionario->tokens()->delete();
 
-		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes(config('auth.access_token_ttl')));
-		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes(config('auth.refresh_token_ttl')));
+		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes((int) config('auth.access_token_ttl')));
+		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes((int) config('auth.refresh_token_ttl')));
 
 		return response()->json([
 			'access_token' => $accessToken->plainTextToken,
