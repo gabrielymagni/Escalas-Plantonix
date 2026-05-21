@@ -3,7 +3,7 @@
 
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:18.4-alpine
     container_name: plantonix-db
     restart: unless-stopped
     environment:

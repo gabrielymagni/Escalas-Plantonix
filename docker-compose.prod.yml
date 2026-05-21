@@ -7,7 +7,7 @@
 
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:18.4-alpine
     restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -37,6 +37,9 @@ services:
       SESSION_DRIVER: database
       QUEUE_CONNECTION: database
       CACHE_STORE: database
+
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL}
+      REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL}
 
   frontend:
     image: ghcr.io/gabrielymagni/plantonix-frontend:latest
