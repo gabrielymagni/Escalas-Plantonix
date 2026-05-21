@@ -45,8 +45,9 @@ class EscalaController extends Controller
 
         if (!$escala) {
             return response()->json([
-                'message' => 'Nenhuma escala encontrada'
-            ], 404);
+                'escala_id' => null,
+                'data' => []
+            ]);
         }
 
         $resultado = (new Escala())->getEscala($escala->id, $blocoId);
