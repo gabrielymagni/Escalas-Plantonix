@@ -22,8 +22,17 @@ const useGerarEscala = () => {
             const response = await api.get(`/escala/${encontraID.id}`);
             const dados = response.data.data;
             setDadosEscala(dados);
+
             if (dados.length === 0) {
                 toast.info("Nenhuma escala encontrada. Gere uma nova escala para começar.");
+            } else if (dados[0]?.dias?.length > 0) {
+                const primeiraData = new Date(dados[0].dias[0].data + 'T12:00:00');
+                const ano = primeiraData.getFullYear();
+                const mes = primeiraData.getMonth();
+                const dia = primeiraData.getDate();
+                setMesAtual(dia <= 15
+                    ? new Date(ano, mes - 1, 1)
+                    : new Date(ano, mes, 1));
             }
         } catch (error) {
             toast.error("Erro ao buscar escala.");

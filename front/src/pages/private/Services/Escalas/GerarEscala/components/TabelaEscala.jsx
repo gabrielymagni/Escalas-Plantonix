@@ -8,9 +8,9 @@ import { formatarDia } from "../../../../../../../utils/formataDataDiaMesAno";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Toaster } from "sonner";
 
-const TabelaEscala = ({ dadosEscala, handleChange, submitSalvar }) => {
+const TabelaEscala = ({ dadosEscala, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior }) => {
 
-    const { mesAtual, proximoMes, mesAnterior, getTurno } = useGerarEscala();
+    const { getTurno } = useGerarEscala();
 
     const { buttonEditar, liberaEditar } = useControlarEscala()
     const hoje = new Date().toISOString().slice(0, 10);

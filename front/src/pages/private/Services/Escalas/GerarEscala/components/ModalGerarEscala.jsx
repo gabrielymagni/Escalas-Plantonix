@@ -1,7 +1,6 @@
 import { Autocomplete, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { Toaster } from "sonner";
 import useModalGerar from "../hooks/useModalGerar";
 
 
@@ -39,19 +38,9 @@ const ModalGerarEscala = ({ open, handleOpen }) => {
                                     <TextField {...params} label="Selecione o período" required
                                         name="periodo" />
                                 )}
-                                renderOption={(props, option) => (
-                                    <li {...props}>
+                                renderOption={({ key, ...props }, option) => (
+                                    <li key={key} {...props}>
                                         {option.label}
-                                        <input
-                                            type="hidden"
-                                            name="periodo_inicio"
-                                            value={option.inicio}
-                                        />
-                                        <input
-                                            type="hidden"
-                                            name="periodo_fim"
-                                            value={option.fim}
-                                        />
                                     </li>
                                 )}
                             />
@@ -78,13 +67,13 @@ const ModalGerarEscala = ({ open, handleOpen }) => {
                 <CircularProgress color="inherit" />
             </Backdrop>
 
-            <Toaster />
         </Dialog >
     )
 }
 
 export default ModalGerarEscala
 
+// ue kkkkkkkkkk
 const top100Films = [
     { title: 'The Shawshank Redemption', year: 1994 },
     { title: 'The Godfather', year: 1972 },

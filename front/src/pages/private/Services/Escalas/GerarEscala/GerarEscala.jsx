@@ -7,7 +7,7 @@ import TabelaEscala from "./components/TabelaEscala";
 
 export default function GerarEscala() {
 
-    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar } = useGerarEscala();
+    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior } = useGerarEscala();
     const { open, handleOpen } = useControlarEscala()
 
     console.log("dadosEscala", dadosEscala)
@@ -30,7 +30,8 @@ export default function GerarEscala() {
 
             {(!loading && dadosEscala.length > 0) &&
                 <TabelaEscala dadosEscala={dadosEscala} handleChange={handleChange}
-                submitSalvar={submitSalvar} />
+                    submitSalvar={submitSalvar} mesAtual={mesAtual}
+                    proximoMes={proximoMes} mesAnterior={mesAnterior} />
             }
 
             <ModalGerarEscala open={open} handleOpen={handleOpen} />
