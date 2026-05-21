@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('funcionarios', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nome', 255)->nullable();
-            $table->string('email', 255)->nullable();
+            $table->string('email', 255)->nullable()->unique();
             $table->string('coren', 20)->nullable();
             $table->string('cargo', 255)->nullable();
             $table->timestamps();

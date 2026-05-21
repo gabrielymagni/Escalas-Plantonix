@@ -17,5 +17,9 @@ class DatabaseSeeder extends Seeder
                 'password' => 'admin123',
             ]
         );
+
+        if (app()->environment('local', 'testing')) {
+            $this->call(DevSeeder::class);
+        }
     }
 }

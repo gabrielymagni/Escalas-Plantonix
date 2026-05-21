@@ -20,15 +20,15 @@ const useGerarEscala = () => {
 
         try {
             const response = await api.get(`/escala/${encontraID.id}`);
-            if (response.status === 200) {
-                console.log("response", response)
-                setDadosEscala(response.data.data);
-                setLoading(false)
-            } else {
-                console.log("erro ao chamar api ")
-            }
+            setDadosEscala(response.data.data);
         } catch (error) {
-            console.error('resposta indisponível', error)
+            if (error.response?.status === 404) {
+                toast.info("Nenhuma escala encontrada. Gere uma nova escala para começar.");
+            } else {
+                toast.error("Erro ao buscar escala.");
+            }
+        } finally {
+            setLoading(false);
         }
     }
 
