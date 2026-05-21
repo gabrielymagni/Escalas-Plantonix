@@ -2,18 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Funcionario;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::firstOrCreate(
-            ['email' => 'admin@platonix.com.br'],
+        Funcionario::firstOrCreate(
+            ['email' => 'admin@plantonix.com.br'],
             [
-                'name'     => 'Admin',
-                'password' => 'admin',
+                'nome'     => 'Admin',
+                'cargo'    => 'Coordenador',
+                'password' => 'admin123',
             ]
         );
     }

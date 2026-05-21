@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Funcionario;
 use App\Services\AuditLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller {
 	public function login(Request $request) {
@@ -14,13 +14,12 @@ class AuthController extends Controller {
 			'password' => 'required|string',
 		]);
 
-		if (!Auth::attempt($credentials)) {
+		$funcionario = Funcionario::where('email', $credentials['email'])->first();
+
+		if (!$funcionario || !Hash::check($credentials['password'], $funcionario->password)) {
 			AuditLogger::log('LOGIN_FALHOU', 'Auth', null, ['email' => $request->email]);
 			return response()->json(['message' => 'Credenciais inválidas.'], 401);
 		}
-
-		/** @var Funcionario $funcionario */
-		$funcionario = Auth::user();
 
 		$funcionario->tokens()->delete();
 
@@ -103,7 +102,7 @@ class AuthController extends Controller {
 
 	public function logout(Request $request) {
 		/** @var Funcionario $funcionario */
-		$funcionario = Auth::user();
+		$funcionario = $request->user();
 
 		AuditLogger::log('LOGOUT', 'Auth', $funcionario->id, [
 			'nome' => $funcionario->nome,
