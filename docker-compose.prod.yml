@@ -5,8 +5,6 @@
 #   docker compose -f docker-compose.prod.yml pull
 #   docker compose -f docker-compose.prod.yml up -d
 
-# Substitua SEU_USUARIO_GITHUB pelo seu usuário do GitHub (em letras minúsculas)
-
 services:
   db:
     image: postgres:16-alpine
