@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bloco/{id}', [BlocoController::class, 'show']);
     Route::get('/funcionario', [FuncionarioController::class, 'index']);
     Route::get('/funcionario/{id}', [FuncionarioController::class, 'show']);
+    Route::get('/funcionario/{id}/horas', [FuncionarioController::class, 'getHoras']);
     Route::get('/regra', [RegraController::class, 'index']);
     Route::get('/regra/{id}', [RegraController::class, 'show']);
 

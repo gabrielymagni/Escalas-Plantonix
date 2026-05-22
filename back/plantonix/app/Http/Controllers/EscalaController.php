@@ -41,7 +41,7 @@ class EscalaController extends Controller
      */
     public function getEscala($blocoId = null)
     {
-        $escala = Escala::latest()->first();
+        $escala = Escala::ativa()->latest()->first();
 
         if (!$escala) {
             return response()->json([
@@ -63,7 +63,10 @@ class EscalaController extends Controller
      */
     public function listarHistorico()
     {
-        $escalas = Escala::orderBy('created_at', 'desc')->get(['id', 'inicio', 'fim', 'created_at']);
+        $escalas = Escala::orderBy('created_at', 'desc')
+            ->leftJoin('funcionarios as f', 'f.id', '=', 'escalas.gerado_por')
+            ->select('escalas.id', 'escalas.inicio', 'escalas.fim', 'escalas.status', 'escalas.created_at', 'f.nome as gerado_por_nome')
+            ->get();
 
         return response()->json(['data' => $escalas]);
     }
