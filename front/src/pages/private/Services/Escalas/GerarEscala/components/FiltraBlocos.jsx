@@ -1,10 +1,11 @@
 import { Autocomplete, Button, Grid, TextField } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import PrintIcon from '@mui/icons-material/Print';
 import useModalBlocoHook from "../../../Cadastros/Blocos/hooks/useModalBlocoHook";
 import { useEffect } from "react";
 
-const FiltraBlocos = ({ filtraBloco, handleOpen, selectedBloco, onBlocoChange, onBlocosLoaded }) => {
+const FiltraBlocos = ({ filtraBloco, handleOpen, selectedBloco, onBlocoChange, onBlocosLoaded, handlePrint }) => {
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
 
     useEffect(() => {
@@ -37,22 +38,28 @@ const FiltraBlocos = ({ filtraBloco, handleOpen, selectedBloco, onBlocoChange, o
                         sx={{
                             bgcolor: '#1b1464', color: '#fff',
                             transition: 'all 0.3s ease',
-                            '&:hover': {
-                                transform: 'translateY(-3px)',
-                            }
+                            '&:hover': { transform: 'translateY(-3px)' }
                         }} endIcon={<SearchIcon />}>
                         Filtrar
                     </Button>
                 </Grid>
 
                 <Grid size={{ md: 6, xs: 12 }} gap={2} sx={{ display: 'flex', justifyContent: 'end' }} >
+                    {allBlocos.length > 0 &&
+                        <Button onClick={handlePrint}
+                            sx={{
+                                bgcolor: '#50b5ae', color: '#fff',
+                                transition: 'all 0.3s ease',
+                                '&:hover': { transform: 'translateY(-3px)' }
+                            }} endIcon={<PrintIcon />}>
+                            Imprimir
+                        </Button>
+                    }
                     <Button onClick={handleOpen}
                         sx={{
                             bgcolor: '#1b1464', color: '#fff',
                             transition: 'all 0.3s ease',
-                            '&:hover': {
-                                transform: 'translateY(-3px)',
-                            }
+                            '&:hover': { transform: 'translateY(-3px)' }
                         }} endIcon={<AddIcon />}>
                         Adicionar
                     </Button>

@@ -1,15 +1,17 @@
-import { Backdrop, CircularProgress, Grid, Typography } from '@mui/material'
+import { Backdrop, CircularProgress, Typography } from '@mui/material'
 import { useState } from 'react'
 import useGerarEscala from "./hooks/useGerarEscala";
 import ModalGerarEscala from "./components/ModalGerarEscala";
 import useControlarEscala from "./hooks/useControlarEscala";
 import FiltraBlocos from "./components/FiltraBlocos";
 import TabelaEscala from "./components/TabelaEscala";
+import usePrintEscala from "./hooks/usePrintEscala";
 
 export default function GerarEscala() {
 
     const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior, fetchLatestEscala, selectedBloco, setSelectedBloco } = useGerarEscala();
     const { open, handleOpen } = useControlarEscala()
+    const { printTodosOsBlocos } = usePrintEscala()
     const [allBlocos, setAllBlocos] = useState([]);
 
     const handleGerarSuccess = () => {
@@ -18,7 +20,7 @@ export default function GerarEscala() {
         if (bloco) fetchLatestEscala(bloco.id, bloco);
     };
 
-    console.log("dadosEscala", dadosEscala)
+    const handlePrint = () => printTodosOsBlocos(allBlocos, mesAtual)
 
     return (
         <>
@@ -40,6 +42,7 @@ export default function GerarEscala() {
                 selectedBloco={selectedBloco}
                 onBlocoChange={setSelectedBloco}
                 onBlocosLoaded={setAllBlocos}
+                handlePrint={handlePrint}
             />
 
             {(!loading && dadosEscala.length > 0) &&

@@ -103,6 +103,7 @@ const TabelaEscala = ({ dadosEscala, handleChange, submitSalvar, mesAtual, proxi
                 handlePrev={mesAnterior}
                 periodo={formatarPeriodo(inicio, diasNoPeriodo)}
                 liberaEditar={liberaEditar}
+                handlePrint={handlePrint}
             />
 
             <TableContainer sx={{ mt: 2 }}>

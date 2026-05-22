@@ -29,9 +29,7 @@ const ButtonsPrevNext = ({ periodo, handleNext, handlePrev, liberaEditar }) => {
                     sx={{
                         bgcolor: '#1b1464', color: '#fff',
                         transition: 'all 0.3s ease',
-                        '&:hover': {
-                            transform: 'translateY(-3px)',
-                        }
+                        '&:hover': { transform: 'translateY(-3px)' }
                     }} endIcon={<EditIcon />}
                 >
                     Editar
