@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import ModalEdicao from './components/ModalEdicao';
 import AlertRemove from './components/AlertRemove';
 import ModalAfastamento from './components/ModalAfastamento';
-import { Toaster } from 'sonner';
 import EstruturaTabela from './components/EstruturaTabela';
 
 const Funcionario = () => {
@@ -60,8 +59,6 @@ const Funcionario = () => {
                 <ModalAfastamento open={openAfastamento} onClose={handleCloseAfastamento}
                 funcionario={infoLinha} onUpdate={getAllFuncionarios} />
             }
-
-            <Toaster />
         </>
     )
 }
