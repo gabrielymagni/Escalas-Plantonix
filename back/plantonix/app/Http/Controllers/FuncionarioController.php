@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use App\Models\Funcionario;
 use App\Services\AuditLogger;
+use App\Services\HorasTrabalhadasService;
 
 class FuncionarioController extends Controller
 {
@@ -89,6 +90,20 @@ class FuncionarioController extends Controller
         } catch (Exception $e) {
             return response()->json(["message" => "Erro ao atualizar funcionário", "err" => $e], 500);
         }
+    }
+
+    public function getHoras($id)
+    {
+        $funcionario = Funcionario::find($id);
+        if (!$funcionario) {
+            return response()->json(['message' => 'Funcionário não encontrado'], 404);
+        }
+
+        $service = new HorasTrabalhadasService();
+        $service->verificarEGerarCompensacoes((int) $id);
+        $resultado = $service->calcularHorasAtivas((int) $id);
+
+        return response()->json($resultado, 200);
     }
 
     public function destroy($id)

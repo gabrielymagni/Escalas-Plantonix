@@ -1,10 +1,11 @@
 import {
-    Autocomplete, Backdrop, Button, CircularProgress, Grid, Paper,
+    Autocomplete, Backdrop, Box, Button, Chip, CircularProgress, Grid, Paper,
     Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow,
     TextField, Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EastIcon from '@mui/icons-material/East';
 import SearchIcon from '@mui/icons-material/Search';
 import HistoryIcon from '@mui/icons-material/History';
 import useHistoricoEscala from './hooks/useHistoricoEscala';
@@ -80,6 +81,8 @@ export default function HistoricoEscala() {
                                         <TableRow>
                                             <TableCell><b>Período</b></TableCell>
                                             <TableCell><b>Gerada em</b></TableCell>
+                                            <TableCell><b>Gerada por</b></TableCell>
+                                            <TableCell align="center"><b>Status</b></TableCell>
                                             <TableCell align="center"><b>Ações</b></TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -89,10 +92,29 @@ export default function HistoricoEscala() {
                                             .map(escala => (
                                                 <TableRow key={escala.id} hover>
                                                     <TableCell>
-                                                        {formatarData(escala.inicio)} → {formatarData(escala.fim)}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            {formatarData(escala.inicio)}
+                                                            <EastIcon sx={{ fontSize: 16, color: '#888' }} />
+                                                            {formatarData(escala.fim)}
+                                                        </Box>
                                                     </TableCell>
                                                     <TableCell>
                                                         {formatarDataHora(escala.created_at)}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {escala.gerado_por_nome ?? '—'}
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        <Chip
+                                                            label={escala.status === 'ativa' ? 'Ativa' : 'Inativa'}
+                                                            size="small"
+                                                            sx={{
+                                                                bgcolor: escala.status === 'ativa' ? '#e6f9f0' : '#f5f5f5',
+                                                                color: escala.status === 'ativa' ? '#1a7a4a' : '#888',
+                                                                fontWeight: 'bold',
+                                                                border: `1px solid ${escala.status === 'ativa' ? '#1a7a4a' : '#ccc'}`,
+                                                            }}
+                                                        />
                                                     </TableCell>
                                                     <TableCell align="center">
                                                         <Button
@@ -141,7 +163,11 @@ export default function HistoricoEscala() {
 
                     <Paper sx={{ p: 2, border: '1px solid #ccc', mb: 2 }}>
                         <Typography sx={{ fontWeight: 'bold', color: '#222059' }}>
-                            Período: {formatarData(escalaSelecionada.inicio)} → {formatarData(escalaSelecionada.fim)}
+                            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+                                Período: {formatarData(escalaSelecionada.inicio)}
+                                <EastIcon sx={{ fontSize: 16, color: '#888' }} />
+                                {formatarData(escalaSelecionada.fim)}
+                            </Box>
                         </Typography>
                         <Typography sx={{ color: '#666', fontSize: 13 }}>
                             Gerada em {formatarDataHora(escalaSelecionada.created_at)}

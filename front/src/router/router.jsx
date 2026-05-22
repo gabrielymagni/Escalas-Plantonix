@@ -7,6 +7,7 @@ import Login from "../pages/public/Login/Login";
 import GerarEscala from "../pages/private/Services/Escalas/GerarEscala/GerarEscala";
 import PrivateRoute from "./PrivateRoute";
 import HistoricoEscala from "../pages/private/Services/Escalas/HistoricoEscala/HistoricoEscala";
+import Compensacoes from "../pages/private/Services/Compensacoes/Compensacoes";
 
 export const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
                     {
                         path: 'historicoEscala',
                         element: <HistoricoEscala />,
+                    },
+                    {
+                        path: 'compensacoes',
+                        element: <Compensacoes />,
                     },
                 ]
             }

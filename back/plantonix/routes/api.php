@@ -9,6 +9,7 @@ use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\EscalaController;
 use App\Http\Controllers\AfastamentoController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\CompensacaoController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/refresh', [AuthController::class, 'refresh']);
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bloco/{id}', [BlocoController::class, 'show']);
     Route::get('/funcionario', [FuncionarioController::class, 'index']);
     Route::get('/funcionario/{id}', [FuncionarioController::class, 'show']);
+    Route::get('/funcionario/{id}/horas', [FuncionarioController::class, 'getHoras']);
     Route::get('/regra', [RegraController::class, 'index']);
     Route::get('/regra/{id}', [RegraController::class, 'show']);
 
@@ -46,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/funcionario/{id}/afastamento', [AfastamentoController::class, 'store']);
         Route::delete('/afastamento/{id}', [AfastamentoController::class, 'destroy']);
+
+        Route::get('/compensacoes', [CompensacaoController::class, 'index']);
+        Route::put('/compensacoes/{id}/resolver', [CompensacaoController::class, 'resolver']);
 
         Route::get('/notificacoes', [NotificacaoController::class, 'index']);
         Route::get('/notificacoes/lidas', [NotificacaoController::class, 'lidas']);

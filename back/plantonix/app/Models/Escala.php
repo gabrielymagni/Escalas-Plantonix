@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class Escala extends Model
 {
+    public function scopeAtiva($query)
+    {
+        return $query->where('status', 'ativa');
+    }
 
     public function getEscala($escalaId, $blocoId = null)
     {
@@ -59,9 +63,15 @@ class Escala extends Model
 
     public function gerarEscalaMes($raio = ['inicio' => '2026-04-16', 'fim' => '2026-05-15'])
     {
+        Escala::where('status', 'ativa')
+            ->where('inicio', '<=', $raio['fim'])
+            ->where('fim', '>=', $raio['inicio'])
+            ->update(['status' => 'inativa']);
+
         $escala = new Escala();
         $escala->inicio = $raio['inicio'];
         $escala->fim = $raio['fim'];
+        $escala->gerado_por = \Illuminate\Support\Facades\Auth::id();
         $escala->save();
 
         $inicio = Carbon::parse($raio['inicio']);

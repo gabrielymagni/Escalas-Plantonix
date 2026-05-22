@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Escala;
+use App\Models\Funcionario;
 use App\Services\AuditLogger;
+use App\Services\HorasTrabalhadasService;
 
 class EscalaController extends Controller
 {
@@ -30,6 +32,12 @@ class EscalaController extends Controller
             'fim'    => $request->fim,
         ]);
 
+        $service = new HorasTrabalhadasService();
+        $ids = Funcionario::where('faz_plantao', true)->pluck('id');
+        foreach ($ids as $id) {
+            $service->verificarEGerarCompensacoes($id);
+        }
+
         return response()->json([
             'message' => 'Escala gerada com sucesso',
             'data' => $resultado
@@ -41,7 +49,7 @@ class EscalaController extends Controller
      */
     public function getEscala($blocoId = null)
     {
-        $escala = Escala::latest()->first();
+        $escala = Escala::ativa()->latest()->first();
 
         if (!$escala) {
             return response()->json([
@@ -63,7 +71,10 @@ class EscalaController extends Controller
      */
     public function listarHistorico()
     {
-        $escalas = Escala::orderBy('created_at', 'desc')->get(['id', 'inicio', 'fim', 'created_at']);
+        $escalas = Escala::orderBy('created_at', 'desc')
+            ->leftJoin('funcionarios as f', 'f.id', '=', 'escalas.gerado_por')
+            ->select('escalas.id', 'escalas.inicio', 'escalas.fim', 'escalas.status', 'escalas.created_at', 'f.nome as gerado_por_nome')
+            ->get();
 
         return response()->json(['data' => $escalas]);
     }
