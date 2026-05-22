@@ -1,17 +1,24 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, TextField, Typography } from "@mui/material"
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Switch, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import useFuncionarioHook from "../hooks/useFuncionarioHook";
 import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { tipoEscala, turnosDisponiveis } from "./ModalCadastro";
 import { getOptionsFiltradas } from "../../../../../../../utils/filtraBlocosSelecionados";
 import { sxButton } from "../../Blocos/components/ModalEdicao";
 import SaveIcon from '@mui/icons-material/Save';
 
+const rolesDisponiveis = [
+    { id: 'admin', label: 'Administrador' },
+    { id: 'funcionario', label: 'Funcionário' },
+];
+
 const ModalEdicao = ({ open, info, handleCloseModal, }) => {
 
-    const { rankingBlocos, handleBlocosRanking, handleTurnos, turnoSelecionado, editarFuncionario, 
+    const { rankingBlocos, handleBlocosRanking, handleTurnos, turnoSelecionado, editarFuncionario,
         escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado } = useFuncionarioHook();
+    const [fazPlantao, setFazPlantao] = useState(true);
+    const [roleSelecionada, setRoleSelecionada] = useState(rolesDisponiveis[1]);
 
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
 
@@ -23,33 +30,21 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
 
         if (!info) return;
 
-        const escala = tipoEscala.find(
-            item => item.tipo === info.tipo_escala
-        );
+        setFazPlantao(info.faz_plantao ?? true);
 
+        const roleEncontrada = rolesDisponiveis.find(r => r.id === info.role) ?? rolesDisponiveis[1];
+        setRoleSelecionada(roleEncontrada);
+
+        const escala = tipoEscala.find(item => item.tipo === info.tipo_escala);
         setEscalaSelecionada(escala || null);
 
-        const turnos = escala
-            ? turnosDisponiveis(escala.tipo)
-            : [];
-
-        const turno = turnos.find(
-            item => item.id === info.turno
-        );
-
+        const turnos = escala ? turnosDisponiveis(escala.tipo) : [];
+        const turno = turnos.find(item => item.id === info.turno);
         setTurnoSelecionado(turno || null);
 
-        // ordena pela ordem do pivot
-        const blocosOrdenados = [...info.blocos]
-            .sort((a, b) => a.pivot.ordem - b.pivot.ordem);
-
-        // monta array na posição correta
+        const blocosOrdenados = [...info.blocos].sort((a, b) => a.pivot.ordem - b.pivot.ordem);
         const rankingInicial = [];
-
-        blocosOrdenados.forEach((bloco) => {
-            rankingInicial[bloco.pivot.ordem - 1] = bloco;
-        });
-
+        blocosOrdenados.forEach((bloco) => { rankingInicial[bloco.pivot.ordem - 1] = bloco; });
         handleBlocosRanking(rankingInicial);
 
     }, [info]);
@@ -66,7 +61,7 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
                 </IconButton>
             </DialogTitle>
 
-            <form onSubmit={(e) => editarFuncionario(e, info.id)}>
+            <form onSubmit={(e) => editarFuncionario(e, info.id, fazPlantao, roleSelecionada?.id)}>
 
                 <DialogContent>
 
@@ -81,7 +76,7 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField label="Coren" name="coren" fullWidth variant="filled" required defaultValue={info?.coren} />
+                            <TextField label="Coren" name="coren" fullWidth variant="filled" defaultValue={info?.coren} />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
@@ -93,69 +88,85 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
                                 defaultValue={info?.data_contratacao}
                                 slotProps={{
                                     inputLabel: { shrink: true },
-                                    input: {
-                                        inputProps: {
-                                            min: "0001-01-01",
-                                            max: "9999-12-31"
-                                        }
-                                    }
+                                    input: { inputProps: { min: "0001-01-01", max: "9999-12-31" } }
                                 }}
                             />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
                             <Autocomplete
-                                value={escalaSelecionada}
-                                options={tipoEscala}
-                                getOptionLabel={(option) => option.tipo}
-                                onChange={handleEscala}
+                                value={roleSelecionada}
+                                options={rolesDisponiveis}
+                                getOptionLabel={(option) => option.label}
+                                onChange={(_, v) => setRoleSelecionada(v)}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Tipos de escala" required name="tipo_escala" />
+                                    <TextField {...params} label="Perfil de acesso" required name="role" />
                                 )}
                             />
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <Autocomplete
-                                disabled={!escalaSelecionada}
-                                options={turnosDisponiveis(escalaSelecionada?.tipo)}
-                                getOptionLabel={(option) => option.turno}
-                                onChange={handleTurnos}
-                                value={turnoSelecionado}
-                                renderInput={(params) => (
-                                    <TextField {...params} label="Disponibilidade de turnos" required name="turno" />
-                                )}
-                            />
-                        </Grid>
-
-                        <Grid size={{ md: 6, xs: 12 }}>
-
-                            <Grid container spacing={2} sx={{ border: '2px solid #141259', p: 2, borderRadius: 5 }} >
-
-                                <Typography sx={{ textAlign: 'center', width: '100%' }}>
-                                    Ordem de preferência de blocos
-                                </Typography>
-
-                                {allBlocos.map((item, index) => (
-                                    <Autocomplete
-                                        key={index}
-                                        size="small"
-                                        fullWidth
-                                        options={getOptionsFiltradas(index, allBlocos, rankingBlocos)}
-                                        value={rankingBlocos[index] || null}
-                                        getOptionLabel={(option) => option?.nome ?? ""}
-                                        onChange={(event, newValue) =>
-                                            handleBlocosRanking(index, newValue)
-                                        }
-                                        renderInput={(params) => (
-                                            <TextField {...params} label={`${index + 1}° opção`} name="blocos" required />
-                                        )}
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={fazPlantao}
+                                        onChange={(e) => setFazPlantao(e.target.checked)}
+                                        color="primary"
                                     />
-                                ))}
+                                }
+                                label="Tira plantão"
+                            />
+                        </Grid>
 
+                        {fazPlantao && <>
+                            <Grid size={{ md: 6, xs: 12 }}>
+                                <Autocomplete
+                                    value={escalaSelecionada}
+                                    options={tipoEscala}
+                                    getOptionLabel={(option) => option.tipo}
+                                    onChange={handleEscala}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Tipos de escala" required name="tipo_escala" />
+                                    )}
+                                />
                             </Grid>
 
-                        </Grid>
+                            <Grid size={{ md: 6, xs: 12 }}>
+                                <Autocomplete
+                                    disabled={!escalaSelecionada}
+                                    options={turnosDisponiveis(escalaSelecionada?.tipo)}
+                                    getOptionLabel={(option) => option.turno}
+                                    onChange={handleTurnos}
+                                    value={turnoSelecionado}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Disponibilidade de turnos" required name="turno" />
+                                    )}
+                                />
+                            </Grid>
+
+                            <Grid size={{ md: 6, xs: 12 }}>
+                                <Grid container spacing={2} sx={{ border: '2px solid #141259', p: 2, borderRadius: 5 }}>
+                                    <Typography sx={{ textAlign: 'center', width: '100%' }}>
+                                        Ordem de preferência de blocos
+                                    </Typography>
+
+                                    {allBlocos.map((item, index) => (
+                                        <Autocomplete
+                                            key={index}
+                                            size="small"
+                                            fullWidth
+                                            options={getOptionsFiltradas(index, allBlocos, rankingBlocos)}
+                                            value={rankingBlocos[index] || null}
+                                            getOptionLabel={(option) => option?.nome ?? ""}
+                                            onChange={(event, newValue) => handleBlocosRanking(index, newValue)}
+                                            renderInput={(params) => (
+                                                <TextField {...params} label={`${index + 1}° opção`} name="blocos" required />
+                                            )}
+                                        />
+                                    ))}
+                                </Grid>
+                            </Grid>
+                        </>}
 
                     </Grid>
 

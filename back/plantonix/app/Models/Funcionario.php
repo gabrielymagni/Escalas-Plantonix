@@ -12,7 +12,7 @@ class Funcionario extends Authenticatable
 {
     use HasApiTokens, SoftDeletes, Notifiable;
 
-    protected $fillable = ['nome', 'email', 'coren', 'turno', 'tipo_escala', 'data_contratacao', 'cargo', 'password', 'faz_plantao'];
+    protected $fillable = ['nome', 'email', 'coren', 'turno', 'tipo_escala', 'data_contratacao', 'cargo', 'password', 'faz_plantao', 'role'];
     protected $hidden = ['password', 'remember_token'];
 
     protected function casts(): array
@@ -37,14 +37,18 @@ class Funcionario extends Authenticatable
     public static function createFuncinario($dados)
     {
         try {
+            $fazPlantao = $dados->faz_plantao ?? false;
+
             $funcionario = self::create([
                 "nome" => $dados->nome,
                 "email" => $dados->email,
                 "coren" => $dados->coren,
-                "turno" => $dados->turno,
-                "tipo_escala" => $dados->tipo_escala,
+                "turno" => $fazPlantao ? ($dados->turno ?? null) : null,
+                "tipo_escala" => $fazPlantao ? ($dados->tipo_escala ?? null) : null,
                 "data_contratacao" => $dados->data_contratacao,
-                "cargo" => $dados->cargo
+                "cargo" => $dados->cargo,
+                "faz_plantao" => $fazPlantao,
+                "role" => $dados->role ?? 'funcionario',
             ]);
 
             foreach ($dados->blocos as $bloco) {
@@ -82,14 +86,18 @@ class Funcionario extends Authenticatable
                 ]);
             }
 
+            $fazPlantao = $dados->faz_plantao ?? $funcionario->faz_plantao;
+
             $funcionario->update([
                 "nome" => $dados->nome,
                 "email" => $dados->email,
                 "coren" => $dados->coren,
-                "turno" => $dados->turno,
-                "tipo_escala" => $dados->tipo_escala,
+                "turno" => $fazPlantao ? ($dados->turno ?? null) : null,
+                "tipo_escala" => $fazPlantao ? ($dados->tipo_escala ?? null) : null,
                 "data_contratacao" => $dados->data_contratacao,
-                "cargo" => $dados->cargo
+                "cargo" => $dados->cargo,
+                "faz_plantao" => $fazPlantao,
+                "role" => $dados->role ?? $funcionario->role,
             ]);
 
             $funcionario->load('blocos');

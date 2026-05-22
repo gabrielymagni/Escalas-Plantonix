@@ -10,7 +10,7 @@ const isAfastadoHoje = (afastamentos = []) => {
 };
 
 export const getColumnsFuncionario = (handleModal, handleModalRemover, handleModalAfastamento) => [
-    { id: "id", label: "ID", minWidth: 50 },
+    { id: "id", label: "ID", minWidth: 10, maxWidth: 30, width: 30 },
     {
         id: "nome", label: "Nome", minWidth: 200,
         render: (row) => (
@@ -23,7 +23,6 @@ export const getColumnsFuncionario = (handleModal, handleModalRemover, handleMod
         )
     },
     { id: "email", label: "Email", minWidth: 200 },
-    { id: "coren", label: "Coren", minWidth: 100 },
     { id: "cargo", label: "Cargo", minWidth: 200 },
     {
         id: "turno", label: "Turno", minWidth: 200,
@@ -32,12 +31,6 @@ export const getColumnsFuncionario = (handleModal, handleModalRemover, handleMod
         )
     },
     { id: "tipo_escala", label: "Tipo escala", minWidth: 100 },
-    {
-        id: "data_contratacao", label: "Data de contratação", minWidth: 200,
-        render: (row) => (
-            <span>{formataDataDiaMesAno(row.data_contratacao)}</span>
-        )
-    },
     {
         id: "blocos", label: "Blocos", minWidth: 250,
         render: (row) => {

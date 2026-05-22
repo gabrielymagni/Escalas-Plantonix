@@ -10,8 +10,7 @@ const useNovoCadastroFuncionario = () => {
         setOpenModalCdastro(prev => !prev);
     }
 
-    const handleSubmit = async (evento, ranking) => {
-        console.log("evento", evento)
+    const handleSubmit = async (evento, ranking, fazPlantao = true) => {
         evento.preventDefault();
 
         const dados = new FormData(evento.target);
@@ -20,27 +19,25 @@ const useNovoCadastroFuncionario = () => {
         const coren = dados.get('coren')
         const data_contratacao = dados.get('data_contratacao')
         const cargo = dados.get('cargo')
-        const tipo_escala = dados.get('tipo_escala')
-        const turno = dados.get('turno')
-        const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno)
-        console.log("turnoAjusta", turnoAjustado)
 
         const payload = {
-            nome: nome,
-            email: email,
-            coren: coren,
-            turno: turnoAjustado.id,
-            tipo_escala: tipo_escala,
-            data_contratacao: data_contratacao,
-            cargo: cargo,
-            blocos: ranking.map((item, index) => {
+            nome,
+            email,
+            coren,
+            data_contratacao,
+            cargo,
+            faz_plantao: fazPlantao,
+            ...(fazPlantao ? (() => {
+                const tipo_escala = dados.get('tipo_escala');
+                const turno = dados.get('turno');
+                const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno);
                 return {
-                    id_bloco: item.id,
-                    ordem: index + 1
-                }
-            })
+                    turno: turnoAjustado?.id ?? null,
+                    tipo_escala,
+                    blocos: ranking.map((item, index) => ({ id_bloco: item.id, ordem: index + 1 }))
+                };
+            })() : { turno: null, tipo_escala: null, blocos: [] })
         }
-        console.log("payload", payload)
 
         try {
             const response = await api.post(`/funcionario`, payload);

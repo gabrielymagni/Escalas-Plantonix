@@ -40,6 +40,7 @@ class AuthController extends Controller {
 				'nome'        => $funcionario->nome,
 				'email'       => $funcionario->email,
 				'cargo'       => $funcionario->cargo,
+				'role'        => $funcionario->role,
 				'faz_plantao' => $funcionario->faz_plantao,
 			],
 		])->cookie(

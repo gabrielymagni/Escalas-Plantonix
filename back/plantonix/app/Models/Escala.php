@@ -153,6 +153,7 @@ class Escala extends Model
     public function gerarEscalaDia($regra, $data = null)
     {
         $funcionarios = Funcionario::with('blocos')
+            ->where('faz_plantao', true)
             ->when($data, function ($q) use ($data) {
                 $q->whereDoesntHave('afastamentos', function ($af) use ($data) {
                     $af->where('inicio', '<=', $data)->where('fim', '>=', $data);
