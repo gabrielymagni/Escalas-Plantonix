@@ -99,7 +99,9 @@ class FuncionarioController extends Controller
             return response()->json(['message' => 'Funcionário não encontrado'], 404);
         }
 
-        $resultado = (new HorasTrabalhadasService())->calcularHorasAtivas($id);
+        $service = new HorasTrabalhadasService();
+        $service->verificarEGerarCompensacoes((int) $id);
+        $resultado = $service->calcularHorasAtivas((int) $id);
 
         return response()->json($resultado, 200);
     }

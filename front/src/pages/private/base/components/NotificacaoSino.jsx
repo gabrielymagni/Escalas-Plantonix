@@ -7,6 +7,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CheckIcon from '@mui/icons-material/Check';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import api from '../../../../services/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,14 +16,19 @@ const acoesPorTipo = {
         { label: 'Ver funcionário', path: '/private/cadastroFuncionario', icon: <PersonSearchIcon sx={{ fontSize: 14 }} /> },
         { label: 'Ajustar escala', path: '/private/gerarEscala', icon: <CalendarMonthIcon sx={{ fontSize: 14 }} /> },
     ],
+    compensacao: [
+        { label: 'Ver compensações', path: '/private/compensacoes', icon: <EventAvailableIcon sx={{ fontSize: 14 }} /> },
+    ],
 };
 
 const corPorTipo = {
     afastamento: '#e67e00',
+    compensacao: '#1565c0',
 };
 
 const labelPorTipo = {
     afastamento: 'Afastamento',
+    compensacao: 'Compensação',
 };
 
 const ItemNotificacao = ({ n, onMarcarLida, onAcao, lida = false }) => {
