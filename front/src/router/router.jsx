@@ -1,10 +1,11 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import BaseAdmin from "../pages/private/base/BaseAdmin";
 import Bloco from "../pages/private/Services/Cadastros/Blocos/Bloco";
 import Funcionario from "../pages/private/Services/Cadastros/Funcionarios/Funcionario";
 import Regras from "../pages/private/Services/Cadastros/Regras/Regras";
 import Login from "../pages/public/Login/Login";
 import GerarEscala from "../pages/private/Services/Escalas/GerarEscala/GerarEscala";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
     {
@@ -13,32 +14,37 @@ export const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <BaseAdmin />
-    },
-    {
-        path: '*',
-        element: <BaseAdmin />
+        element: <Navigate to="/login" replace />
     },
     {
         path: '/private',
-        element: <BaseAdmin />,
+        element: <PrivateRoute />,
         children: [
             {
-                path: 'cadastroBloco',
-                element: <Bloco />,
-            },
-            {
-                path: 'cadastroFuncionario',
-                element: <Funcionario />,
-            },
-            {
-                path: 'cadastroRegras',
-                element: <Regras />,
-            },
-            {
-                path: 'gerarEscala',
-                element: <GerarEscala />,
-            },
+                element: <BaseAdmin />,
+                children: [
+                    {
+                        path: 'cadastroBloco',
+                        element: <Bloco />,
+                    },
+                    {
+                        path: 'cadastroFuncionario',
+                        element: <Funcionario />,
+                    },
+                    {
+                        path: 'cadastroRegras',
+                        element: <Regras />,
+                    },
+                    {
+                        path: 'gerarEscala',
+                        element: <GerarEscala />,
+                    },
+                ]
+            }
         ]
-    }
+    },
+    {
+        path: '*',
+        element: <Navigate to="/login" replace />
+    },
 ])

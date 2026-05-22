@@ -1,5 +1,5 @@
 import { useState } from "react"
-import axios from "axios"
+import api from "../../../../services/api"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 
@@ -20,11 +20,7 @@ const useLoginHook = () => {
         }
 
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/login`,
-                payload,
-                { withCredentials: true }  // necessário para receber o cookie do refresh_token
-            )
+            const response = await api.post('/login', payload)
             if (response.status === 200) {
                 localStorage.setItem('access_token', response.data.access_token)
                 localStorage.setItem('funcionario', JSON.stringify(response.data.funcionario))

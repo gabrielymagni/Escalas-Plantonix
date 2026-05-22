@@ -6,10 +6,11 @@ use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Funcionario extends Authenticatable
 {
-    use SoftDeletes, Notifiable;
+    use HasApiTokens, SoftDeletes, Notifiable;
 
     protected $fillable = ['nome', 'email', 'coren', 'turno', 'tipo_escala', 'data_contratacao', 'cargo', 'password', 'faz_plantao'];
     protected $hidden = ['password', 'remember_token'];

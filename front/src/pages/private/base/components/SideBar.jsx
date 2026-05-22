@@ -13,7 +13,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import Box from "@mui/material/Box";
 import useAdminBase from "../hooks/useAdminBase.js";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../../services/api";
 import { toast } from "sonner";
 
 export function SideBar({ openSideBar, handleDrawer }) {
@@ -27,11 +27,7 @@ export function SideBar({ openSideBar, handleDrawer }) {
 
     const handleLogout = async () => {
         try {
-            const token = localStorage.getItem('access_token');
-            await axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, {
-                withCredentials: true,
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await api.post('/logout');
         } catch {
             // ignora erro de rede — limpa sessão de qualquer forma
         } finally {

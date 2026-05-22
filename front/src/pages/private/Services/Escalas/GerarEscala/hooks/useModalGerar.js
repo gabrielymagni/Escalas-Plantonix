@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { gerarPeriodos } from "../../../../../../../utils/gerarPeriodoEscala";
-import axios from "axios";
+import api from "../../../../../../services/api";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -27,25 +27,15 @@ const useModalGerar = () => {
         console.log("payload", payload)
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/escala`, payload);
-            if (response.status === 200) {
-                console.log("response", response)
-                setLoading(false)
-                toast.success("Escala gerada com sucesso! ✅", {
-                    style: {
-                        background: "#227212",
-                        color: "white"
-                    }
-                })
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            } else {
-                console.log("erro ao chamar api")
-            }
+            await api.post(`/escala`, payload);
+            toast.success("Escala gerada com sucesso! ✅", {
+                style: { background: "#227212", color: "white" }
+            });
+            setTimeout(() => window.location.reload(), 1500);
         } catch (error) {
-            console.error('resposta indisponível', error)
+            toast.error("Erro ao gerar escala.");
+        } finally {
+            setLoading(false);
         }
     }
 

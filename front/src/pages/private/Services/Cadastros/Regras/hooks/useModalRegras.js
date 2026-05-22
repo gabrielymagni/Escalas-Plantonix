@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../../../../services/api";
 import { useState } from "react"
 import { toast } from "sonner";
 
@@ -34,7 +34,7 @@ const useModalRegras = () => {
         setLoading(true)
 
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/regra`);
+            const response = await api.get(`/regra`);
             if (response.status === 200) {
                 console.log("response", response)
                 setAllRegras(response.data);
@@ -73,7 +73,7 @@ const useModalRegras = () => {
         console.log("payload", payload)
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/regra`, payload);
+            const response = await api.post(`/regra`, payload);
             if (response.status === 201) {
                 console.log("response", response)
                 toast.success("Nova regra cadastrada com sucesso! ✅", {
@@ -119,7 +119,7 @@ const useModalRegras = () => {
         console.log("payload", payload)
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/regra/${id}`, payload);
+            const response = await api.put(`/regra/${id}`, payload);
             if (response.status === 200) {
                 console.log("response", response)
                 toast.success("Regra editada com sucesso! ✅", {
@@ -143,7 +143,7 @@ const useModalRegras = () => {
     const deleteRegra = async (id) => {
 
         try {
-            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/regra/${id}`);
+            const response = await api.delete(`/regra/${id}`);
             if (response.status === 204) {
                 console.log("response", response)
                 setOpenRemover(false)

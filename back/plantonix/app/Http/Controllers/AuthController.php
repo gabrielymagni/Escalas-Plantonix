@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Funcionario;
 use App\Services\AuditLogger;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller {
 	public function login(Request $request) {
@@ -14,18 +14,17 @@ class AuthController extends Controller {
 			'password' => 'required|string',
 		]);
 
-		if (!Auth::attempt($credentials)) {
+		$funcionario = Funcionario::where('email', $credentials['email'])->first();
+
+		if (!$funcionario || !Hash::check($credentials['password'], $funcionario->password)) {
 			AuditLogger::log('LOGIN_FALHOU', 'Auth', null, ['email' => $request->email]);
 			return response()->json(['message' => 'Credenciais inválidas.'], 401);
 		}
 
-		/** @var Funcionario $funcionario */
-		$funcionario = Auth::user();
-
 		$funcionario->tokens()->delete();
 
-		$accessToken  = $funcionario->createToken('access', ['*'], now()->addHour());
-		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addDays(30));
+		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes((int) config('auth.access_token_ttl')));
+		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes((int) config('auth.refresh_token_ttl')));
 
 		AuditLogger::log('LOGIN', 'Auth', $funcionario->id, [
 			'nome'  => $funcionario->nome,
@@ -35,7 +34,7 @@ class AuthController extends Controller {
 		return response()->json([
 			'access_token' => $accessToken->plainTextToken,
 			'token_type'   => 'Bearer',
-			'expires_in'   => 3600,
+			'expires_in'   => config('auth.access_token_ttl') * 60,
 			'funcionario'  => [
 				'id'          => $funcionario->id,
 				'nome'        => $funcionario->nome,
@@ -46,7 +45,7 @@ class AuthController extends Controller {
 		])->cookie(
 			'refresh_token',
 			$refreshToken->plainTextToken,
-			60 * 24 * 30,
+			config('auth.refresh_token_ttl'),
 			'/',
 			null,
 			true,
@@ -81,17 +80,17 @@ class AuthController extends Controller {
 
 		$funcionario->tokens()->delete();
 
-		$accessToken  = $funcionario->createToken('access', ['*'], now()->addHour());
-		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addDays(30));
+		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes((int) config('auth.access_token_ttl')));
+		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes((int) config('auth.refresh_token_ttl')));
 
 		return response()->json([
 			'access_token' => $accessToken->plainTextToken,
 			'token_type'   => 'Bearer',
-			'expires_in'   => 3600,
+			'expires_in'   => config('auth.access_token_ttl') * 60,
 		])->cookie(
 			'refresh_token',
 			$refreshToken->plainTextToken,
-			60 * 24 * 30,
+			config('auth.refresh_token_ttl'),
 			'/',
 			null,
 			true,
@@ -103,7 +102,7 @@ class AuthController extends Controller {
 
 	public function logout(Request $request) {
 		/** @var Funcionario $funcionario */
-		$funcionario = Auth::user();
+		$funcionario = $request->user();
 
 		AuditLogger::log('LOGOUT', 'Auth', $funcionario->id, [
 			'nome' => $funcionario->nome,

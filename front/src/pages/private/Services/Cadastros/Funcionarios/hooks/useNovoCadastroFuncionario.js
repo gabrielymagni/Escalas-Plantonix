@@ -1,5 +1,5 @@
 import { useState } from "react"
-import axios from "axios";
+import api from "../../../../../../services/api";
 import { turnosDisponiveis } from "../components/ModalCadastro";
 import { toast } from "sonner";
 
@@ -43,7 +43,7 @@ const useNovoCadastroFuncionario = () => {
         console.log("payload", payload)
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/funcionario`, payload);
+            const response = await api.post(`/funcionario`, payload);
             if (response.status === 201) {
                 console.log("response", response)
                 toast.success("Novo funcionário cadastrado com sucesso! ✅", {

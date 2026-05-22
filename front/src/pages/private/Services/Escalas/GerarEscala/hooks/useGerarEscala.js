@@ -1,8 +1,8 @@
 
 import { useState } from "react"
 import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
-import axios from "axios";
 import { toast } from "sonner";
+import api from "../../../../../../services/api";
 
 const useGerarEscala = () => {
 
@@ -19,16 +19,25 @@ const useGerarEscala = () => {
         const encontraID = blocos.find(item => item.nome === dados.get('bloco'))
 
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/escala/${encontraID.id}`);
-            if (response.status === 200) {
-                console.log("response", response)
-                setDadosEscala(response.data.data);
-                setLoading(false)
-            } else {
-                console.log("erro ao chamar api ")
+            const response = await api.get(`/escala/${encontraID.id}`);
+            const dados = response.data.data;
+            setDadosEscala(dados);
+
+            if (dados.length === 0) {
+                toast.info("Nenhuma escala encontrada. Gere uma nova escala para começar.");
+            } else if (dados[0]?.dias?.length > 0) {
+                const primeiraData = new Date(dados[0].dias[0].data + 'T12:00:00');
+                const ano = primeiraData.getFullYear();
+                const mes = primeiraData.getMonth();
+                const dia = primeiraData.getDate();
+                setMesAtual(dia <= 15
+                    ? new Date(ano, mes - 1, 1)
+                    : new Date(ano, mes, 1));
             }
         } catch (error) {
-            console.error('resposta indisponível', error)
+            toast.error("Erro ao buscar escala.");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -104,7 +113,7 @@ const useGerarEscala = () => {
         console.log("payload itens", payload)
 
         try {
-            const response = await axios.put(`${import.meta.env.VITE_API_URL}/escala`, payload);
+            const response = await api.put(`/escala`, payload);
             if (response.status === 200) {
                 toast.success("Escala atualizada com sucesso! ✅", {
                     style: {
