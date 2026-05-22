@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../../../../services/api';
 
 const useHistoricoEscala = () => {
     const [historico, setHistorico] = useState([]);
@@ -15,7 +15,7 @@ const useHistoricoEscala = () => {
     const carregarHistorico = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/escala/historico`);
+            const response = await api.get('/escala/historico');
             setHistorico(response.data.data);
         } catch (error) {
             console.error('Erro ao carregar histórico', error);
@@ -39,9 +39,9 @@ const useHistoricoEscala = () => {
         setLoadingDetalhe(true);
         try {
             const url = bloco
-                ? `${import.meta.env.VITE_API_URL}/escala/${escalaSelecionada.id}/detalhes/${bloco.id}`
-                : `${import.meta.env.VITE_API_URL}/escala/${escalaSelecionada.id}/detalhes`;
-            const response = await axios.get(url);
+                ? `/escala/${escalaSelecionada.id}/detalhes/${bloco.id}`
+                : `/escala/${escalaSelecionada.id}/detalhes`;
+            const response = await api.get(url);
             setDadosEscala(response.data.data);
         } catch (error) {
             console.error('Erro ao carregar escala', error);
