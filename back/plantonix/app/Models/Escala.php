@@ -29,13 +29,13 @@ class Escala extends Model
             $query->where('ei.bloco_id', $blocoId);
         }
 
-        $registros = $query->orderBy('ei.data')->get();
+        $registros = $query->whereNotNull('ei.funcionario_id')->orderBy('ei.data')->get();
 
         $resultado = [];
 
         foreach ($registros as $r) {
 
-            $id = $r->funcionario_id ?? 'sem_funcionario_' . uniqid();
+            $id = $r->funcionario_id;
 
             if (!isset($resultado[$id])) {
                 $resultado[$id] = [
