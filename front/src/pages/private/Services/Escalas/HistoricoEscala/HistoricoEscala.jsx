@@ -17,6 +17,16 @@ const formatarData = (data) => {
     return `${dia}/${mes}/${ano}`;
 };
 
+const formatarDataHora = (data) => {
+    const d = new Date(data);
+    const dia = String(d.getDate()).padStart(2, '0');
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const ano = d.getFullYear();
+    const hora = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${dia}/${mes}/${ano} ${hora}:${min}`;
+};
+
 export default function HistoricoEscala() {
     const {
         historico,
@@ -76,7 +86,7 @@ export default function HistoricoEscala() {
                                                 {formatarData(escala.inicio)} → {formatarData(escala.fim)}
                                             </TableCell>
                                             <TableCell>
-                                                {formatarData(escala.created_at)}
+                                                {formatarDataHora(escala.created_at)}
                                             </TableCell>
                                             <TableCell align="center">
                                                 <Button
@@ -84,6 +94,8 @@ export default function HistoricoEscala() {
                                                     onClick={() => selecionarEscala(escala)}
                                                     sx={{
                                                         bgcolor: '#1b1464', color: '#fff',
+                                                        px: 2, py: 0.75,
+                                                        textTransform: 'none',
                                                         transition: 'all 0.3s ease',
                                                         '&:hover': { transform: 'translateY(-2px)' }
                                                     }}
@@ -114,7 +126,7 @@ export default function HistoricoEscala() {
                             Período: {formatarData(escalaSelecionada.inicio)} → {formatarData(escalaSelecionada.fim)}
                         </Typography>
                         <Typography sx={{ color: '#666', fontSize: 13 }}>
-                            Gerada em {formatarData(escalaSelecionada.created_at)}
+                            Gerada em {formatarDataHora(escalaSelecionada.created_at)}
                         </Typography>
                     </Paper>
 
