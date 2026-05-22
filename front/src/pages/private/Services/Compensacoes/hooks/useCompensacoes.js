@@ -22,9 +22,13 @@ export default function useCompensacoes() {
     const resolverCompensacao = async (id) => {
         try {
             await api.put(`/compensacoes/${id}/resolver`);
-            setCompensacoes(prev =>
-                prev.map(c => c.id === id ? { ...c, status: 'resolvida' } : c)
-            );
+            if (filtroStatus === 'pendente') {
+                setCompensacoes(prev => prev.filter(c => c.id !== id));
+            } else {
+                setCompensacoes(prev =>
+                    prev.map(c => c.id === id ? { ...c, status: 'resolvida' } : c)
+                );
+            }
         } catch {
             // silencioso
         }
