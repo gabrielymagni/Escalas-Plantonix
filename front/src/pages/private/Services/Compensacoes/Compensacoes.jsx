@@ -45,7 +45,7 @@ export default function Compensacoes() {
             <Paper sx={{ p: 2, border: '2px solid #50b5ae' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                     <Typography sx={{ color: '#50b5ae', fontWeight: 'bold' }}>
-                        Folgas pendentes (RN005)
+                        Folgas pendentes 
                     </Typography>
 
                     <ToggleButtonGroup
