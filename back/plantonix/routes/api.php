@@ -15,6 +15,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/escala', [EscalaController::class, 'gerarEscala']);
+    Route::get('/escala/historico', [EscalaController::class, 'listarHistorico']);
+    Route::get('/escala/{escalaId}/detalhes/{blocoId?}', [EscalaController::class, 'getEscalaPorId']);
     Route::get('/escala/{blocoId?}', [EscalaController::class, 'getEscala']);
     Route::put('/escala', [EscalaController::class, 'editarEscala']);
 

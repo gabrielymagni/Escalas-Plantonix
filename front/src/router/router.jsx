@@ -6,6 +6,7 @@ import Regras from "../pages/private/Services/Cadastros/Regras/Regras";
 import Login from "../pages/public/Login/Login";
 import GerarEscala from "../pages/private/Services/Escalas/GerarEscala/GerarEscala";
 import PrivateRoute from "./PrivateRoute";
+import HistoricoEscala from "../pages/private/Services/Escalas/HistoricoEscala/HistoricoEscala";
 
 export const router = createBrowserRouter([
     {
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
                     {
                         path: 'gerarEscala',
                         element: <GerarEscala />,
+                    },
+                    {
+                        path: 'historicoEscala',
+                        element: <HistoricoEscala />,
                     },
                 ]
             }

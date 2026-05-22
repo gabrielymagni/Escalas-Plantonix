@@ -1,6 +1,7 @@
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddHomeIcon from '@mui/icons-material/AddHome';
 import FeedIcon from '@mui/icons-material/Feed';
+import HistoryIcon from '@mui/icons-material/History';
 
 export const RoutesSidebar = [
     {
@@ -30,5 +31,12 @@ export const RoutesSidebar = [
         divider: true,
         icon: <FeedIcon />,
         text_divider: "Escalas"
+    },
+    {
+        name: "Histórico",
+        path: "/private/historicoEscala",
+        divider: false,
+        icon: <HistoryIcon />,
+        text_divider: " "
     },
 ];
