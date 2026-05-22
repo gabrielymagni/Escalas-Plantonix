@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 
 const useFuncionarioHook = () => {
 
-    const [infoLinha, setInfoLinha] = useState(); //pega dados da linha selecioanda pra passar pro modal 
+    const [infoLinha, setInfoLinha] = useState();
     const [openModal, setOpenModal] = useState(false);
     const [openRemove, setOpenRemove] = useState(false);
+    const [openAfastamento, setOpenAfastamento] = useState(false);
     const [rankingBlocos, setRankingBlocos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [allFuncionarios, setAllFuncionarios] = useState([]);
@@ -44,6 +45,15 @@ const useFuncionarioHook = () => {
     const handleModalRemover = (row) => {
         setOpenRemove((prev) => !prev);
         setInfoLinha(row)
+    }
+
+    const handleModalAfastamento = (row) => {
+        setInfoLinha(row);
+        setOpenAfastamento(true);
+    }
+
+    const handleCloseAfastamento = () => {
+        setOpenAfastamento(false);
     }
 
     const handleBlocosRanking = (indexOrArray, value) => {
@@ -96,9 +106,9 @@ const useFuncionarioHook = () => {
     }
 
     const rows = getRowsFuncionario(allFuncionarios);
-    const columns = getColumnsFuncionario(handleModal, handleModalRemover);
+    const columns = getColumnsFuncionario(handleModal, handleModalRemover, handleModalAfastamento);
 
-    const editarFuncionario = async (evento, id) => {
+    const editarFuncionario = async (evento, id, fazPlantao = true, role = 'funcionario') => {
         evento.preventDefault();
         setLoading(true)
 
@@ -108,26 +118,26 @@ const useFuncionarioHook = () => {
         const coren = dados.get('coren')
         const data_contratacao = dados.get('data_contratacao')
         const cargo = dados.get('cargo')
-        const tipo_escala = dados.get('tipo_escala')
-        const turno = dados.get('turno')
-        const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno)
 
         const payload = {
-            nome: nome,
-            email: email,
-            coren: coren,
-            turno: turnoAjustado.id,
-            tipo_escala: tipo_escala,
-            data_contratacao: data_contratacao,
-            cargo: cargo,
-            blocos: rankingBlocos.map((item, index) => {
+            nome,
+            email,
+            coren,
+            data_contratacao,
+            cargo,
+            faz_plantao: fazPlantao,
+            role,
+            ...(fazPlantao ? (() => {
+                const tipo_escala = dados.get('tipo_escala');
+                const turno = dados.get('turno');
+                const turnoAjustado = turnosDisponiveis(tipo_escala).find(item => item.turno === turno);
                 return {
-                    id_bloco: item.id,
-                    ordem: index + 1
-                }
-            })
+                    turno: turnoAjustado?.id ?? null,
+                    tipo_escala,
+                    blocos: rankingBlocos.map((item, index) => ({ id_bloco: item.id, ordem: index + 1 }))
+                };
+            })() : { turno: null, tipo_escala: null, blocos: [] })
         }
-        console.log("payload", payload)
 
         try {
             const response = await api.put(`/funcionario/${id}`, payload);
@@ -154,8 +164,9 @@ const useFuncionarioHook = () => {
 
     return {
         rows, columns, infoLinha, openModal, handleCloseModal, allFuncionarios, deleteFuncionario,
-        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading, openRemove, handleModalRemover, 
-        handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado
+        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading, openRemove, handleModalRemover,
+        handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado,
+        openAfastamento, handleModalAfastamento, handleCloseAfastamento,
     }
 }
 

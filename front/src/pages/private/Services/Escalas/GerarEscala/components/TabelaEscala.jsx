@@ -6,7 +6,6 @@ import useGerarEscala, { OpcoesEventos } from "../hooks/useGerarEscala";
 import useControlarEscala from "../hooks/useControlarEscala";
 import { formatarDia } from "../../../../../../../utils/formataDataDiaMesAno";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Toaster } from "sonner";
 
 const TabelaEscala = ({ dadosEscala, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior }) => {
 
@@ -167,7 +166,6 @@ const TabelaEscala = ({ dadosEscala, handleChange, submitSalvar, mesAtual, proxi
                 </Grid>
             }
 
-            <Toaster />
         </Paper>
 
     )

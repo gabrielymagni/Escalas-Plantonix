@@ -4,9 +4,9 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import useModalGerar from "../hooks/useModalGerar";
 
 
-const ModalGerarEscala = ({ open, handleOpen }) => {
+const ModalGerarEscala = ({ open, handleOpen, onSuccess }) => {
 
-    const { submitGerarEscala, loading, periodos } = useModalGerar();
+    const { submitGerarEscala, loading, periodos } = useModalGerar(onSuccess);
 
     return (
         <Dialog fullWidth={'md'} open={open} onClose={() => handleOpen()}

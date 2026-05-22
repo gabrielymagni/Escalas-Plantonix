@@ -6,11 +6,10 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
-const useModalGerar = () => {
+const useModalGerar = (onSuccess) => {
 
     const periodos = gerarPeriodos();
     const [loading, setLoading] = useState(false);
-
 
     const submitGerarEscala = async (evento) => {
         evento.preventDefault();
@@ -24,21 +23,18 @@ const useModalGerar = () => {
             fim: dayjs(fim, "DD/MM/YYYY").format("YYYY-MM-DD"),
         }
 
-        console.log("payload", payload)
-
         try {
             await api.post(`/escala`, payload);
             toast.success("Escala gerada com sucesso! ✅", {
                 style: { background: "#227212", color: "white" }
             });
-            setTimeout(() => window.location.reload(), 1500);
+            onSuccess?.();
         } catch (error) {
             toast.error("Erro ao gerar escala.");
         } finally {
             setLoading(false);
         }
     }
-
 
     return {
         submitGerarEscala, loading, periodos

@@ -10,6 +10,38 @@ const useGerarEscala = () => {
     const [loading, setLoading] = useState(false);
     const [mesAtual, setMesAtual] = useState(getPeriodoAtual());
     const [itensAlterados, setItensAlterados] = useState([]);
+    const [selectedBloco, setSelectedBloco] = useState(null);
+
+    const aplicarDadosEscala = (dados) => {
+        setDadosEscala(dados);
+        if (dados[0]?.dias?.length > 0) {
+            const primeiraData = new Date(dados[0].dias[0].data + 'T12:00:00');
+            const ano = primeiraData.getFullYear();
+            const mes = primeiraData.getMonth();
+            const dia = primeiraData.getDate();
+            setMesAtual(dia <= 15
+                ? new Date(ano, mes - 1, 1)
+                : new Date(ano, mes, 1));
+        }
+    };
+
+    const fetchLatestEscala = async (blocoId, blocoObj) => {
+        setLoading(true);
+        try {
+            const response = await api.get(`/escala/${blocoId}`);
+            const dados = response.data.data;
+            if (dados.length === 0) {
+                toast.info("Nenhuma escala encontrada.");
+            } else {
+                aplicarDadosEscala(dados);
+                if (blocoObj) setSelectedBloco(blocoObj);
+            }
+        } catch {
+            toast.error("Erro ao buscar escala.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filtraBloco = async (evento, blocos) => {
         evento.preventDefault();
@@ -25,14 +57,8 @@ const useGerarEscala = () => {
 
             if (dados.length === 0) {
                 toast.info("Nenhuma escala encontrada. Gere uma nova escala para começar.");
-            } else if (dados[0]?.dias?.length > 0) {
-                const primeiraData = new Date(dados[0].dias[0].data + 'T12:00:00');
-                const ano = primeiraData.getFullYear();
-                const mes = primeiraData.getMonth();
-                const dia = primeiraData.getDate();
-                setMesAtual(dia <= 15
-                    ? new Date(ano, mes - 1, 1)
-                    : new Date(ano, mes, 1));
+            } else {
+                aplicarDadosEscala(dados);
             }
         } catch (error) {
             toast.error("Erro ao buscar escala.");
@@ -134,7 +160,8 @@ const useGerarEscala = () => {
     }
 
     return {
-        dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco, loading, submitSalvar
+        dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco,
+        loading, submitSalvar, fetchLatestEscala, selectedBloco, setSelectedBloco
     }
 }
 

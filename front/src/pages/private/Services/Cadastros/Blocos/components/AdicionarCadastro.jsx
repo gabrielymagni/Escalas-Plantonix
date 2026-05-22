@@ -2,7 +2,6 @@ import { Button, Grid } from "@mui/material";
 import useModalBlocoHook from "../hooks/useModalBlocoHook";
 import ModalCadastro from "./ModalCadastro";
 import AddIcon from '@mui/icons-material/Add';
-import { Toaster } from "sonner";
 
 
 const AdicionarCadastro = () => {
@@ -25,7 +24,6 @@ const AdicionarCadastro = () => {
                  cadastrarSubmit={cadastrarSubmit} loading={loading} />
             }
 
-            <Toaster />
         </>
     )
 }

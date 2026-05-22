@@ -1,0 +1,2 @@
+ALTER TABLE public.funcionarios
+ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'admin';

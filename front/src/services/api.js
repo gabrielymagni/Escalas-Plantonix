@@ -29,10 +29,11 @@ api.interceptors.response.use(
                 localStorage.setItem('access_token', data.access_token)
                 original.headers.Authorization = `Bearer ${data.access_token}`
                 return api(original)
-            } catch {
+            } catch (refreshError) {
+                console.error('[DEBUG] Refresh falhou:', refreshError?.response?.status, refreshError?.response?.data)
                 localStorage.removeItem('access_token')
                 localStorage.removeItem('funcionario')
-                window.location.href = '/login'
+                // window.location.href = '/login'  // DEBUG: redirect desabilitado
             }
         }
 

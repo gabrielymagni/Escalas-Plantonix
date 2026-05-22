@@ -29,13 +29,13 @@ class Escala extends Model
             $query->where('ei.bloco_id', $blocoId);
         }
 
-        $registros = $query->orderBy('ei.data')->get();
+        $registros = $query->whereNotNull('ei.funcionario_id')->orderBy('ei.data')->get();
 
         $resultado = [];
 
         foreach ($registros as $r) {
 
-            $id = $r->funcionario_id ?? 'sem_funcionario_' . uniqid();
+            $id = $r->funcionario_id;
 
             if (!isset($resultado[$id])) {
                 $resultado[$id] = [
@@ -83,7 +83,7 @@ class Escala extends Model
 
             $regra = $data->isWeekend() ? $regraDiaInutil : $regraDiaUtil;
 
-            $escalaDia = $this->gerarEscalaDia($regra);
+            $escalaDia = $this->gerarEscalaDia($regra, $data->format('Y-m-d'));
 
             foreach ($escalaDia['escala'] as $blocoId => $bloco) {
 
@@ -150,9 +150,16 @@ class Escala extends Model
         return array_values($resultado);
     }
 
-    public function gerarEscalaDia($regra)
+    public function gerarEscalaDia($regra, $data = null)
     {
-        $funcionarios = Funcionario::with('blocos')->get();
+        $funcionarios = Funcionario::with('blocos')
+            ->where('faz_plantao', true)
+            ->when($data, function ($q) use ($data) {
+                $q->whereDoesntHave('afastamentos', function ($af) use ($data) {
+                    $af->where('inicio', '<=', $data)->where('fim', '>=', $data);
+                });
+            })
+            ->get();
 
         // 🔹 Separar funcionários por turno e bloco preferido (ordem = 1)
         $pool = [
@@ -164,13 +171,30 @@ class Escala extends Model
         foreach ($funcionarios as $f) {
             $blocoPreferido = $f->blocos->firstWhere('pivot.ordem', 1);
 
-            if ($blocoPreferido) {
-                $pool[$f->turno][] = [
-                    'funcionario' => $f,
-                    'bloco_id' => $blocoPreferido->id
-                ];
+            if (!$blocoPreferido) continue;
+
+            $entrada = ['funcionario' => $f, 'bloco_id' => $blocoPreferido->id];
+
+            if ($f->turno === 'MT') {
+                $pool['M'][] = $entrada;
+                $pool['T'][] = $entrada;
+            } else {
+                $pool[$f->turno][] = $entrada;
             }
         }
+
+        // Rotaciona o pool a cada dia para distribuição justa (base para RN002)
+        $dayIndex = (new \DateTime($data ?? 'today'))->diff(new \DateTime('2020-01-01'))->days;
+        foreach ($pool as $turno => &$pessoas) {
+            if (count($pessoas) > 1) {
+                $offset = $dayIndex % count($pessoas);
+                $pessoas = array_values(array_merge(
+                    array_slice($pessoas, $offset),
+                    array_slice($pessoas, 0, $offset)
+                ));
+            }
+        }
+        unset($pessoas);
 
         $escala = [];
         $sobrando = [];

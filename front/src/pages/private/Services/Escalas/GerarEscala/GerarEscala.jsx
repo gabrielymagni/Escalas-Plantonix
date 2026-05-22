@@ -1,4 +1,5 @@
 import { Backdrop, CircularProgress, Grid, Typography } from '@mui/material'
+import { useState } from 'react'
 import useGerarEscala from "./hooks/useGerarEscala";
 import ModalGerarEscala from "./components/ModalGerarEscala";
 import useControlarEscala from "./hooks/useControlarEscala";
@@ -7,8 +8,15 @@ import TabelaEscala from "./components/TabelaEscala";
 
 export default function GerarEscala() {
 
-    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior } = useGerarEscala();
+    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior, fetchLatestEscala, selectedBloco, setSelectedBloco } = useGerarEscala();
     const { open, handleOpen } = useControlarEscala()
+    const [allBlocos, setAllBlocos] = useState([]);
+
+    const handleGerarSuccess = () => {
+        handleOpen();
+        const bloco = allBlocos.find(b => b.id === 1) ?? allBlocos[0];
+        if (bloco) fetchLatestEscala(bloco.id, bloco);
+    };
 
     console.log("dadosEscala", dadosEscala)
 
@@ -26,7 +34,13 @@ export default function GerarEscala() {
                 Escalas
             </Typography>
 
-            <FiltraBlocos filtraBloco={filtraBloco} handleOpen={handleOpen} />
+            <FiltraBlocos
+                filtraBloco={filtraBloco}
+                handleOpen={handleOpen}
+                selectedBloco={selectedBloco}
+                onBlocoChange={setSelectedBloco}
+                onBlocosLoaded={setAllBlocos}
+            />
 
             {(!loading && dadosEscala.length > 0) &&
                 <TabelaEscala dadosEscala={dadosEscala} handleChange={handleChange}
@@ -34,7 +48,7 @@ export default function GerarEscala() {
                     proximoMes={proximoMes} mesAnterior={mesAnterior} />
             }
 
-            <ModalGerarEscala open={open} handleOpen={handleOpen} />
+            <ModalGerarEscala open={open} handleOpen={handleOpen} onSuccess={handleGerarSuccess} />
         </>
     );
 }

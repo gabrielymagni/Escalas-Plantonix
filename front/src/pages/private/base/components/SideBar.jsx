@@ -55,7 +55,7 @@ export function SideBar({ openSideBar, handleDrawer }) {
 
             <List>
                 {RoutesSidebar.map(item => (
-                    <ListItem key={item.path} disablePadding sx={{ display: "block" }} title={item.name}>
+                    <ListItem key={item.path} disablePadding sx={{ display: "block", mt: item.divider ? 1.5 : 0 }} title={item.name}>
                         {item.divider &&
                             <Divider sx={{ fontSize: 14, color: '#000000' }}>
                                 {openSideBar ? item.text_divider : null}

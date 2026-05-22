@@ -1,9 +1,9 @@
 import {
     Autocomplete, Backdrop, Button, CircularProgress, Grid, Paper,
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow,
     TextField, Typography
 } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SearchIcon from '@mui/icons-material/Search';
 import HistoryIcon from '@mui/icons-material/History';
@@ -41,6 +41,9 @@ export default function HistoricoEscala() {
 
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
     useEffect(() => {
         getAllBlocos();
     }, []);
@@ -70,45 +73,60 @@ export default function HistoricoEscala() {
                             Nenhuma escala encontrada.
                         </Typography>
                     ) : (
-                        <TableContainer>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell><b>Período</b></TableCell>
-                                        <TableCell><b>Gerada em</b></TableCell>
-                                        <TableCell align="center"><b>Ações</b></TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {historico.map(escala => (
-                                        <TableRow key={escala.id} hover>
-                                            <TableCell>
-                                                {formatarData(escala.inicio)} → {formatarData(escala.fim)}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatarDataHora(escala.created_at)}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Button
-                                                    size="small"
-                                                    onClick={() => selecionarEscala(escala)}
-                                                    sx={{
-                                                        bgcolor: '#1b1464', color: '#fff',
-                                                        px: 2, py: 0.75,
-                                                        textTransform: 'none',
-                                                        transition: 'all 0.3s ease',
-                                                        '&:hover': { transform: 'translateY(-2px)' }
-                                                    }}
-                                                    endIcon={<HistoryIcon />}
-                                                >
-                                                    Visualizar
-                                                </Button>
-                                            </TableCell>
+                        <>
+                            <TableContainer>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell><b>Período</b></TableCell>
+                                            <TableCell><b>Gerada em</b></TableCell>
+                                            <TableCell align="center"><b>Ações</b></TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableHead>
+                                    <TableBody>
+                                        {historico
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map(escala => (
+                                                <TableRow key={escala.id} hover>
+                                                    <TableCell>
+                                                        {formatarData(escala.inicio)} → {formatarData(escala.fim)}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {formatarDataHora(escala.created_at)}
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() => selecionarEscala(escala)}
+                                                            sx={{
+                                                                bgcolor: '#1b1464', color: '#fff',
+                                                                px: 2, py: 0.75,
+                                                                textTransform: 'none',
+                                                                transition: 'all 0.3s ease',
+                                                                '&:hover': { transform: 'translateY(-2px)' }
+                                                            }}
+                                                            endIcon={<HistoryIcon />}
+                                                        >
+                                                            Visualizar
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <TablePagination
+                                component="div"
+                                count={historico.length}
+                                page={page}
+                                onPageChange={(_, newPage) => setPage(newPage)}
+                                rowsPerPage={rowsPerPage}
+                                onRowsPerPageChange={(e) => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }}
+                                rowsPerPageOptions={[5, 10, 25]}
+                                labelRowsPerPage="Linhas por página:"
+                                labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+                            />
+                        </>
                     )}
                 </Paper>
             ) : (

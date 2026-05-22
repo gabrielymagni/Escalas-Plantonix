@@ -1,13 +1,28 @@
-import { Box, Chip, IconButton } from '@mui/material';
+import { Box, Chip, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 import { formataDataDiaMesAno } from '../../../../../../../utils/formataDataDiaMesAno';
 
-export const getColumnsFuncionario = (handleModal, handleModalRemover) => [
-    { id: "id", label: "ID", minWidth: 50 },
-    { id: "nome", label: "Nome", minWidth: 200 },
+const isAfastadoHoje = (afastamentos = []) => {
+    const hoje = new Date().toISOString().split('T')[0];
+    return afastamentos.some(af => af.inicio <= hoje && af.fim >= hoje);
+};
+
+export const getColumnsFuncionario = (handleModal, handleModalRemover, handleModalAfastamento) => [
+    { id: "id", label: "ID", minWidth: 10, maxWidth: 30, width: 30 },
+    {
+        id: "nome", label: "Nome", minWidth: 200,
+        render: (row) => (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <span>{row.nome}</span>
+                {isAfastadoHoje(row.afastamentos) && (
+                    <Chip label="Afastado" size="small" color="warning" variant="outlined" />
+                )}
+            </Box>
+        )
+    },
     { id: "email", label: "Email", minWidth: 200 },
-    { id: "coren", label: "Coren", minWidth: 100 },
     { id: "cargo", label: "Cargo", minWidth: 200 },
     {
         id: "turno", label: "Turno", minWidth: 200,
@@ -16,12 +31,6 @@ export const getColumnsFuncionario = (handleModal, handleModalRemover) => [
         )
     },
     { id: "tipo_escala", label: "Tipo escala", minWidth: 100 },
-    {
-        id: "data_contratacao", label: "Data de contratação", minWidth: 200,
-        render: (row) => (
-            <span>{formataDataDiaMesAno(row.data_contratacao)}</span>
-        )
-    },
     {
         id: "blocos", label: "Blocos", minWidth: 250,
         render: (row) => {
@@ -46,13 +55,23 @@ export const getColumnsFuncionario = (handleModal, handleModalRemover) => [
         render: (row) => (
             <Box sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', height: '100%' }}>
 
-                <IconButton sx={{ color: '#1b1464' }} onClick={() => handleModal(row)} title="Editar" >
-                    <EditIcon />
-                </IconButton>
+                <Tooltip title="Editar">
+                    <IconButton sx={{ color: '#1b1464' }} onClick={() => handleModal(row)}>
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
 
-                <IconButton sx={{ color: '#b8492d' }} onClick={() => handleModalRemover(row)} title="Remover" >
-                    <DeleteIcon />
-                </IconButton>
+                <Tooltip title="Gerenciar Afastamentos">
+                    <IconButton sx={{ color: '#e67e00' }} onClick={() => handleModalAfastamento(row)}>
+                        <EventBusyIcon />
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Remover">
+                    <IconButton sx={{ color: '#b8492d' }} onClick={() => handleModalRemover(row)}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
             </Box >
         ),
     },
@@ -69,7 +88,8 @@ export const getRowsFuncionario = (dados) =>
         turno: item.turno,
         tipo_escala: item.tipo_escala,
         data_contratacao: item.data_contratacao,
-        cargo: item.cargo
+        cargo: item.cargo,
+        afastamentos: item.afastamentos ?? [],
     }))
 
 
