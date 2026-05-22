@@ -17,4 +17,9 @@ class Notificacao extends Model
             'lida'  => 'boolean',
         ];
     }
+
+    public function leituras()
+    {
+        return $this->hasMany(NotificacaoLeitura::class);
+    }
 }

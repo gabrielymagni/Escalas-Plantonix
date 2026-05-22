@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/afastamento/{id}', [AfastamentoController::class, 'destroy']);
 
         Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+        Route::get('/notificacoes/lidas', [NotificacaoController::class, 'lidas']);
         Route::put('/notificacoes/{id}/lida', [NotificacaoController::class, 'marcarLida']);
     });
 });
