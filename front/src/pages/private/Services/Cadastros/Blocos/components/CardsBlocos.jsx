@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import ModalEdicao from "./ModalEdicao";
 import AlertRemove from "./AlertRemove";
-import { Toaster } from "sonner";
 
 const CardsBlocos = () => {
 
@@ -66,7 +65,6 @@ const CardsBlocos = () => {
                         item={itemSelecionado} deleteBloco={deleteBloco} />
                 }
 
-                <Toaster />
             </Grid>
 
         </>

@@ -5,7 +5,6 @@ import { getColumnsRegras } from './ColunaRegras';
 import { getRowsRegras } from './LinhasRegras';
 import ModalEditar from './ModalEditar';
 import AlertRemove from './AlertRemove';
-import { Toaster } from 'sonner';
 import { Backdrop, CircularProgress } from '@mui/material';
 
 const TabelaRegras = () => {
@@ -40,7 +39,6 @@ const TabelaRegras = () => {
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Toaster />
     </div>
   )
 }

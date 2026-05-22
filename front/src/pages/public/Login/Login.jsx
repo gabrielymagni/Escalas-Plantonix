@@ -9,7 +9,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import logo from "../../../img/logo.webp";
 import useLoginHook from "./hooks/useLoginHook";
-import { Toaster } from "sonner";
 
 function Login() {
   const { loading, showPassword, setShowPassword, handleLogin } =
@@ -23,8 +22,6 @@ function Login() {
         bgcolor: "#f8f7fa",
       }}
     >
-      <Toaster richColors position="top-right" />
-
       <Box
         sx={{
           display: { xs: "none", md: "flex" },

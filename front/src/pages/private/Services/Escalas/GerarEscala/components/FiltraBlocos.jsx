@@ -4,12 +4,16 @@ import SearchIcon from '@mui/icons-material/Search';
 import useModalBlocoHook from "../../../Cadastros/Blocos/hooks/useModalBlocoHook";
 import { useEffect } from "react";
 
-const FiltraBlocos = ({ filtraBloco, handleOpen }) => {
+const FiltraBlocos = ({ filtraBloco, handleOpen, selectedBloco, onBlocoChange, onBlocosLoaded }) => {
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
 
     useEffect(() => {
         getAllBlocos();
     }, [])
+
+    useEffect(() => {
+        if (allBlocos.length > 0) onBlocosLoaded?.(allBlocos);
+    }, [allBlocos])
 
     return (
         <form onSubmit={(e) => filtraBloco(e, allBlocos)}>
@@ -20,6 +24,8 @@ const FiltraBlocos = ({ filtraBloco, handleOpen }) => {
                     <Autocomplete
                         options={allBlocos}
                         getOptionLabel={(option) => option.nome}
+                        value={selectedBloco}
+                        onChange={(_, newValue) => onBlocoChange?.(newValue)}
                         renderInput={(params) => (
                             <TextField {...params} label="Filtre pelo bloco" required name="bloco" />
                         )}

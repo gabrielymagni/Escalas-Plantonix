@@ -170,13 +170,30 @@ class Escala extends Model
         foreach ($funcionarios as $f) {
             $blocoPreferido = $f->blocos->firstWhere('pivot.ordem', 1);
 
-            if ($blocoPreferido) {
-                $pool[$f->turno][] = [
-                    'funcionario' => $f,
-                    'bloco_id' => $blocoPreferido->id
-                ];
+            if (!$blocoPreferido) continue;
+
+            $entrada = ['funcionario' => $f, 'bloco_id' => $blocoPreferido->id];
+
+            if ($f->turno === 'MT') {
+                $pool['M'][] = $entrada;
+                $pool['T'][] = $entrada;
+            } else {
+                $pool[$f->turno][] = $entrada;
             }
         }
+
+        // Rotaciona o pool a cada dia para distribuição justa (base para RN002)
+        $dayIndex = (new \DateTime($data ?? 'today'))->diff(new \DateTime('2020-01-01'))->days;
+        foreach ($pool as $turno => &$pessoas) {
+            if (count($pessoas) > 1) {
+                $offset = $dayIndex % count($pessoas);
+                $pessoas = array_values(array_merge(
+                    array_slice($pessoas, $offset),
+                    array_slice($pessoas, 0, $offset)
+                ));
+            }
+        }
+        unset($pessoas);
 
         $escala = [];
         $sobrando = [];
