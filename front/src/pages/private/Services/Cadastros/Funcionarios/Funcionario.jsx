@@ -4,12 +4,14 @@ import AdicionarCadastro from './components/AdicionarCadastro';
 import { useEffect } from 'react';
 import ModalEdicao from './components/ModalEdicao';
 import AlertRemove from './components/AlertRemove';
+import ModalAfastamento from './components/ModalAfastamento';
 import { Toaster } from 'sonner';
 import EstruturaTabela from './components/EstruturaTabela';
 
 const Funcionario = () => {
     const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading,
-        openRemove, handleModalRemover, deleteFuncionario
+        openRemove, handleModalRemover, deleteFuncionario,
+        openAfastamento, handleCloseAfastamento,
      } = useFuncionarioHook();
 
     useEffect(() => {
@@ -50,8 +52,13 @@ const Funcionario = () => {
             }
 
             {openRemove &&
-                <AlertRemove open={openRemove} onClose={handleModalRemover} 
+                <AlertRemove open={openRemove} onClose={handleModalRemover}
                 item={infoLinha} deleteFuncionario={deleteFuncionario} />
+            }
+
+            {openAfastamento &&
+                <ModalAfastamento open={openAfastamento} onClose={handleCloseAfastamento}
+                funcionario={infoLinha} onUpdate={getAllFuncionarios} />
             }
 
             <Toaster />

@@ -26,12 +26,12 @@ class Funcionario extends Authenticatable
 
     public static function getFuncionarios()
     {
-        return self::with('blocos')->get();
+        return self::with('blocos', 'afastamentos')->get();
     }
 
     public static function findFuncionario($id)
     {
-        return self::with('blocos')->find($id);
+        return self::with('blocos', 'afastamentos')->find($id);
     }
 
     public static function createFuncinario($dados)
@@ -123,5 +123,10 @@ class Funcionario extends Authenticatable
         return $this->belongsToMany(Bloco::class, 'funcionario_blocos')
             ->withPivot('ordem')
             ->withTimestamps();
+    }
+
+    public function afastamentos()
+    {
+        return $this->hasMany(Afastamento::class);
     }
 }

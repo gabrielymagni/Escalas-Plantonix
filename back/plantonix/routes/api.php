@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlocoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\EscalaController;
+use App\Http\Controllers\AfastamentoController;
+use App\Http\Controllers\NotificacaoController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/refresh', [AuthController::class, 'refresh']);
@@ -37,4 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/regra/{id}', [RegraController::class, 'show']);
     Route::put('/regra/{id}', [RegraController::class, 'update']);
     Route::delete('/regra/{id}', [RegraController::class, 'destroy']);
+
+    Route::post('/funcionario/{id}/afastamento', [AfastamentoController::class, 'store']);
+    Route::delete('/afastamento/{id}', [AfastamentoController::class, 'destroy']);
+
+    Route::get('/notificacoes', [NotificacaoController::class, 'index']);
+    Route::put('/notificacoes/{id}/lida', [NotificacaoController::class, 'marcarLida']);
 });

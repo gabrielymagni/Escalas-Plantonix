@@ -83,7 +83,7 @@ class Escala extends Model
 
             $regra = $data->isWeekend() ? $regraDiaInutil : $regraDiaUtil;
 
-            $escalaDia = $this->gerarEscalaDia($regra);
+            $escalaDia = $this->gerarEscalaDia($regra, $data->format('Y-m-d'));
 
             foreach ($escalaDia['escala'] as $blocoId => $bloco) {
 
@@ -150,9 +150,15 @@ class Escala extends Model
         return array_values($resultado);
     }
 
-    public function gerarEscalaDia($regra)
+    public function gerarEscalaDia($regra, $data = null)
     {
-        $funcionarios = Funcionario::with('blocos')->get();
+        $funcionarios = Funcionario::with('blocos')
+            ->when($data, function ($q) use ($data) {
+                $q->whereDoesntHave('afastamentos', function ($af) use ($data) {
+                    $af->where('inicio', '<=', $data)->where('fim', '>=', $data);
+                });
+            })
+            ->get();
 
         // 🔹 Separar funcionários por turno e bloco preferido (ordem = 1)
         $pool = [

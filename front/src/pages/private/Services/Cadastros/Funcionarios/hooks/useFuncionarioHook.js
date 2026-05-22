@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 
 const useFuncionarioHook = () => {
 
-    const [infoLinha, setInfoLinha] = useState(); //pega dados da linha selecioanda pra passar pro modal 
+    const [infoLinha, setInfoLinha] = useState();
     const [openModal, setOpenModal] = useState(false);
     const [openRemove, setOpenRemove] = useState(false);
+    const [openAfastamento, setOpenAfastamento] = useState(false);
     const [rankingBlocos, setRankingBlocos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [allFuncionarios, setAllFuncionarios] = useState([]);
@@ -44,6 +45,15 @@ const useFuncionarioHook = () => {
     const handleModalRemover = (row) => {
         setOpenRemove((prev) => !prev);
         setInfoLinha(row)
+    }
+
+    const handleModalAfastamento = (row) => {
+        setInfoLinha(row);
+        setOpenAfastamento(true);
+    }
+
+    const handleCloseAfastamento = () => {
+        setOpenAfastamento(false);
     }
 
     const handleBlocosRanking = (indexOrArray, value) => {
@@ -96,7 +106,7 @@ const useFuncionarioHook = () => {
     }
 
     const rows = getRowsFuncionario(allFuncionarios);
-    const columns = getColumnsFuncionario(handleModal, handleModalRemover);
+    const columns = getColumnsFuncionario(handleModal, handleModalRemover, handleModalAfastamento);
 
     const editarFuncionario = async (evento, id) => {
         evento.preventDefault();
@@ -154,8 +164,9 @@ const useFuncionarioHook = () => {
 
     return {
         rows, columns, infoLinha, openModal, handleCloseModal, allFuncionarios, deleteFuncionario,
-        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading, openRemove, handleModalRemover, 
-        handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado
+        getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading, openRemove, handleModalRemover,
+        handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado,
+        openAfastamento, handleModalAfastamento, handleCloseAfastamento,
     }
 }
 
