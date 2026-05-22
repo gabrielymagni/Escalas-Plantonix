@@ -28,12 +28,12 @@ class HorasTrabalhadasService
 
     public function calcularHorasAtivas(int $funcionarioId): array
     {
-        $escalasAtivas = Escala::ativa()->get(['id', 'inicio', 'fim']);
+        $escalas = Escala::ativa()->get(['id', 'inicio', 'fim']);
 
         $porEscala = [];
         $total = 0.0;
 
-        foreach ($escalasAtivas as $escala) {
+        foreach ($escalas as $escala) {
             $horas = $this->calcularHorasPorEscala($funcionarioId, $escala->id);
             if ($horas > 0) {
                 $porEscala[] = [
@@ -61,7 +61,7 @@ class HorasTrabalhadasService
     {
         $funcionario = Funcionario::find($funcionarioId);
 
-        if (!$funcionario || !$funcionario->faz_plantao) {
+        if (!$funcionario || !$funcionario->faz_plantao || $funcionario->tipo_escala !== '12x36') {
             return;
         }
 
