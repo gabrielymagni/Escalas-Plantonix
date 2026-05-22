@@ -23,7 +23,7 @@ class AuthController extends Controller {
 
 		$funcionario->tokens()->delete();
 
-		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes((int) config('auth.access_token_ttl')));
+		$accessToken  = $funcionario->createToken('access', ['*'], now()->addSeconds((int) config('auth.access_token_ttl')));
 		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes((int) config('auth.refresh_token_ttl')));
 
 		AuditLogger::log('LOGIN', 'Auth', $funcionario->id, [
@@ -34,7 +34,7 @@ class AuthController extends Controller {
 		return response()->json([
 			'access_token' => $accessToken->plainTextToken,
 			'token_type'   => 'Bearer',
-			'expires_in'   => config('auth.access_token_ttl') * 60,
+			'expires_in'   => (int) config('auth.access_token_ttl'),
 			'funcionario'  => [
 				'id'          => $funcionario->id,
 				'nome'        => $funcionario->nome,
@@ -49,7 +49,7 @@ class AuthController extends Controller {
 			config('auth.refresh_token_ttl'),
 			'/',
 			null,
-			true,
+			app()->isProduction(),
 			true,
 			false,
 			'Strict'
@@ -81,20 +81,20 @@ class AuthController extends Controller {
 
 		$funcionario->tokens()->delete();
 
-		$accessToken  = $funcionario->createToken('access', ['*'], now()->addMinutes((int) config('auth.access_token_ttl')));
+		$accessToken  = $funcionario->createToken('access', ['*'], now()->addSeconds((int) config('auth.access_token_ttl')));
 		$refreshToken = $funcionario->createToken('refresh', ['refresh'], now()->addMinutes((int) config('auth.refresh_token_ttl')));
 
 		return response()->json([
 			'access_token' => $accessToken->plainTextToken,
 			'token_type'   => 'Bearer',
-			'expires_in'   => config('auth.access_token_ttl') * 60,
+			'expires_in'   => (int) config('auth.access_token_ttl'),
 		])->cookie(
 			'refresh_token',
 			$refreshToken->plainTextToken,
 			config('auth.refresh_token_ttl'),
 			'/',
 			null,
-			true,
+			app()->isProduction(),
 			true,
 			false,
 			'Strict'
