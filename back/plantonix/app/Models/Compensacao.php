@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Compensacao extends Model
 {
+    protected $table = 'compensacoes';
+
     protected $fillable = ['funcionario_id', 'tipo', 'motivo', 'status'];
 
     public function funcionario()

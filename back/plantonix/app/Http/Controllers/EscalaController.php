@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Escala;
+use App\Models\Funcionario;
 use App\Services\AuditLogger;
+use App\Services\HorasTrabalhadasService;
 
 class EscalaController extends Controller
 {
@@ -29,6 +31,12 @@ class EscalaController extends Controller
             'inicio' => $request->inicio,
             'fim'    => $request->fim,
         ]);
+
+        $service = new HorasTrabalhadasService();
+        $ids = Funcionario::where('faz_plantao', true)->pluck('id');
+        foreach ($ids as $id) {
+            $service->verificarEGerarCompensacoes($id);
+        }
 
         return response()->json([
             'message' => 'Escala gerada com sucesso',
