@@ -149,9 +149,9 @@ const NotificacaoSino = () => {
         }
     };
 
-    const handleAcao = (path, notificacaoId) => {
+    const handleAcao = async (path, notificacaoId) => {
+        await handleMarcarLida(notificacaoId);
         handleClose();
-        handleMarcarLida(notificacaoId);
         navigate(path);
     };
 
