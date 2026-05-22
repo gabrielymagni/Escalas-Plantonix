@@ -59,6 +59,37 @@ class EscalaController extends Controller
     }
 
     /**
+     * 🔹 Lista todas as escalas geradas (histórico)
+     */
+    public function listarHistorico()
+    {
+        $escalas = Escala::orderBy('created_at', 'desc')->get(['id', 'inicio', 'fim', 'created_at']);
+
+        return response()->json(['data' => $escalas]);
+    }
+
+    /**
+     * 🔹 Busca escala específica por ID com filtro opcional de bloco
+     */
+    public function getEscalaPorId($escalaId, $blocoId = null)
+    {
+        $escala = Escala::find($escalaId);
+
+        if (!$escala) {
+            return response()->json(['message' => 'Escala não encontrada'], 404);
+        }
+
+        $resultado = (new Escala())->getEscala($escala->id, $blocoId);
+
+        return response()->json([
+            'escala_id' => $escala->id,
+            'inicio'    => $escala->inicio,
+            'fim'       => $escala->fim,
+            'data'      => $resultado
+        ]);
+    }
+
+    /**
      * 🔹 Edita turnos da escala
      */
     public function editarEscala(Request $request)
