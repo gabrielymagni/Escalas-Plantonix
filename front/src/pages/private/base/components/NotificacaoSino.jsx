@@ -137,13 +137,15 @@ const NotificacaoSino = () => {
 
     const handleTabChange = (_, newTab) => {
         setTab(newTab);
-        if (newTab === 1 && lidas.length === 0) fetchLidas();
+        if (newTab === 1) fetchLidas();
     };
 
     const handleMarcarLida = async (id) => {
         try {
             await api.put(`/notificacoes/${id}/lida`);
+            const notif = pendentes.find(n => n.id === id);
             setPendentes(prev => prev.filter(n => n.id !== id));
+            if (notif) setLidas(prev => [notif, ...prev]);
         } catch {
             // silencioso
         }
