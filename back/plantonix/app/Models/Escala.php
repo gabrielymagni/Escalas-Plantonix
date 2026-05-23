@@ -89,11 +89,16 @@ class Escala extends Model
 
         $resultado = [];
 
+        // RN002: busca quem trabalhou à noite no último dia da escala anterior
+        $noiteAnterior = $this->getNoiteUltimaEscala($raio['inicio']);
+
         for ($data = $inicio->copy(); $data->lte($fim); $data->addDay()) {
 
             $regra = $data->isWeekend() ? $regraDiaInutil : $regraDiaUtil;
 
-            $escalaDia = $this->gerarEscalaDia($regra, $data->format('Y-m-d'));
+            $escalaDia = $this->gerarEscalaDia($regra, $data->format('Y-m-d'), $noiteAnterior);
+
+            $noiteHoje = [];
 
             foreach ($escalaDia['escala'] as $blocoId => $bloco) {
 
@@ -115,6 +120,11 @@ class Escala extends Model
                             $id = $pessoa->id;
                         }
 
+                        // RN002: registra quem trabalhou à noite para bloquear no dia seguinte
+                        if ($turno === 'N' && $id !== null) {
+                            $noiteHoje[] = $id;
+                        }
+
                         if (!isset($resultado[$id])) {
                             $resultado[$id] = [
                                 'id' => $id,
@@ -132,6 +142,8 @@ class Escala extends Model
                     }
                 }
             }
+
+            $noiteAnterior = $noiteHoje;
         }
 
         $linhas = [];
@@ -160,7 +172,7 @@ class Escala extends Model
         return array_values($resultado);
     }
 
-    public function gerarEscalaDia($regra, $data = null)
+    public function gerarEscalaDia($regra, $data = null, array $noiteAnterior = [])
     {
         $funcionarios = Funcionario::with('blocos')
             ->where('faz_plantao', true)
@@ -193,7 +205,14 @@ class Escala extends Model
             }
         }
 
-        // Rotaciona o pool a cada dia para distribuição justa (base para RN002)
+        // RN002: remove do turno noturno quem trabalhou na noite anterior
+        if (!empty($noiteAnterior)) {
+            $pool['N'] = array_values(array_filter($pool['N'], function ($entrada) use ($noiteAnterior) {
+                return !in_array($entrada['funcionario']->id, $noiteAnterior);
+            }));
+        }
+
+        // Rotaciona o pool a cada dia para distribuição justa
         $dayIndex = (new \DateTime($data ?? 'today'))->diff(new \DateTime('2020-01-01'))->days;
         foreach ($pool as $turno => &$pessoas) {
             if (count($pessoas) > 1) {
@@ -276,6 +295,18 @@ class Escala extends Model
             'escala' => $escala,
             'sobrando' => array_values($sobrando)
         ];
+    }
+
+    private function getNoiteUltimaEscala(string $inicio): array
+    {
+        $diaAnterior = Carbon::parse($inicio)->subDay()->format('Y-m-d');
+
+        return DB::table('escala_itens')
+            ->where('data', $diaAnterior)
+            ->where('turno', 'N')
+            ->whereNotNull('funcionario_id')
+            ->pluck('funcionario_id')
+            ->toArray();
     }
 
     public function editarEscalaItens(array $itens)
