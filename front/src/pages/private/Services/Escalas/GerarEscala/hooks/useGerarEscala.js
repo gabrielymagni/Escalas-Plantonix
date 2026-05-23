@@ -1,12 +1,14 @@
 
 import { useState } from "react"
-import { getPeriodoAtual } from "../../../../../../../utils/gerarPeriodoEscala";
+import { getPeriodoAtual, gerarPeriodo16a15 } from "../../../../../../../utils/gerarPeriodoEscala";
 import { toast } from "sonner";
 import api from "../../../../../../services/api";
 
 const useGerarEscala = () => {
 
     const [dadosEscala, setDadosEscala] = useState([]);
+    const [deficiencias, setDeficiencias] = useState([]);
+    const [afastados, setAfastados] = useState([]);
     const [loading, setLoading] = useState(false);
     const [mesAtual, setMesAtual] = useState(getPeriodoAtual());
     const [itensAlterados, setItensAlterados] = useState([]);
@@ -30,11 +32,13 @@ const useGerarEscala = () => {
         setLoading(true);
         try {
             const response = await api.get(`/escala/${blocoId}`);
-            const { data: dados, inicio, fim } = response.data;
+            const { data: dados, inicio, fim, deficiencias: def, afastados: afast } = response.data;
             if (dados.length === 0) {
                 toast.info("Nenhuma escala encontrada.");
             } else {
                 aplicarDadosEscala(dados);
+                setDeficiencias(def ?? []);
+                setAfastados(afast ?? []);
                 if (blocoObj) setSelectedBloco(blocoObj);
                 if (inicio && fim) setEscalaAtiva({ inicio, fim });
             }
@@ -49,18 +53,19 @@ const useGerarEscala = () => {
         evento.preventDefault();
         setLoading(true)
 
-        const dados = new FormData(evento.target);
-        const encontraID = blocos.find(item => item.nome === dados.get('bloco'))
+        const formData = new FormData(evento.target);
+        const encontraID = blocos.find(item => item.nome === formData.get('bloco'))
 
         try {
             const response = await api.get(`/escala/${encontraID.id}`);
-            const { data: dados, inicio, fim } = response.data;
-            setDadosEscala(dados);
+            const { data: dados, inicio, fim, deficiencias: def, afastados: afast } = response.data;
 
             if (dados.length === 0) {
                 toast.info("Nenhuma escala encontrada. Gere uma nova escala para começar.");
             } else {
                 aplicarDadosEscala(dados);
+                setDeficiencias(def ?? []);
+                setAfastados(afast ?? []);
                 if (inicio && fim) setEscalaAtiva({ inicio, fim });
             }
         } catch (error) {
@@ -70,11 +75,39 @@ const useGerarEscala = () => {
         }
     }
 
-    const proximoMes = () =>
-        setMesAtual(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    const fetchEscalaParaPeriodo = async (bloco, novoMes) => {
+        if (!bloco) return;
+        const { inicio } = gerarPeriodo16a15(novoMes);
+        const inicioStr = inicio.toISOString().slice(0, 10);
+        setLoading(true);
+        try {
+            const response = await api.get(`/escala/${bloco.id}`, { params: { inicio: inicioStr } });
+            const { data: dados, inicio: ini, fim, deficiencias: def, afastados: afast } = response.data;
+            if (dados && dados.length > 0) {
+                setDadosEscala(dados);
+                setDeficiencias(def ?? []);
+                setAfastados(afast ?? []);
+                if (ini && fim) setEscalaAtiva({ inicio: ini, fim });
+            }
+            // se não encontrou escala para o período, não altera o estado atual
+        } catch {
+            // silencioso: período pode não ter escala cadastrada
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const mesAnterior = () =>
-        setMesAtual(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    const proximoMes = () => {
+        const novoMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 1);
+        setMesAtual(novoMes);
+        fetchEscalaParaPeriodo(selectedBloco, novoMes);
+    };
+
+    const mesAnterior = () => {
+        const novoMes = new Date(mesAtual.getFullYear(), mesAtual.getMonth() - 1, 1);
+        setMesAtual(novoMes);
+        fetchEscalaParaPeriodo(selectedBloco, novoMes);
+    };
 
     const getTurno = (profissional, data) => {
         const diasNaData = profissional.dias.filter(d => d.data === data);
@@ -161,8 +194,9 @@ const useGerarEscala = () => {
     }
 
     return {
-        dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco,
-        loading, submitSalvar, fetchLatestEscala, selectedBloco, setSelectedBloco, escalaAtiva
+        dadosEscala, deficiencias, afastados, mesAtual, proximoMes, mesAnterior, handleChange, getTurno,
+        filtraBloco, loading, submitSalvar, fetchLatestEscala, selectedBloco, setSelectedBloco,
+        escalaAtiva,
     }
 }
 

@@ -5,6 +5,8 @@ const useHistoricoEscala = () => {
     const [historico, setHistorico] = useState([]);
     const [escalaSelecionada, setEscalaSelecionada] = useState(null);
     const [dadosEscala, setDadosEscala] = useState([]);
+    const [deficiencias, setDeficiencias] = useState([]);
+    const [afastados, setAfastados] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingDetalhe, setLoadingDetalhe] = useState(false);
 
@@ -27,14 +29,16 @@ const useHistoricoEscala = () => {
     const selecionarEscala = (escala) => {
         setEscalaSelecionada(escala);
         setDadosEscala([]);
+        setDeficiencias([]);
+        setAfastados([]);
     };
 
     const filtrarPorBloco = async (evento, allBlocos) => {
         evento.preventDefault();
         if (!escalaSelecionada) return;
 
-        const dados = new FormData(evento.target);
-        const bloco = allBlocos.find(item => item.nome === dados.get('bloco'));
+        const formData = new FormData(evento.target);
+        const bloco = allBlocos.find(item => item.nome === formData.get('bloco'));
 
         setLoadingDetalhe(true);
         try {
@@ -43,6 +47,8 @@ const useHistoricoEscala = () => {
                 : `/escala/${escalaSelecionada.id}/detalhes`;
             const response = await api.get(url);
             setDadosEscala(response.data.data);
+            setDeficiencias(response.data.deficiencias ?? []);
+            setAfastados(response.data.afastados ?? []);
         } catch (error) {
             console.error('Erro ao carregar escala', error);
         } finally {
@@ -53,12 +59,16 @@ const useHistoricoEscala = () => {
     const voltarParaLista = () => {
         setEscalaSelecionada(null);
         setDadosEscala([]);
+        setDeficiencias([]);
+        setAfastados([]);
     };
 
     return {
         historico,
         escalaSelecionada,
         dadosEscala,
+        deficiencias,
+        afastados,
         loading,
         loadingDetalhe,
         selecionarEscala,

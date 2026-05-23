@@ -1,4 +1,4 @@
-import { Autocomplete, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Switch, TextField, Typography } from "@mui/material"
+import { Autocomplete, Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Switch, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
 import { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
     const { allBlocos, getAllBlocos, loading } = useModalBlocoHook();
     const { rankingBlocos, handleBlocosRanking, handleTurnos, handleEscala, escalaSelecionada, turnoSelecionado } = useFuncionarioHook();
     const [fazPlantao, setFazPlantao] = useState(true);
+    const [cargo, setCargo] = useState('');
 
     useEffect(() => {
         getAllBlocos()
@@ -49,7 +50,14 @@ const ModalCadastro = ({ open, handleCloseModal }) => {
                             </Grid>
 
                             <Grid size={{ md: 6, xs: 12 }}>
-                                <TextField label="Cargo" variant="filled" name="cargo" fullWidth required size="small" />
+                                <FormControl variant="filled" fullWidth required size="small">
+                                    <InputLabel>Cargo</InputLabel>
+                                    <Select name="cargo" value={cargo} onChange={(e) => setCargo(e.target.value)}>
+                                        <MenuItem value="Enfermeira">Enfermeira</MenuItem>
+                                        <MenuItem value="Técnica">Técnica</MenuItem>
+                                        <MenuItem value="Gestor">Gestor</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
 
                             <Grid size={{ md: 6, xs: 12 }}>

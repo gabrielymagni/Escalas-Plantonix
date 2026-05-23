@@ -7,10 +7,12 @@ import useControlarEscala from "./hooks/useControlarEscala";
 import FiltraBlocos from "./components/FiltraBlocos";
 import TabelaEscala from "./components/TabelaEscala";
 import usePrintEscala from "./hooks/usePrintEscala";
+import PainelAfastados from "../components/PainelAfastados";
+import PainelDeficiencias from "../components/PainelDeficiencias";
 
 export default function GerarEscala() {
 
-    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior, fetchLatestEscala, selectedBloco, setSelectedBloco, escalaAtiva } = useGerarEscala();
+    const { dadosEscala, deficiencias, afastados, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior, fetchLatestEscala, selectedBloco, setSelectedBloco, escalaAtiva } = useGerarEscala();
     const { open, handleOpen } = useControlarEscala()
     const { printTodosOsBlocos } = usePrintEscala()
     const [allBlocos, setAllBlocos] = useState([]);
@@ -58,9 +60,17 @@ export default function GerarEscala() {
             />
 
             {(!loading && dadosEscala.length > 0) &&
-                <TabelaEscala dadosEscala={dadosEscala} handleChange={handleChange}
-                    submitSalvar={submitSalvar} mesAtual={mesAtual}
-                    proximoMes={proximoMes} mesAnterior={mesAnterior} />
+                <TabelaEscala dadosEscala={dadosEscala}
+                    handleChange={handleChange} submitSalvar={submitSalvar}
+                    mesAtual={mesAtual} proximoMes={proximoMes} mesAnterior={mesAnterior} />
+            }
+
+            {(!loading && dadosEscala.length > 0) &&
+                <PainelDeficiencias deficiencias={deficiencias} />
+            }
+
+            {(!loading && dadosEscala.length > 0) &&
+                <PainelAfastados afastados={afastados} />
             }
 
             <ModalGerarEscala open={open} handleOpen={handleOpen} onSuccess={handleGerarSuccess} />

@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, Switch, TextField, Typography } from "@mui/material"
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Switch, TextField, Typography } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import useFuncionarioHook from "../hooks/useFuncionarioHook";
 import useModalBlocoHook from "../../Blocos/hooks/useModalBlocoHook";
@@ -19,6 +19,7 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
         escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado } = useFuncionarioHook();
     const [fazPlantao, setFazPlantao] = useState(true);
     const [roleSelecionada, setRoleSelecionada] = useState(rolesDisponiveis[1]);
+    const [cargo, setCargo] = useState('');
 
     const { allBlocos, getAllBlocos } = useModalBlocoHook();
 
@@ -31,6 +32,7 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
         if (!info) return;
 
         setFazPlantao(info.faz_plantao ?? true);
+        setCargo(info.cargo ?? '');
 
         const roleEncontrada = rolesDisponiveis.find(r => r.id === info.role) ?? rolesDisponiveis[1];
         setRoleSelecionada(roleEncontrada);
@@ -80,7 +82,14 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>
-                            <TextField label="Cargo" name="cargo" fullWidth variant="filled" required defaultValue={info?.cargo} />
+                            <FormControl variant="filled" fullWidth required>
+                                <InputLabel>Cargo</InputLabel>
+                                <Select name="cargo" value={cargo} onChange={(e) => setCargo(e.target.value)}>
+                                    <MenuItem value="Enfermeira">Enfermeira</MenuItem>
+                                    <MenuItem value="Técnica">Técnica</MenuItem>
+                                    <MenuItem value="Gestor">Gestor</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Grid>
 
                         <Grid size={{ md: 6, xs: 12 }}>

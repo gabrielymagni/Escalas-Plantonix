@@ -11,6 +11,8 @@ import HistoryIcon from '@mui/icons-material/History';
 import useHistoricoEscala from './hooks/useHistoricoEscala';
 import useModalBlocoHook from '../../Cadastros/Blocos/hooks/useModalBlocoHook';
 import TabelaHistorico from './components/TabelaHistorico';
+import PainelAfastados from '../../Escalas/components/PainelAfastados';
+import PainelDeficiencias from '../../Escalas/components/PainelDeficiencias';
 
 const formatarData = (data) => {
     const s = String(data).substring(0, 10);
@@ -33,6 +35,8 @@ export default function HistoricoEscala() {
         historico,
         escalaSelecionada,
         dadosEscala,
+        deficiencias,
+        afastados,
         loading,
         loadingDetalhe,
         selecionarEscala,
@@ -204,11 +208,16 @@ export default function HistoricoEscala() {
                     </form>
 
                     {dadosEscala.length > 0 && (
-                        <TabelaHistorico
-                            dadosEscala={dadosEscala}
-                            inicio={escalaSelecionada.inicio}
-                            fim={escalaSelecionada.fim}
-                        />
+                        <>
+                            <TabelaHistorico
+                                dadosEscala={dadosEscala}
+                                deficiencias={deficiencias}
+                                inicio={escalaSelecionada.inicio}
+                                fim={escalaSelecionada.fim}
+                            />
+                            <PainelDeficiencias deficiencias={deficiencias} />
+                            <PainelAfastados afastados={afastados} />
+                        </>
                     )}
                 </>
             )}
