@@ -40,6 +40,11 @@ class FuncionarioController extends Controller
                 "blocos" => 'required|array'
             ]);
 
+            $erroRN001 = $this->validarRN001($request->input('tipo_escala'), $request->input('turno'));
+            if ($erroRN001) {
+                return response()->json(['message' => $erroRN001], 422);
+            }
+
             $funcionario = Funcionario::createFuncinario($request);
             if ($funcionario['err'] != null) {
                 return response()->json(["message" => "Erro ao criar novo funcionário", "err" => $funcionario['err']], 500);
@@ -70,6 +75,11 @@ class FuncionarioController extends Controller
                 "cargo" => "required|string|max:255",
                 "blocos" => 'required|array'
             ]);
+
+            $erroRN001 = $this->validarRN001($request->input('tipo_escala'), $request->input('turno'));
+            if ($erroRN001) {
+                return response()->json(['message' => $erroRN001], 422);
+            }
 
             $funcionario = Funcionario::updateFuncinario($request, $id);
             if ($funcionario['err'] != null) {
@@ -104,6 +114,29 @@ class FuncionarioController extends Controller
         $resultado = $service->calcularHorasAtivas((int) $id);
 
         return response()->json($resultado, 200);
+    }
+
+    private function validarRN001(?string $tipoEscala, ?string $turno): ?string
+    {
+        $turnosValidos = [
+            '6x1'   => ['M', 'T'],
+            '5x2'   => ['MT'],
+            '12x36' => ['N'],
+        ];
+
+        if ($tipoEscala === null || $turno === null) {
+            return null;
+        }
+
+        if (!isset($turnosValidos[$tipoEscala])) {
+            return "Tipo de escala '{$tipoEscala}' inválido (RN001).";
+        }
+
+        if (!in_array($turno, $turnosValidos[$tipoEscala])) {
+            return "O turno '{$turno}' não é permitido para a escala '{$tipoEscala}' (RN001).";
+        }
+
+        return null;
     }
 
     public function destroy($id)
