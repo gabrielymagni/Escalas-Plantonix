@@ -19,6 +19,7 @@ class HorasTrabalhadasService
             ->where('ei.escala_id', $escalaId)
             ->where('ei.funcionario_id', $funcionarioId)
             ->whereNotNull('ei.funcionario_id')
+            ->where('ei.turno', '!=', 'F')
             ->where('ei.data', '<=', now()->toDateString())
             ->select('f.tipo_escala')
             ->get();
