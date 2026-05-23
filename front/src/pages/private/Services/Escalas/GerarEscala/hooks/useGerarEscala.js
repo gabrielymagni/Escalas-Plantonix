@@ -11,6 +11,7 @@ const useGerarEscala = () => {
     const [mesAtual, setMesAtual] = useState(getPeriodoAtual());
     const [itensAlterados, setItensAlterados] = useState([]);
     const [selectedBloco, setSelectedBloco] = useState(null);
+    const [escalaAtiva, setEscalaAtiva] = useState(null);
 
     const aplicarDadosEscala = (dados) => {
         setDadosEscala(dados);
@@ -29,12 +30,13 @@ const useGerarEscala = () => {
         setLoading(true);
         try {
             const response = await api.get(`/escala/${blocoId}`);
-            const dados = response.data.data;
+            const { data: dados, inicio, fim } = response.data;
             if (dados.length === 0) {
                 toast.info("Nenhuma escala encontrada.");
             } else {
                 aplicarDadosEscala(dados);
                 if (blocoObj) setSelectedBloco(blocoObj);
+                if (inicio && fim) setEscalaAtiva({ inicio, fim });
             }
         } catch {
             toast.error("Erro ao buscar escala.");
@@ -52,13 +54,14 @@ const useGerarEscala = () => {
 
         try {
             const response = await api.get(`/escala/${encontraID.id}`);
-            const dados = response.data.data;
+            const { data: dados, inicio, fim } = response.data;
             setDadosEscala(dados);
 
             if (dados.length === 0) {
                 toast.info("Nenhuma escala encontrada. Gere uma nova escala para começar.");
             } else {
                 aplicarDadosEscala(dados);
+                if (inicio && fim) setEscalaAtiva({ inicio, fim });
             }
         } catch (error) {
             toast.error("Erro ao buscar escala.");
@@ -73,13 +76,11 @@ const useGerarEscala = () => {
     const mesAnterior = () =>
         setMesAtual(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
 
-    //qual turno o profissina faz naquele dia 
     const getTurno = (profissional, data) => {
-        const dia = profissional.dias.find(
-            d => d.data === data
-        );
-       
-        return dia?.turno || '';
+        const diasNaData = profissional.dias.filter(d => d.data === data);
+        if (diasNaData.length === 0) return '';
+        const plantao = diasNaData.find(d => d.tipo === 'plantao');
+        return plantao ? plantao.turno : diasNaData[0].turno;
     };
 
     console.log('itensAlterados', itensAlterados)
@@ -161,7 +162,7 @@ const useGerarEscala = () => {
 
     return {
         dadosEscala, mesAtual, proximoMes, mesAnterior, handleChange, getTurno, filtraBloco,
-        loading, submitSalvar, fetchLatestEscala, selectedBloco, setSelectedBloco
+        loading, submitSalvar, fetchLatestEscala, selectedBloco, setSelectedBloco, escalaAtiva
     }
 }
 

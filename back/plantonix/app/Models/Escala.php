@@ -24,7 +24,8 @@ class Escala extends Model
                 'f.nome',
                 'ei.bloco_id',
                 'ei.data',
-                'ei.turno'
+                'ei.turno',
+                'ei.tipo'
             )
             ->where('ei.escala_id', $escalaId);
 
@@ -54,7 +55,8 @@ class Escala extends Model
             $resultado[$id]['dias'][] = [
                 'id_item_escala' => $r->id,
                 'data' => $r->data,
-                'turno' => $r->turno
+                'turno' => $r->turno,
+                'tipo' => $r->tipo,
             ];
         }
 
@@ -92,11 +94,28 @@ class Escala extends Model
         // RN002: busca quem trabalhou à noite no último dia da escala anterior
         $noiteAnterior = $this->getNoiteUltimaEscala($raio['inicio']);
 
+        // Controle de horas semanais por funcionário (reseta a cada semana ISO)
+        $horasSemana = [];
+        $semanaAtual = null;
+
         for ($data = $inicio->copy(); $data->lte($fim); $data->addDay()) {
 
-            $regra = $data->isWeekend() ? $regraDiaInutil : $regraDiaUtil;
+            // Reseta o contador semanal no início de cada semana ISO (segunda-feira)
+            $semana = $data->format('o-W');
+            if ($semana !== $semanaAtual) {
+                $horasSemana = [];
+                $semanaAtual = $semana;
+            }
 
-            $escalaDia = $this->gerarEscalaDia($regra, $data->format('Y-m-d'), $noiteAnterior);
+            $isWeekend = $data->isWeekend();
+            $regra = $isWeekend ? $regraDiaInutil : $regraDiaUtil;
+
+            $escalaDia = $this->gerarEscalaDia($regra, $data->format('Y-m-d'), $noiteAnterior, $horasSemana, $isWeekend);
+
+            // Atualiza horas semanais com o que foi alocado hoje
+            foreach ($escalaDia['escalados'] as $funcId => $horas) {
+                $horasSemana[$funcId] = ($horasSemana[$funcId] ?? 0) + $horas;
+            }
 
             $noiteHoje = [];
 
@@ -169,11 +188,22 @@ class Escala extends Model
         // 🔥 bulk insert
         DB::table('escala_itens')->insert($linhas);
 
+        // RN003: gerar plantões para cada dia inútil do período conforme a regra
+        if ($regraDiaInutil) {
+            for ($d = $inicio->copy(); $d->lte($fim); $d->addDay()) {
+                if ($d->isWeekend()) {
+                    $this->gerarPlantoes($escala->id, $d->format('Y-m-d'), $regraDiaInutil);
+                }
+            }
+        }
+
         return array_values($resultado);
     }
 
-    public function gerarEscalaDia($regra, $data = null, array $noiteAnterior = [])
+    public function gerarEscalaDia($regra, $data = null, array $noiteAnterior = [], array $horasSemana = [], bool $isWeekend = false)
     {
+        $LIMITE_SEMANAL = 36;
+
         $funcionarios = Funcionario::with('blocos')
             ->where('faz_plantao', true)
             ->when($data, function ($q) use ($data) {
@@ -183,16 +213,10 @@ class Escala extends Model
             })
             ->get();
 
-        // 🔹 Separar funcionários por turno e bloco preferido (ordem = 1)
-        $pool = [
-            'M' => [],
-            'T' => [],
-            'N' => [],
-        ];
+        $pool = ['M' => [], 'T' => [], 'N' => []];
 
         foreach ($funcionarios as $f) {
             $blocoPreferido = $f->blocos->firstWhere('pivot.ordem', 1);
-
             if (!$blocoPreferido) continue;
 
             $entrada = ['funcionario' => $f, 'bloco_id' => $blocoPreferido->id];
@@ -212,89 +236,211 @@ class Escala extends Model
             }));
         }
 
-        // Rotaciona o pool a cada dia para distribuição justa
+        // Índice do dia para desempate determinístico no rodízio de fim de semana
         $dayIndex = (new \DateTime($data ?? 'today'))->diff(new \DateTime('2020-01-01'))->days;
-        foreach ($pool as $turno => &$pessoas) {
-            if (count($pessoas) > 1) {
-                $offset = $dayIndex % count($pessoas);
-                $pessoas = array_values(array_merge(
-                    array_slice($pessoas, $offset),
-                    array_slice($pessoas, 0, $offset)
-                ));
-            }
-        }
-        unset($pessoas);
 
         $escala = [];
-        $sobrando = [];
+        $escaladosHoje = []; // IDs já alocados hoje (evita dupla alocação)
+        $escalados = [];     // [funcId => horas] acumuladas no dia
 
         foreach ($regra->blocos as $bloco) {
 
             $escala[$bloco->id] = [
-                'nome' => $bloco->nome,
+                'nome'  => $bloco->nome,
                 'manha' => [],
                 'tarde' => [],
                 'noite' => [],
             ];
 
-            // Função auxiliar pra alocar
-            $alocar = function ($turno, $qtd, $blocoId) use (&$pool, &$sobrando) {
-                $alocados = [];
+            /**
+             * Aloca funcionários para um turno/bloco.
+             *
+             * Em dias úteis: aloca TODOS os elegíveis (qtd_* é mínimo).
+             * Em fins de semana: aloca apenas o mínimo, priorizando quem
+             * trabalhou menos horas na semana (rodízio justo).
+             */
+            $alocar = function (string $turnoKey, int $qtdMinima, int $blocoId)
+                use (&$pool, &$escaladosHoje, &$escalados, $isWeekend, $horasSemana, $LIMITE_SEMANAL, $dayIndex): array {
 
-                foreach ($pool[$turno] as $key => $pessoa) {
-                    if ($qtd <= 0)
-                        break;
+                $candidatos = [];
 
-                    if ($pessoa['bloco_id'] == $blocoId) {
-                        $alocados[] = $pessoa['funcionario'];
-                        unset($pool[$turno][$key]);
-                        $qtd--;
-                    }
+                foreach ($pool[$turnoKey] as $key => $pessoa) {
+                    $funcId = $pessoa['funcionario']->id;
+
+                    if (in_array($funcId, $escaladosHoje)) continue;
+                    if ($pessoa['bloco_id'] != $blocoId) continue;
+
+                    $horasShift = match ($pessoa['funcionario']->tipo_escala) {
+                        '12x36' => 12,
+                        '5x2'   => 8,
+                        default => 6,
+                    };
+
+                    if (($horasSemana[$funcId] ?? 0) + $horasShift > $LIMITE_SEMANAL) continue;
+
+                    $candidatos[$key] = [
+                        'pessoa'      => $pessoa,
+                        'horas'       => $horasShift,
+                        'horasAtuais' => $horasSemana[$funcId] ?? 0,
+                    ];
                 }
 
-                // Se faltar gente
-                while ($qtd > 0) {
+                if ($isWeekend) {
+                    // Rodízio: quem trabalhou menos horas na semana vai primeiro;
+                    // desempate determinístico por dia para variar quem é escalado.
+                    uasort($candidatos, function ($a, $b) use ($dayIndex) {
+                        if ($a['horasAtuais'] !== $b['horasAtuais']) {
+                            return $a['horasAtuais'] <=> $b['horasAtuais'];
+                        }
+                        $hashA = crc32($a['pessoa']['funcionario']->id . '-' . $dayIndex);
+                        $hashB = crc32($b['pessoa']['funcionario']->id . '-' . $dayIndex);
+                        return $hashA <=> $hashB;
+                    });
+                    $selecionados = array_slice($candidatos, 0, $qtdMinima, true);
+                } else {
+                    // Dia útil: todos os elegíveis trabalham (qtd_* é apenas o mínimo)
+                    $selecionados = $candidatos;
+                }
+
+                $alocados = [];
+                foreach ($selecionados as $key => $c) {
+                    $funcId = $c['pessoa']['funcionario']->id;
+                    $alocados[] = $c['pessoa']['funcionario'];
+                    $escaladosHoje[] = $funcId;
+                    $escalados[$funcId] = ($escalados[$funcId] ?? 0) + $c['horas'];
+                    unset($pool[$turnoKey][$key]);
+                }
+
+                // Mínimo não atingido: marca as vagas faltantes como ausente
+                $faltam = $qtdMinima - count($alocados);
+                while ($faltam-- > 0) {
                     $alocados[] = ['ausente' => true];
-                    $qtd--;
                 }
 
                 return $alocados;
             };
 
-            // 🔹 Preencher cada turno
             $escala[$bloco->id]['manha'] = $alocar('M', $bloco->pivot->qtd_manha, $bloco->id);
             $escala[$bloco->id]['tarde'] = $alocar('T', $bloco->pivot->qtd_tarde, $bloco->id);
             $escala[$bloco->id]['noite'] = $alocar('N', $bloco->pivot->qtd_noite, $bloco->id);
         }
 
-        // 🔹 Coletar sobras
-        foreach ($pool as $turno => $pessoas) {
-            foreach ($pessoas as $p) {
-                $sobrando[] = $p['funcionario']->nome;
-            }
-        }
-
-        // 🔹 Preencher ausentes com sobras (aleatório)
-        foreach ($escala as &$bloco) {
-            foreach (['manha', 'tarde', 'noite'] as $turno) {
-                foreach ($bloco[$turno] as &$pessoa) {
-
-                    if (is_array($pessoa) && isset($pessoa['ausente']) && count($sobrando) > 0) {
-                        $randomKey = array_rand($sobrando);
-                        $pessoa = [
-                            'nome' => $sobrando[$randomKey],
-                            'tipo' => 'sorteado'
-                        ];
-                        unset($sobrando[$randomKey]);
+        // Em dias úteis: funcionários restantes no pool cobrem vagas com ausência
+        // (casos onde o mínimo não foi atingido por falta de match de bloco)
+        if (!$isWeekend) {
+            $sobrando = [];
+            foreach ($pool as $pessoas) {
+                foreach ($pessoas as $p) {
+                    $funcId = $p['funcionario']->id;
+                    if (!in_array($funcId, $escaladosHoje)) {
+                        $sobrando[$funcId] = $p['funcionario'];
                     }
                 }
             }
+
+            foreach ($escala as &$blocoData) {
+                foreach (['manha', 'tarde', 'noite'] as $periodo) {
+                    foreach ($blocoData[$periodo] as &$pessoa) {
+                        if (is_array($pessoa) && isset($pessoa['ausente']) && !empty($sobrando)) {
+                            $funcId = array_key_first($sobrando);
+                            $pessoa = $sobrando[$funcId];
+                            $escaladosHoje[] = $funcId;
+                            unset($sobrando[$funcId]);
+                        }
+                    }
+                    unset($pessoa);
+                }
+            }
+            unset($blocoData);
         }
 
         return [
-            'escala' => $escala,
-            'sobrando' => array_values($sobrando)
+            'escala'    => $escala,
+            'escalados' => $escalados,
+            'sobrando'  => [],
         ];
+    }
+
+    private function gerarPlantoes(int $escalaId, string $dataPlantao, Regra $regra): void
+    {
+        $now = now();
+        $linhas = [];
+
+        foreach ($regra->blocos as $bloco) {
+            $qtd = (int) ($bloco->pivot->qtd_plantoes ?? 0);
+            if ($qtd <= 0) continue;
+
+            // Critério 1: já com plantão nesta escala neste bloco são inelegíveis
+            $comPlantaoNaEscala = DB::table('escala_itens')
+                ->where('escala_id', $escalaId)
+                ->where('bloco_id', $bloco->id)
+                ->where('tipo', 'plantao')
+                ->pluck('funcionario_id')
+                ->toArray();
+
+            // Candidatos: 6x1, bloco preferido = este bloco, sem afastamento na data
+            $candidatos = Funcionario::with('blocos')
+                ->where('tipo_escala', '6x1')
+                ->where('faz_plantao', true)
+                ->whereNotIn('id', $comPlantaoNaEscala)
+                ->whereDoesntHave('afastamentos', function ($q) use ($dataPlantao) {
+                    $q->where('inicio', '<=', $dataPlantao)->where('fim', '>=', $dataPlantao);
+                })
+                ->whereHas('blocos', function ($q) use ($bloco) {
+                    $q->where('blocos.id', $bloco->id)->where('funcionario_blocos.ordem', 1);
+                })
+                ->get();
+
+            // Critérios 2, 3 e 4: enriquecer com métricas de plantão
+            $candidatos = $candidatos->map(function ($f) {
+                $stats = DB::table('escala_itens')
+                    ->where('funcionario_id', $f->id)
+                    ->where('tipo', 'plantao')
+                    ->selectRaw('COUNT(*) as total, MAX(data) as ultimo')
+                    ->first();
+
+                $diasTrabalhados = max(1, Carbon::parse($f->data_contratacao)->diffInDays(now()));
+
+                $f->_ultimo_plantao = $stats->ultimo;
+                $f->_media_plantoes = $stats->total / $diasTrabalhados;
+
+                return $f;
+            });
+
+            $selecionados = $candidatos->sort(function ($a, $b) {
+                // Critério 2: nunca fez plantão = prioridade máxima; senão o mais antigo primeiro
+                if ($a->_ultimo_plantao !== $b->_ultimo_plantao) {
+                    if ($a->_ultimo_plantao === null) return -1;
+                    if ($b->_ultimo_plantao === null) return 1;
+                    return strcmp($a->_ultimo_plantao, $b->_ultimo_plantao);
+                }
+                // Critério 3: menor média de plantões por dia trabalhado
+                $diffMedia = $a->_media_plantoes <=> $b->_media_plantoes;
+                if ($diffMedia !== 0) return $diffMedia;
+                // Critério 4: maior tempo de casa
+                $diffCasa = strcmp($a->data_contratacao, $b->data_contratacao);
+                if ($diffCasa !== 0) return $diffCasa;
+                // Desempate final: ordem alfabética
+                return strcmp($a->nome, $b->nome);
+            })->take($qtd)->values();
+
+            foreach ($selecionados as $f) {
+                $linhas[] = [
+                    'escala_id'      => $escalaId,
+                    'funcionario_id' => $f->id,
+                    'data'           => $dataPlantao,
+                    'turno'          => 'MT',
+                    'bloco_id'       => $bloco->id,
+                    'tipo'           => 'plantao',
+                    'created_at'     => $now,
+                    'updated_at'     => $now,
+                ];
+            }
+        }
+
+        if (!empty($linhas)) {
+            DB::table('escala_itens')->insert($linhas);
+        }
     }
 
     private function getNoiteUltimaEscala(string $inicio): array

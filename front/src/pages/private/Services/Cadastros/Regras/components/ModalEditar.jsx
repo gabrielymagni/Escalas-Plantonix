@@ -2,25 +2,19 @@ import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import { sxButton } from "../../Blocos/components/ModalEdicao";
-import useModalRegras, { tipoDias, tipoProfissional } from "../hooks/useModalRegras";
+import { tipoDias, tipoProfissional } from "../hooks/useModalRegras";
 
-const ModalEditar = ({ open, handleOpen, info }) => {
-
-    const { editarRegra } = useModalRegras();
-
-    console.log("info", info)
-
+const ModalEditar = ({ open, handleOpen, info, editarRegra }) => {
     return (
-        <Dialog fullWidth={'md'} open={open} onClose={() => handleOpen(null)} aria-labelledby="alert-dialog-title" >
+        <Dialog fullWidth={'md'} open={open} onClose={() => handleOpen(null)} aria-labelledby="alert-dialog-title">
 
             <DialogTitle sx={{ position: "relative" }}>
-
                 <Typography sx={{ p: 2, fontWeight: "bold", color: "#141259", textAlign: "center", fontSize: 20 }}>
                     Editar Regra
                 </Typography>
 
                 <IconButton aria-label="close" onClick={() => handleOpen(null)}
-                    sx={{ position: "absolute", right: 5, top: 5 }} >
+                    sx={{ position: "absolute", right: 5, top: 5 }}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
@@ -34,7 +28,7 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                                 defaultValue={tipoProfissional.find(item => item.tipo === info.tipo_profissional) || null}
                                 getOptionLabel={(option) => option.tipo}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Tipo profissional" required name="tipo_profissional"  />
+                                    <TextField {...params} label="Tipo profissional" required name="tipo_profissional" />
                                 )}
                             />
                         </Grid>
@@ -45,12 +39,11 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                                 defaultValue={tipoDias.find(item => item.id === info.tipo_dia) || null}
                                 getOptionLabel={(option) => option.tipo}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Dias" required name="tipo_dia"  />
+                                    <TextField {...params} label="Dias" required name="tipo_dia" />
                                 )}
                             />
                         </Grid>
                     </Grid>
-
 
                     {info.blocos.map((item, index) => (
                         <Grid container key={index} spacing={2} sx={{
@@ -62,33 +55,31 @@ const ModalEditar = ({ open, handleOpen, info }) => {
                                 <Typography>{item.nome}</Typography>
                             </Grid>
 
-                            <Grid size={{ md: 12, xs: 12 }} sx={{}}>
-
+                            <Grid size={{ md: 12, xs: 12 }}>
                                 <Typography sx={{ textAlign: 'center', mb: 1 }}>Quantidade de pessoas: </Typography>
 
                                 <Grid size={{ md: 12, xs: 12 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                                     <TextField size='small' variant="standard" label="Manhã" fullWidth required type='number'
                                         name={`${item.nome} - manha`} defaultValue={item.pivot.qtd_manha} />
                                     <TextField size='small' variant="standard" label="Tarde" fullWidth required type='number'
-                                        name={`${item.nome} - tarde`} defaultValue={item.pivot.qtd_tarde}/>
+                                        name={`${item.nome} - tarde`} defaultValue={item.pivot.qtd_tarde} />
                                     <TextField size='small' variant="standard" label="Noite" fullWidth required type='number'
                                         name={`${item.nome} - noite`} defaultValue={item.pivot.qtd_noite} />
+                                    <TextField size='small' variant="standard" label="Plantões" fullWidth type='number'
+                                        name={`${item.nome} - plantoes`} defaultValue={item.pivot.qtd_plantoes ?? 0} inputProps={{ min: 0 }} />
                                 </Grid>
-
                             </Grid>
                         </Grid>
                     ))}
-
                 </DialogContent>
 
                 <DialogActions>
-                    <Button type="submit" sx={sxButton} endIcon={<SendIcon />} >
+                    <Button type="submit" sx={sxButton} endIcon={<SendIcon />}>
                         Salvar edição
                     </Button>
                 </DialogActions>
             </form>
-
-        </Dialog >
+        </Dialog>
     )
 }
 

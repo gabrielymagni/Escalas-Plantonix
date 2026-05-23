@@ -1,4 +1,5 @@
-import { Backdrop, CircularProgress, Typography } from '@mui/material'
+import { Backdrop, Chip, CircularProgress, Typography } from '@mui/material'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { useState } from 'react'
 import useGerarEscala from "./hooks/useGerarEscala";
 import ModalGerarEscala from "./components/ModalGerarEscala";
@@ -9,7 +10,7 @@ import usePrintEscala from "./hooks/usePrintEscala";
 
 export default function GerarEscala() {
 
-    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior, fetchLatestEscala, selectedBloco, setSelectedBloco } = useGerarEscala();
+    const { dadosEscala, filtraBloco, loading, handleChange, submitSalvar, mesAtual, proximoMes, mesAnterior, fetchLatestEscala, selectedBloco, setSelectedBloco, escalaAtiva } = useGerarEscala();
     const { open, handleOpen } = useControlarEscala()
     const { printTodosOsBlocos } = usePrintEscala()
     const [allBlocos, setAllBlocos] = useState([]);
@@ -31,10 +32,21 @@ export default function GerarEscala() {
 
             <Typography sx={{
                 fontSize: '24px', color: '#222059', fontWeight: 'bold',
-                textAlign: 'center', mb: 2, mt: 1
+                textAlign: 'center', mb: 1, mt: 1
             }}>
                 Escalas
             </Typography>
+
+            {escalaAtiva && (
+                <Typography sx={{ textAlign: 'center', mb: 2 }}>
+                    <Chip
+                        icon={<CalendarMonthIcon />}
+                        label={`Escala ativa: ${new Date(escalaAtiva.inicio + 'T12:00:00').toLocaleDateString('pt-BR')} – ${new Date(escalaAtiva.fim + 'T12:00:00').toLocaleDateString('pt-BR')}`}
+                        color="success"
+                        variant="outlined"
+                    />
+                </Typography>
+            )}
 
             <FiltraBlocos
                 filtraBloco={filtraBloco}

@@ -76,24 +76,25 @@ class Funcionario extends Authenticatable
                 return ["funcionario" => null, "err" => 404];
             }
 
-            FuncionarioBloco::where('funcionario_id', '=', $funcionario->id)->delete();
-
-            foreach ($dados->blocos as $bloco) {
-                FuncionarioBloco::create([
-                    "funcionario_id" => $funcionario->id,
-                    "bloco_id" => $bloco['id_bloco'],
-                    "ordem" => $bloco['ordem']
-                ]);
-            }
-
             $fazPlantao = $dados->faz_plantao ?? $funcionario->faz_plantao;
+
+            if ($fazPlantao) {
+                FuncionarioBloco::where('funcionario_id', '=', $funcionario->id)->delete();
+                foreach ($dados->blocos as $bloco) {
+                    FuncionarioBloco::create([
+                        "funcionario_id" => $funcionario->id,
+                        "bloco_id" => $bloco['id_bloco'],
+                        "ordem" => $bloco['ordem']
+                    ]);
+                }
+            }
 
             $funcionario->update([
                 "nome" => $dados->nome,
                 "email" => $dados->email,
                 "coren" => $dados->coren,
-                "turno" => $fazPlantao ? ($dados->turno ?? null) : null,
-                "tipo_escala" => $fazPlantao ? ($dados->tipo_escala ?? null) : null,
+                "turno" => $fazPlantao ? ($dados->turno ?? null) : $funcionario->turno,
+                "tipo_escala" => $fazPlantao ? ($dados->tipo_escala ?? null) : $funcionario->tipo_escala,
                 "data_contratacao" => $dados->data_contratacao,
                 "cargo" => $dados->cargo,
                 "faz_plantao" => $fazPlantao,

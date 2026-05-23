@@ -29,11 +29,12 @@ class Regra extends Model
 
             foreach ($dados->blocos as $bloco) {
                 RegraBloco::create([
-                    'bloco_id' => $bloco['bloco_id'],
-                    'regra_id' => $regra->id,
-                    'qtd_manha' => $bloco['qtd_manha'],
-                    'qtd_tarde' => $bloco['qtd_tarde'],
-                    'qtd_noite' => $bloco['qtd_noite'],
+                    'bloco_id'      => $bloco['bloco_id'],
+                    'regra_id'      => $regra->id,
+                    'qtd_manha'     => $bloco['qtd_manha'],
+                    'qtd_tarde'     => $bloco['qtd_tarde'],
+                    'qtd_noite'     => $bloco['qtd_noite'],
+                    'qtd_plantoes'  => $bloco['qtd_plantoes'] ?? 0,
                 ]);
             }
 
@@ -58,11 +59,12 @@ class Regra extends Model
 
             foreach ($dados->blocos as $bloco) {
                 RegraBloco::create([
-                    'bloco_id' => $bloco['bloco_id'],
-                    'regra_id' => $regra->id,
-                    'qtd_manha' => $bloco['qtd_manha'],
-                    'qtd_tarde' => $bloco['qtd_tarde'],
-                    'qtd_noite' => $bloco['qtd_noite'],
+                    'bloco_id'      => $bloco['bloco_id'],
+                    'regra_id'      => $regra->id,
+                    'qtd_manha'     => $bloco['qtd_manha'],
+                    'qtd_tarde'     => $bloco['qtd_tarde'],
+                    'qtd_noite'     => $bloco['qtd_noite'],
+                    'qtd_plantoes'  => $bloco['qtd_plantoes'] ?? 0,
                 ]);
             }
 
@@ -105,7 +107,7 @@ class Regra extends Model
             'regra_id',
             'bloco_id'
         )
-            ->withPivot('qtd_manha', 'qtd_tarde', 'qtd_noite')
+            ->withPivot('qtd_manha', 'qtd_tarde', 'qtd_noite', 'qtd_plantoes')
             ->withTimestamps();
     }
 }

@@ -45,6 +45,7 @@ const ModalGerarEscala = ({ open, handleOpen, onSuccess }) => {
                                 )}
                             />
                         </Grid>
+
                     </Grid>
 
                 </DialogContent>

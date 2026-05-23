@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Funcionario;
 use App\Services\AuditLogger;
 use App\Services\HorasTrabalhadasService;
@@ -29,20 +30,24 @@ class FuncionarioController extends Controller
     public function store(Request $request)
     {
         try {
+            $fazPlantao = $request->boolean('faz_plantao');
+
             $request->validate([
                 "nome" => 'required|string|max:255',
                 "email" => 'required|string|max:255',
                 "coren" => 'required|string|max:20',
-                "turno" => 'required|string|max:2',
-                "tipo_escala" => 'required|string|max:6',
+                "turno" => [Rule::requiredIf($fazPlantao), 'nullable', 'string', 'max:2'],
+                "tipo_escala" => [Rule::requiredIf($fazPlantao), 'nullable', 'string', 'max:6'],
                 "data_contratacao" => 'required|date',
                 "cargo" => "required|string|max:255",
-                "blocos" => 'required|array'
+                "blocos" => [Rule::requiredIf($fazPlantao), 'nullable', 'array'],
             ]);
 
-            $erroRN001 = $this->validarRN001($request->input('tipo_escala'), $request->input('turno'));
-            if ($erroRN001) {
-                return response()->json(['message' => $erroRN001], 422);
+            if ($fazPlantao) {
+                $erroRN001 = $this->validarRN001($request->input('tipo_escala'), $request->input('turno'));
+                if ($erroRN001) {
+                    return response()->json(['message' => $erroRN001], 422);
+                }
             }
 
             $funcionario = Funcionario::createFuncinario($request);
@@ -65,20 +70,24 @@ class FuncionarioController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $fazPlantao = $request->boolean('faz_plantao');
+
             $request->validate([
                 "nome" => 'required|string|max:255',
                 "email" => 'required|string|max:255',
                 "coren" => 'required|string|max:20',
-                "turno" => 'required|string|max:2',
-                "tipo_escala" => 'required|string|max:6',
+                "turno" => [Rule::requiredIf($fazPlantao), 'nullable', 'string', 'max:2'],
+                "tipo_escala" => [Rule::requiredIf($fazPlantao), 'nullable', 'string', 'max:6'],
                 "data_contratacao" => 'required|date',
                 "cargo" => "required|string|max:255",
-                "blocos" => 'required|array'
+                "blocos" => [Rule::requiredIf($fazPlantao), 'nullable', 'array'],
             ]);
 
-            $erroRN001 = $this->validarRN001($request->input('tipo_escala'), $request->input('turno'));
-            if ($erroRN001) {
-                return response()->json(['message' => $erroRN001], 422);
+            if ($fazPlantao) {
+                $erroRN001 = $this->validarRN001($request->input('tipo_escala'), $request->input('turno'));
+                if ($erroRN001) {
+                    return response()->json(['message' => $erroRN001], 422);
+                }
             }
 
             $funcionario = Funcionario::updateFuncinario($request, $id);

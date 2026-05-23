@@ -17,14 +17,14 @@ class EscalaController extends Controller
     {
         $request->validate([
             'inicio' => 'required|date',
-            'fim' => 'required|date|after_or_equal:inicio'
+            'fim'    => 'required|date|after_or_equal:inicio',
         ]);
 
         $escalaModel = new Escala();
 
         $resultado = $escalaModel->gerarEscalaMes([
             'inicio' => $request->inicio,
-            'fim' => $request->fim
+            'fim'    => $request->fim,
         ]);
 
         AuditLogger::log('GERAR_ESCALA', 'Escala', null, [
@@ -62,7 +62,9 @@ class EscalaController extends Controller
 
         return response()->json([
             'escala_id' => $escala->id,
-            'data' => $resultado
+            'inicio'    => $escala->inicio,
+            'fim'       => $escala->fim,
+            'data'      => $resultado
         ]);
     }
 

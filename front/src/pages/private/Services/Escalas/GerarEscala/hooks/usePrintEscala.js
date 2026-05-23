@@ -24,7 +24,7 @@ const usePrintEscala = () => {
 
         const results = await Promise.allSettled(
             allBlocos.map(bloco =>
-                api.get(`/escala/${bloco.id}`).then(r => ({ bloco, dados: r.data.data }))
+                api.get(`/escala/${bloco.id}`).then(r => ({ bloco, dados: r.data.data, inicio: r.data.inicio }))
             )
         )
 
@@ -39,7 +39,14 @@ const usePrintEscala = () => {
             return
         }
 
-        const { inicio, diasNoPeriodo } = gerarPeriodo16a15(mesAtual)
+        let mesEfetivo = mesAtual
+        const firstInicio = escalas[0]?.inicio
+        if (firstInicio) {
+            const d = new Date(firstInicio + 'T12:00:00')
+            mesEfetivo = new Date(d.getFullYear(), d.getMonth(), 1)
+        }
+
+        const { inicio, diasNoPeriodo } = gerarPeriodo16a15(mesEfetivo)
         const periodo = formatarPeriodo(inicio, diasNoPeriodo)
 
         const dias = Array.from({ length: diasNoPeriodo }, (_, i) => {

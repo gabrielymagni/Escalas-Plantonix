@@ -83,7 +83,7 @@ class HorasTrabalhadasService
             Compensacao::create([
                 'funcionario_id' => $funcionarioId,
                 'tipo'           => 'folga',
-                'motivo'         => "Atingiu {$novoCheckpoint}h trabalhadas (RN005)",
+                'motivo'         => "Atingiu " . self::LIMITE_HORAS . "h trabalhadas (RN005)",
                 'status'         => 'pendente',
             ]);
 

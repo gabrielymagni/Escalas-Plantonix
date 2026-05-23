@@ -13,12 +13,10 @@ const useModalRegras = () => {
     const handleOpen = (row) => {
         if (row) {
             setInfoLinha(row)
-            setOpen(prev => !prev)
         } else {
-            setOpen(prev => !prev)
+            setInfoLinha([])
         }
-
-        console.log("item", row)
+        setOpen(prev => !prev)
     }
 
     const handleRemover = (row) => {
@@ -58,39 +56,28 @@ const useModalRegras = () => {
             qtd_manha: dados.get(`${item.nome} - manha`),
             qtd_tarde: dados.get(`${item.nome} - tarde`),
             qtd_noite: dados.get(`${item.nome} - noite`),
+            qtd_plantoes: parseInt(dados.get(`${item.nome} - plantoes`) || '0'),
         }))
-        console.log("encontraBlocos", encontraBlocos)
 
         const encontraTipoDia = tipoDias.find(item => item.tipo === dados.get('tipo_dia'))
-        console.log("encontraTipoDia", encontraTipoDia)
-
 
         const payload = {
             tipo_profissional: dados.get('tipo_profissional'),
             tipo_dia: encontraTipoDia.id,
             blocos: encontraBlocos
         }
-        console.log("payload", payload)
 
         try {
             const response = await api.post(`/regra`, payload);
             if (response.status === 201) {
-                console.log("response", response)
                 toast.success("Nova regra cadastrada com sucesso! ✅", {
-                    style: {
-                        background: "#227212",
-                        color: "white"
-                    }
+                    style: { background: "#227212", color: "white" }
                 })
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            } else {
-                console.log("erro ao chamar api ")
+                await getAllRegras();
+                setOpen(false);
             }
         } catch (error) {
-            console.error('resposta indisponível', error)
+            toast.error("Erro ao cadastrar regra.");
         }
     }
 
@@ -105,38 +92,28 @@ const useModalRegras = () => {
             qtd_manha: dados.get(`${item.nome} - manha`),
             qtd_tarde: dados.get(`${item.nome} - tarde`),
             qtd_noite: dados.get(`${item.nome} - noite`),
+            qtd_plantoes: parseInt(dados.get(`${item.nome} - plantoes`) || '0'),
         }))
-        console.log("encontraBlocos", encontraBlocos)
 
         const encontraTipoDia = tipoDias.find(item => item.tipo === dados.get('tipo_dia'))
-        console.log("encontraTipoDia", encontraTipoDia)
 
         const payload = {
             tipo_profissional: dados.get('tipo_profissional'),
             tipo_dia: encontraTipoDia.id,
             blocos: encontraBlocos
         }
-        console.log("payload", payload)
 
         try {
             const response = await api.put(`/regra/${id}`, payload);
             if (response.status === 200) {
-                console.log("response", response)
                 toast.success("Regra editada com sucesso! ✅", {
-                    style: {
-                        background: "#227212",
-                        color: "white"
-                    }
+                    style: { background: "#227212", color: "white" }
                 })
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            } else {
-                console.log("erro ao chamar api ")
+                await getAllRegras();
+                setOpen(false);
             }
         } catch (error) {
-            console.error('resposta indisponível', error)
+            toast.error("Erro ao editar regra.");
         }
     }
 
