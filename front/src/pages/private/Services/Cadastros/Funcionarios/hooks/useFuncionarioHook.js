@@ -22,7 +22,7 @@ const useFuncionarioHook = () => {
         try {
             const response = await api.get(`/funcionario`);
             if (response.status === 200) {
-                setAllFuncionarios(response.data);
+                setAllFuncionarios([...response.data].sort((a, b) => a.id - b.id));
                 setLoading(false)
             } else {
                 console.log("erro ao chamar api ")
@@ -108,7 +108,7 @@ const useFuncionarioHook = () => {
     const rows = getRowsFuncionario(allFuncionarios);
     const columns = getColumnsFuncionario(handleModal, handleModalRemover, handleModalAfastamento);
 
-    const editarFuncionario = async (evento, id, fazPlantao = true, role = 'funcionario') => {
+    const editarFuncionario = async (evento, id, fazPlantao = true, role = 'funcionario', onSuccess) => {
         evento.preventDefault();
         setLoading(true)
 
@@ -150,9 +150,7 @@ const useFuncionarioHook = () => {
                     }
                 })
 
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                onSuccess?.();
             } else {
                 console.log("erro ao chamar api ")
             }

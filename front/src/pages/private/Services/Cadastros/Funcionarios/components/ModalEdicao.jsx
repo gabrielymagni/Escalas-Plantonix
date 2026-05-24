@@ -13,7 +13,7 @@ const rolesDisponiveis = [
     { id: 'funcionario', label: 'Funcionário' },
 ];
 
-const ModalEdicao = ({ open, info, handleCloseModal, }) => {
+const ModalEdicao = ({ open, info, handleCloseModal, onSuccess }) => {
 
     const { rankingBlocos, handleBlocosRanking, handleTurnos, turnoSelecionado, editarFuncionario,
         escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado } = useFuncionarioHook();
@@ -63,7 +63,7 @@ const ModalEdicao = ({ open, info, handleCloseModal, }) => {
                 </IconButton>
             </DialogTitle>
 
-            <form onSubmit={(e) => editarFuncionario(e, info.id, fazPlantao, roleSelecionada?.id)}>
+            <form onSubmit={(e) => editarFuncionario(e, info.id, fazPlantao, roleSelecionada?.id, onSuccess)}>
 
                 <DialogContent>
 
