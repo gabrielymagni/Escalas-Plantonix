@@ -52,7 +52,7 @@ class AuthController extends Controller {
 			app()->isProduction(),
 			true,
 			false,
-			'Strict'
+			'None'
 		);
 	}
 
@@ -97,7 +97,7 @@ class AuthController extends Controller {
 			app()->isProduction(),
 			true,
 			false,
-			'Strict'
+			'None'
 		);
 	}
 
