@@ -34,7 +34,6 @@ class Regra extends Model
                     'qtd_manha'     => $bloco['qtd_manha'],
                     'qtd_tarde'     => $bloco['qtd_tarde'],
                     'qtd_noite'     => $bloco['qtd_noite'],
-                    'qtd_plantoes'  => $bloco['qtd_plantoes'] ?? 0,
                 ]);
             }
 
@@ -64,7 +63,6 @@ class Regra extends Model
                     'qtd_manha'     => $bloco['qtd_manha'],
                     'qtd_tarde'     => $bloco['qtd_tarde'],
                     'qtd_noite'     => $bloco['qtd_noite'],
-                    'qtd_plantoes'  => $bloco['qtd_plantoes'] ?? 0,
                 ]);
             }
 
@@ -107,7 +105,7 @@ class Regra extends Model
             'regra_id',
             'bloco_id'
         )
-            ->withPivot('qtd_manha', 'qtd_tarde', 'qtd_noite', 'qtd_plantoes')
+            ->withPivot('qtd_manha', 'qtd_tarde', 'qtd_noite')
             ->withTimestamps();
     }
 }

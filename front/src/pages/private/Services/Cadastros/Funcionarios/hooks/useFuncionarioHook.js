@@ -13,6 +13,7 @@ const useFuncionarioHook = () => {
     const [rankingBlocos, setRankingBlocos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [allFuncionarios, setAllFuncionarios] = useState([]);
+    const [campoPesquisa, setCampoPesquisa] = useState('');
     const [turnoSelecionado, setTurnoSelecionado] = useState(null);
     const [escalaSelecionada, setEscalaSelecionada] = useState(null);
 
@@ -105,7 +106,17 @@ const useFuncionarioHook = () => {
 
     }
 
-    const rows = getRowsFuncionario(allFuncionarios);
+    const changePesquisa = (value) => setCampoPesquisa(value);
+
+    const funcionariosFiltrados = campoPesquisa.trim()
+        ? allFuncionarios.filter(f =>
+            f.nome?.toLowerCase().includes(campoPesquisa.toLowerCase()) ||
+            f.email?.toLowerCase().includes(campoPesquisa.toLowerCase()) ||
+            f.cargo?.toLowerCase().includes(campoPesquisa.toLowerCase())
+          )
+        : allFuncionarios;
+
+    const rows = getRowsFuncionario(funcionariosFiltrados);
     const columns = getColumnsFuncionario(handleModal, handleModalRemover, handleModalAfastamento);
 
     const editarFuncionario = async (evento, id, fazPlantao = true, role = 'funcionario') => {
@@ -167,6 +178,7 @@ const useFuncionarioHook = () => {
         getAllFuncionarios, editarFuncionario, rankingBlocos, handleBlocosRanking, loading, openRemove, handleModalRemover,
         handleTurnos, turnoSelecionado, escalaSelecionada, handleEscala, setEscalaSelecionada, setTurnoSelecionado,
         openAfastamento, handleModalAfastamento, handleCloseAfastamento,
+        campoPesquisa, changePesquisa,
     }
 }
 

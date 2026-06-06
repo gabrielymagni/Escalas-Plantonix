@@ -65,8 +65,6 @@ const ModalEditar = ({ open, handleOpen, info, editarRegra }) => {
                                         name={`${item.nome} - tarde`} defaultValue={item.pivot.qtd_tarde} />
                                     <TextField size='small' variant="standard" label="Noite" fullWidth required type='number'
                                         name={`${item.nome} - noite`} defaultValue={item.pivot.qtd_noite} />
-                                    <TextField size='small' variant="standard" label="Plantões" fullWidth type='number'
-                                        name={`${item.nome} - plantoes`} defaultValue={item.pivot.qtd_plantoes ?? 0} inputProps={{ min: 0 }} />
                                 </Grid>
                             </Grid>
                         </Grid>

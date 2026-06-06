@@ -11,6 +11,7 @@ const Funcionario = () => {
     const { rows, columns, infoLinha, openModal, handleCloseModal, getAllFuncionarios, loading,
         openRemove, handleModalRemover, deleteFuncionario,
         openAfastamento, handleCloseAfastamento,
+        campoPesquisa, changePesquisa,
      } = useFuncionarioHook();
 
     useEffect(() => {
@@ -35,8 +36,9 @@ const Funcionario = () => {
             }} >
                 <Grid size={{ xs: 12, md: 6 }}>
                     <TextField label="Pesquisa" fullWidth
-                    // value={campoPesquisa} 
-                    // onChange={(event) => changePesquisa(event.target.value)} 
+                        value={campoPesquisa}
+                        onChange={(event) => changePesquisa(event.target.value)}
+                        placeholder="Buscar por nome, e-mail ou cargo..."
                     />
                 </Grid>
 

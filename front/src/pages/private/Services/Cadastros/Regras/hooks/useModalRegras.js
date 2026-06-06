@@ -56,7 +56,6 @@ const useModalRegras = () => {
             qtd_manha: dados.get(`${item.nome} - manha`),
             qtd_tarde: dados.get(`${item.nome} - tarde`),
             qtd_noite: dados.get(`${item.nome} - noite`),
-            qtd_plantoes: parseInt(dados.get(`${item.nome} - plantoes`) || '0'),
         }))
 
         const encontraTipoDia = tipoDias.find(item => item.tipo === dados.get('tipo_dia'))
@@ -92,7 +91,6 @@ const useModalRegras = () => {
             qtd_manha: dados.get(`${item.nome} - manha`),
             qtd_tarde: dados.get(`${item.nome} - tarde`),
             qtd_noite: dados.get(`${item.nome} - noite`),
-            qtd_plantoes: parseInt(dados.get(`${item.nome} - plantoes`) || '0'),
         }))
 
         const encontraTipoDia = tipoDias.find(item => item.tipo === dados.get('tipo_dia'))

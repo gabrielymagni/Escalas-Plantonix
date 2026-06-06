@@ -13,21 +13,12 @@ import useModalBlocoHook from '../../Cadastros/Blocos/hooks/useModalBlocoHook';
 import TabelaHistorico from './components/TabelaHistorico';
 import PainelAfastados from '../../Escalas/components/PainelAfastados';
 import PainelDeficiencias from '../../Escalas/components/PainelDeficiencias';
+import { formatarDataHora } from '../../../../../../utils/formatarDataHora';
 
 const formatarData = (data) => {
     const s = String(data).substring(0, 10);
     const [ano, mes, dia] = s.split('-');
     return `${dia}/${mes}/${ano}`;
-};
-
-const formatarDataHora = (data) => {
-    const d = new Date(data);
-    const dia = String(d.getDate()).padStart(2, '0');
-    const mes = String(d.getMonth() + 1).padStart(2, '0');
-    const ano = d.getFullYear();
-    const hora = String(d.getHours()).padStart(2, '0');
-    const min = String(d.getMinutes()).padStart(2, '0');
-    return `${dia}/${mes}/${ano} ${hora}:${min}`;
 };
 
 export default function HistoricoEscala() {

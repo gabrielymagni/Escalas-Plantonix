@@ -361,15 +361,6 @@ class Escala extends Model
         // 🔥 bulk insert
         DB::table('escala_itens')->insert($linhas);
 
-        // RN003: gerar plantões para cada dia inútil do período conforme a regra
-        if ($regraDiaInutil) {
-            for ($d = $inicio->copy(); $d->lte($fim); $d->addDay()) {
-                if ($d->isWeekend()) {
-                    $this->gerarPlantoes($escala->id, $d->format('Y-m-d'), $regraDiaInutil);
-                }
-            }
-        }
-
         return array_values($resultado);
     }
 
@@ -595,93 +586,6 @@ class Escala extends Model
             'escalados' => $escalados,
             'sobrando' => [],
         ];
-    }
-
-    private function gerarPlantoes(int $escalaId, string $dataPlantao, Regra $regra): void
-    {
-        $now = now();
-        $linhas = [];
-
-        foreach ($regra->blocos as $bloco) {
-            $qtd = (int) ($bloco->pivot->qtd_plantoes ?? 0);
-            if ($qtd <= 0)
-                continue;
-
-            // Critério 1: já com plantão nesta escala neste bloco são inelegíveis
-            $comPlantaoNaEscala = DB::table('escala_itens')
-                ->where('escala_id', $escalaId)
-                ->where('bloco_id', $bloco->id)
-                ->where('tipo', 'plantao')
-                ->pluck('funcionario_id')
-                ->toArray();
-
-            // Candidatos: 6x1, bloco preferido = este bloco, sem afastamento na data
-            $candidatos = Funcionario::with('blocos')
-                ->where('tipo_escala', '6x1')
-                ->where('faz_plantao', true)
-                ->whereNotIn('id', $comPlantaoNaEscala)
-                ->whereDoesntHave('afastamentos', function ($q) use ($dataPlantao) {
-                    $q->where('inicio', '<=', $dataPlantao)->where('fim', '>=', $dataPlantao);
-                })
-                ->whereHas('blocos', function ($q) use ($bloco) {
-                    $q->where('blocos.id', $bloco->id)->where('funcionario_blocos.ordem', 1);
-                })
-                ->get();
-
-            // Critérios 2, 3 e 4: enriquecer com métricas de plantão
-            $candidatos = $candidatos->map(function ($f) {
-                $stats = DB::table('escala_itens')
-                    ->where('funcionario_id', $f->id)
-                    ->where('tipo', 'plantao')
-                    ->selectRaw('COUNT(*) as total, MAX(data) as ultimo')
-                    ->first();
-
-                $diasTrabalhados = max(1, Carbon::parse($f->data_contratacao)->diffInDays(now()));
-
-                $f->_ultimo_plantao = $stats->ultimo;
-                $f->_media_plantoes = $stats->total / $diasTrabalhados;
-
-                return $f;
-            });
-
-            $selecionados = $candidatos->sort(function ($a, $b) {
-                // Critério 2: nunca fez plantão = prioridade máxima; senão o mais antigo primeiro
-                if ($a->_ultimo_plantao !== $b->_ultimo_plantao) {
-                    if ($a->_ultimo_plantao === null)
-                        return -1;
-                    if ($b->_ultimo_plantao === null)
-                        return 1;
-                    return strcmp($a->_ultimo_plantao, $b->_ultimo_plantao);
-                }
-                // Critério 3: menor média de plantões por dia trabalhado
-                $diffMedia = $a->_media_plantoes <=> $b->_media_plantoes;
-                if ($diffMedia !== 0)
-                    return $diffMedia;
-                // Critério 4: maior tempo de casa
-                $diffCasa = strcmp($a->data_contratacao, $b->data_contratacao);
-                if ($diffCasa !== 0)
-                    return $diffCasa;
-                // Desempate final: ordem alfabética
-                return strcmp($a->nome, $b->nome);
-            })->take($qtd)->values();
-
-            foreach ($selecionados as $f) {
-                $linhas[] = [
-                    'escala_id' => $escalaId,
-                    'funcionario_id' => $f->id,
-                    'data' => $dataPlantao,
-                    'turno' => 'MT',
-                    'bloco_id' => $bloco->id,
-                    'tipo' => 'plantao',
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-            }
-        }
-
-        if (!empty($linhas)) {
-            DB::table('escala_itens')->insert($linhas);
-        }
     }
 
     /**

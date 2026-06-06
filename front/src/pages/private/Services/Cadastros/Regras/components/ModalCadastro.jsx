@@ -59,7 +59,6 @@ const ModalCadastro = ({ open, handleOpen, submitCadastro, allBlocos }) => {
                                     <TextField size='small' variant="standard" label="Manhã" name={`${item.nome} - manha`} fullWidth required type='number' />
                                     <TextField size='small' variant="standard" label="Tarde" name={`${item.nome} - tarde`} fullWidth required type='number' />
                                     <TextField size='small' variant="standard" label="Noite" name={`${item.nome} - noite`} fullWidth required type='number' />
-                                    <TextField size='small' variant="standard" label="Plantões" name={`${item.nome} - plantoes`} fullWidth type='number' defaultValue={0} inputProps={{ min: 0 }} />
                                 </Grid>
                             </Grid>
                         </Grid>

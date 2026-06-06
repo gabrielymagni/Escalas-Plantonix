@@ -185,8 +185,8 @@ class EscalaController extends Controller
             $turnoAntigo = $itemAtual->turno_atual;
             $turnoNovo   = $item['turno'];
 
-            // M ou T → MT: criar compensação de folga
-            if (in_array($turnoAntigo, ['M', 'T']) && $turnoNovo === 'MT') {
+            // M, T ou F → MT: criar compensação de folga
+            if (in_array($turnoAntigo, ['M', 'T', 'F']) && $turnoNovo === 'MT') {
                 $compensacao = Compensacao::create([
                     'funcionario_id' => $itemAtual->funcionario_id,
                     'escala_item_id' => $item['id'],
