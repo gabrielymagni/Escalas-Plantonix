@@ -48,8 +48,9 @@ const Funcionario = () => {
             <EstruturaTabela rows={rows} columns={columns} />
 
             {openModal &&
-                <ModalEdicao open={openModal} info={infoLinha} 
-                handleCloseModal={handleCloseModal}/>
+                <ModalEdicao open={openModal} info={infoLinha}
+                handleCloseModal={handleCloseModal}
+                onSuccess={() => { getAllFuncionarios(); handleCloseModal(); }} />
             }
 
             {openRemove &&
